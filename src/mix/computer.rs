@@ -65,17 +65,13 @@ impl Computer {
             6 => self.r_i6.address(),
             _ => panic!("Illegal index register value"),
         };
-        println!("index_value = {}", index_value);
         let modified_address = word.address() + index_value;
-        println!("modified_address = {}", modified_address);
         let full_contents = self.memory.contents(modified_address as u16).unwrap();
         let left_limit = word.modifier() / 8;
         let right_limit = word.modifier() % 8;
         if right_limit < left_limit {
             panic!("Illegal modifier range");
         }
-        println!("{}", left_limit);
-        println!("{}", right_limit);
         let mut buffer: Vec<Byte> = Vec::new();
         for i in 0..6 {
             if i >= left_limit && i <= right_limit {
@@ -87,11 +83,9 @@ impl Computer {
         for i in 0..buffer.len() {
             final_value[prepended_zero_count + i] = buffer[i];
         }
-        println!("{:?}", final_value);
         self.r_a = Word {
             values: final_value,
         };
-        println!("END OF DEBUGGING")
     }
 }
 
