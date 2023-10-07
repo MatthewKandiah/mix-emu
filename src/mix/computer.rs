@@ -438,3 +438,216 @@ fn should_handle_ldi_instruction_with_index_with_modifier() {
     computer.handle_instruction(Word::from_u8s([1, 31, 23, 2, 2, 14]).unwrap());
     assert_eq!(computer.r_i6, IndexRegister::from_u8s([0, 8, 9]).unwrap());
 }
+
+#[test]
+fn should_handle_ldan_instruction_no_index_no_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    assert_eq!(computer.r_a, Word::zero());
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 16]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 2, 3, 4, 5, 6]).unwrap());
+}
+
+#[test]
+fn should_handle_ldan_instruction_with_positive_index_no_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
+    computer.r_i3 = IndexRegister::from_u8s([1, 1, 36]).unwrap();
+    assert_eq!(computer.r_a, Word::zero());
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 3, 5, 16]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 8, 9, 10, 11, 12]).unwrap());
+}
+
+#[test]
+fn should_handle_ldan_instruction_with_negative_index_no_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
+    computer.r_i3 = IndexRegister::from_u8s([0, 1, 36]).unwrap();
+    assert_eq!(computer.r_a, Word::zero());
+    computer.handle_instruction(Word::from_u8s([1, 1, 37, 3, 5, 16]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 2, 3, 4, 5, 6]).unwrap());
+}
+
+#[test]
+fn should_handle_ldan_instruction_no_index_with_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    assert_eq!(computer.r_a, Word::zero());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 1, 16]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 0, 1, 2]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 3, 16]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 1, 2, 3, 4]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 20, 16]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 3, 4, 5]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 45, 16]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 0, 0, 6]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 0, 16]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 0, 0, 1]).unwrap());
+}
+
+#[test]
+fn should_handle_ldan_instruction_with_index_with_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[7] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
+    computer.memory.value[2007] = Word::from_u8s([13, 14, 15, 16, 17, 18]).unwrap();
+    computer.r_i5 = IndexRegister::from_u8s([2, 31, 16]).unwrap();
+    computer.r_i6 = IndexRegister::from_u8s([0, 31, 16]).unwrap();
+    assert_eq!(computer.r_a, Word::zero());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 7, 5, 13, 16]).unwrap());
+    assert_eq!(
+        computer.r_a,
+        Word::from_u8s([1, 14, 15, 16, 17, 18]).unwrap()
+    );
+
+    computer.handle_instruction(Word::from_u8s([1, 31, 23, 6, 2, 16]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 7, 8, 9]).unwrap());
+}
+
+#[test]
+fn should_handle_ldxn_instruction_no_index_no_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    assert_eq!(computer.r_x, Word::zero());
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 23]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([0, 2, 3, 4, 5, 6]).unwrap());
+}
+
+#[test]
+fn should_handle_ldxn_instruction_with_positive_index_no_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
+    computer.r_i3 = IndexRegister::from_u8s([1, 1, 36]).unwrap();
+    assert_eq!(computer.r_x, Word::zero());
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 3, 5, 23]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([0, 8, 9, 10, 11, 12]).unwrap());
+}
+
+#[test]
+fn should_handle_ldxn_instruction_with_negative_index_no_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
+    computer.r_i3 = IndexRegister::from_u8s([0, 1, 36]).unwrap();
+    assert_eq!(computer.r_x, Word::zero());
+    computer.handle_instruction(Word::from_u8s([1, 1, 37, 3, 5, 23]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([0, 2, 3, 4, 5, 6]).unwrap());
+}
+
+#[test]
+fn should_handle_ldxn_instruction_no_index_with_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    assert_eq!(computer.r_x, Word::zero());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 1, 23]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 0, 0, 0, 1, 2]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 3, 23]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 0, 1, 2, 3, 4]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 20, 23]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 0, 0, 3, 4, 5]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 45, 23]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 0, 0, 0, 0, 6]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 0, 23]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 0, 0, 0, 0, 1]).unwrap());
+}
+
+#[test]
+fn should_handle_ldxn_instruction_with_index_with_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[7] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
+    computer.memory.value[2007] = Word::from_u8s([13, 14, 15, 16, 17, 18]).unwrap();
+    computer.r_i5 = IndexRegister::from_u8s([2, 31, 16]).unwrap();
+    computer.r_i6 = IndexRegister::from_u8s([0, 31, 16]).unwrap();
+    assert_eq!(computer.r_x, Word::zero());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 7, 5, 13, 23]).unwrap());
+    assert_eq!(
+        computer.r_x,
+        Word::from_u8s([1, 14, 15, 16, 17, 18]).unwrap()
+    );
+
+    computer.handle_instruction(Word::from_u8s([1, 31, 23, 6, 2, 23]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 0, 0, 7, 8, 9]).unwrap());
+}
+
+#[test]
+fn should_handle_ldin_instruction_no_index_no_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    assert_eq!(computer.r_i1, IndexRegister::zero());
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 17]).unwrap());
+    assert_eq!(computer.r_i1, IndexRegister::from_u8s([0, 5, 6]).unwrap());
+}
+
+#[test]
+fn should_handle_ldin_instruction_with_positive_index_no_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
+    computer.r_i3 = IndexRegister::from_u8s([1, 1, 36]).unwrap();
+    assert_eq!(computer.r_i2, IndexRegister::zero());
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 3, 5, 18]).unwrap());
+    assert_eq!(computer.r_i2, IndexRegister::from_u8s([0, 11, 12]).unwrap());
+}
+
+#[test]
+fn should_handle_ldin_instruction_with_negative_index_no_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
+    computer.r_i4 = IndexRegister::from_u8s([0, 1, 36]).unwrap();
+    assert_eq!(computer.r_i3, IndexRegister::zero());
+    computer.handle_instruction(Word::from_u8s([1, 1, 37, 4, 5, 19]).unwrap());
+    assert_eq!(computer.r_i3, IndexRegister::from_u8s([0, 5, 6]).unwrap());
+}
+
+#[test]
+fn should_handle_ldin_instruction_no_index_with_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    assert_eq!(computer.r_i4, IndexRegister::zero());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 1, 20]).unwrap());
+    assert_eq!(computer.r_i4, IndexRegister::from_u8s([1, 1, 2]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 3, 20]).unwrap());
+    assert_eq!(computer.r_i4, IndexRegister::from_u8s([1, 3, 4]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 20, 20]).unwrap());
+    assert_eq!(computer.r_i4, IndexRegister::from_u8s([1, 4, 5]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 45, 20]).unwrap());
+    assert_eq!(computer.r_i4, IndexRegister::from_u8s([1, 0, 6]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 0, 20]).unwrap());
+    assert_eq!(computer.r_i4, IndexRegister::from_u8s([1, 0, 1]).unwrap());
+}
+
+#[test]
+fn should_handle_ldin_instruction_with_index_with_modifier() {
+    let mut computer = Computer::new();
+    computer.memory.value[7] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
+    computer.memory.value[2007] = Word::from_u8s([13, 14, 15, 16, 17, 18]).unwrap();
+    computer.r_i1 = IndexRegister::from_u8s([2, 31, 16]).unwrap();
+    computer.r_i2 = IndexRegister::from_u8s([0, 31, 16]).unwrap();
+    assert_eq!(computer.r_i5, IndexRegister::zero());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 7, 1, 13, 21]).unwrap());
+    assert_eq!(computer.r_i5, IndexRegister::from_u8s([1, 17, 18]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 31, 23, 2, 2, 22]).unwrap());
+    assert_eq!(computer.r_i6, IndexRegister::from_u8s([1, 8, 9]).unwrap());
+}
