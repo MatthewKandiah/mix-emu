@@ -80,7 +80,6 @@ impl Word {
         return Ok(Word { values: result });
     }
 
-    // true for +, false for -
     fn sign(&self) -> i8 {
         match self.values[0].value {
             0 => -1,
