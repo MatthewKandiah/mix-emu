@@ -1,6 +1,6 @@
 use super::{byte::Byte, byte_overflow::ByteOverflow};
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct IndexRegister {
     pub values: [Byte; 3],
 }
