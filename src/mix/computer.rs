@@ -1,4 +1,6 @@
-use super::{word::Word, index_register::IndexRegister, jump_register::JumpRegister, memory::Memory};
+use super::{
+    index_register::IndexRegister, jump_register::JumpRegister, memory::Memory, word::Word,
+};
 
 pub enum ComparisonIndicatorState {
     Less,

@@ -34,4 +34,3 @@ fn it_should_return_overflow_error_if_u8_too_big() {
 fn it_should_make_a_zero_byte() {
     assert_eq!(Byte::zero(), Byte { value: 0 });
 }
-

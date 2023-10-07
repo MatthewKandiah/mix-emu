@@ -40,7 +40,7 @@ impl Word {
             Ok(x) => result[5] = x,
             Err(x) => return Err(ByteOverflow { value: x.value }),
         }
-        return Ok(Word { values: result });
+        return Ok(Self { values: result });
     }
 
     pub fn zero() -> Self {
@@ -123,4 +123,3 @@ fn it_should_calculate_address_from_the_first_three_bytes() {
         -4095
     );
 }
-
