@@ -65,6 +65,36 @@ impl Word {
     }
 }
 
+type IndexRegister = [Byte; 3];
+
+type JumpRegister = [Byte; 2];
+
+enum ComparisonIndicatorState {
+    Less,
+    Equal,
+    Greater,
+    Off,
+}
+
+struct MixComputer {
+    // main register
+    r_a: Word,
+    // extension register
+    r_x: Word,
+    // index registers, used primarily for counting and referencing variable memory addresses
+    r_i1: IndexRegister,
+    r_i2: IndexRegister,
+    r_i3: IndexRegister,
+    r_i4: IndexRegister,
+    r_i5: IndexRegister,
+    r_i6: IndexRegister,
+    // jump register, always hold the address of the instruction following the most recent jump operation
+    r_j: JumpRegister,
+    overflow_toggle: bool,
+    comparison_indicator: ComparisonIndicatorState,
+    memory: [Word; 4000],
+}
+
 fn main() {
     let max = Byte::from_u8(63);
     let min = Byte::from_u8(0);
