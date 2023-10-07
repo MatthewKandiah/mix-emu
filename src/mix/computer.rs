@@ -59,6 +59,14 @@ impl Computer {
             13 => Self::ld5(self, instruction),
             14 => Self::ld6(self, instruction),
             15 => Self::ldx(self, instruction),
+            16 => Self::ldan(self, instruction),
+            17 => Self::ld1n(self, instruction),
+            18 => Self::ld2n(self, instruction),
+            19 => Self::ld3n(self, instruction),
+            20 => Self::ld4n(self, instruction),
+            21 => Self::ld5n(self, instruction),
+            22 => Self::ld6n(self, instruction),
+            23 => Self::ldxn(self, instruction),
             _ => panic!("Illegal op code"),
         }
     }
@@ -150,6 +158,71 @@ impl Computer {
 
     fn ld6(&mut self, instruction_word: Word) -> () {
         self.r_i6 = self.index_register_to_load(instruction_word);
+    }
+
+    fn negated_word_to_load(&self, instruction_word: Word) -> Word {
+        let word = self.word_to_load(instruction_word);
+        let negated_sign_byte = match word.values[0].value {
+            0 => Byte::from_u8(1).unwrap(),
+            _ => Byte::zero(),
+        };
+        return Word {
+            values: [
+                negated_sign_byte,
+                word.values[1],
+                word.values[2],
+                word.values[3],
+                word.values[4],
+                word.values[5],
+            ],
+        };
+    }
+
+    fn negated_index_register_to_load(&self, instruction_word: Word) -> IndexRegister {
+        let index_register = self.index_register_to_load(instruction_word);
+        let negated_sign_byte = match index_register.values[0].value {
+            0 => Byte::from_u8(1).unwrap(),
+            _ => Byte::zero(),
+        };
+        return IndexRegister {
+            values: [
+                negated_sign_byte,
+                index_register.values[1],
+                index_register.values[2],
+            ]
+        }
+    }
+
+    fn ldan(&mut self, instruction_word: Word) -> () {
+        self.r_a = self.negated_word_to_load(instruction_word);
+    }
+
+    fn ldxn(&mut self, instruction_word: Word) -> () {
+        self.r_x = self.negated_word_to_load(instruction_word);
+    }
+
+    fn ld1n(&mut self, instruction_word: Word) -> () {
+        self.r_i1 = self.negated_index_register_to_load(instruction_word);
+    }
+
+    fn ld2n(&mut self, instruction_word: Word) -> () {
+        self.r_i2 = self.negated_index_register_to_load(instruction_word);
+    }
+
+    fn ld3n(&mut self, instruction_word: Word) -> () {
+        self.r_i3 = self.negated_index_register_to_load(instruction_word);
+    }
+
+    fn ld4n(&mut self, instruction_word: Word) -> () {
+        self.r_i4 = self.negated_index_register_to_load(instruction_word);
+    }
+
+    fn ld5n(&mut self, instruction_word: Word) -> () {
+        self.r_i5 = self.negated_index_register_to_load(instruction_word);
+    }
+
+    fn ld6n(&mut self, instruction_word: Word) -> () {
+        self.r_i6 = self.negated_index_register_to_load(instruction_word);
     }
 }
 
@@ -360,10 +433,7 @@ fn should_handle_ldi_instruction_with_index_with_modifier() {
     assert_eq!(computer.r_i5, IndexRegister::zero());
 
     computer.handle_instruction(Word::from_u8s([1, 0, 7, 1, 13, 13]).unwrap());
-    assert_eq!(
-        computer.r_i5,
-        IndexRegister::from_u8s([0, 17, 18]).unwrap()
-    );
+    assert_eq!(computer.r_i5, IndexRegister::from_u8s([0, 17, 18]).unwrap());
 
     computer.handle_instruction(Word::from_u8s([1, 31, 23, 2, 2, 14]).unwrap());
     assert_eq!(computer.r_i6, IndexRegister::from_u8s([0, 8, 9]).unwrap());
