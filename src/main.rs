@@ -80,10 +80,14 @@ impl Word {
         return Ok(Word { values: result });
     }
 
+    fn zero() -> Self {
+        Self::from_u8s([0, 0, 0, 0, 0, 0]).unwrap()
+    }
+
     fn sign(&self) -> i8 {
         match self.values[0].value {
             0 => -1,
-            _ => 1
+            _ => 1,
         }
     }
 
@@ -129,7 +133,7 @@ fn it_should_return_overflow_error_containing_first_value_that_is_too_big() {
     assert_eq!(
         Word::from_u8s([61, 62, 63, 64, 65, 66,]).unwrap_err(),
         ByteOverflow { value: 64 },
-        );
+    );
 }
 
 #[test]
@@ -144,16 +148,42 @@ fn sign_should_be_negative_if_sign_byte_zero() {
 
 #[test]
 fn it_should_calculate_address_from_the_first_three_bytes() {
-    assert_eq!(Word::from_u8s([0,1,2,3,4,5]).unwrap().address(), -66);
-    assert_eq!(Word::from_u8s([1,2,3,4,5,6]).unwrap().address(), 131);
-    assert_eq!(Word::from_u8s([0,0,0,0,0,0]).unwrap().address(), 0);
-    assert_eq!(Word::from_u8s([63, 63, 63, 63, 63, 63]).unwrap().address(), 4095);
-    assert_eq!(Word::from_u8s([0, 63, 63, 63, 63, 63]).unwrap().address(), -4095);
+    assert_eq!(Word::from_u8s([0, 1, 2, 3, 4, 5]).unwrap().address(), -66);
+    assert_eq!(Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap().address(), 131);
+    assert_eq!(Word::from_u8s([0, 0, 0, 0, 0, 0]).unwrap().address(), 0);
+    assert_eq!(
+        Word::from_u8s([63, 63, 63, 63, 63, 63]).unwrap().address(),
+        4095
+    );
+    assert_eq!(
+        Word::from_u8s([0, 63, 63, 63, 63, 63]).unwrap().address(),
+        -4095
+    );
 }
 
-type IndexRegister = [Byte; 3];
+struct IndexRegister {
+    value: [Byte; 3],
+}
 
-type JumpRegister = [Byte; 2];
+impl IndexRegister {
+    fn zero() -> Self {
+        Self {
+            value: [Byte::zero(); 3],
+        }
+    }
+}
+
+struct JumpRegister {
+    value: [Byte; 2],
+}
+
+impl JumpRegister {
+    fn zero() -> Self {
+        Self {
+            value: [Byte::zero(); 2],
+        }
+    }
+}
 
 enum ComparisonIndicatorState {
     Less,
@@ -167,6 +197,12 @@ struct Memory {
 }
 
 impl Memory {
+    fn zero() -> Self {
+        Self {
+            value: [Word::zero(); 4000],
+        }
+    }
+
     fn contents(&self, address: u16) -> Result<Word, AddressOutOfRange> {
         match address >= 4000 {
             true => Err(AddressOutOfRange { value: address }),
@@ -198,16 +234,25 @@ struct MixComputer {
     memory: Memory,
 }
 
+impl MixComputer {
+    fn new() -> Self {
+        MixComputer {
+            r_a: Word::zero(),
+            r_x: Word::zero(),
+            r_i1: IndexRegister::zero(),
+            r_i2: IndexRegister::zero(),
+            r_i3: IndexRegister::zero(),
+            r_i4: IndexRegister::zero(),
+            r_i5: IndexRegister::zero(),
+            r_i6: IndexRegister::zero(),
+            r_j: JumpRegister::zero(),
+            overflow_toggle: false,
+            comparison_indicator: ComparisonIndicatorState::Off,
+            memory: Memory::zero(),
+        }
+    }
+}
+
 fn main() {
-    let max = Byte::from_u8(63);
-    let min = Byte::from_u8(0);
-    let example = Byte::from_u8(47);
-
-    println!("{:06b}", max.unwrap().value);
-    println!("{:06b}", min.unwrap().value);
-    println!("{:06b}", example.unwrap().value);
-
-    let word = Word::from_u8s([1, 2, 3, 4, 5, 6]);
-    println!("{:?}", word);
-    println!("{:?}", Word::from_u8s([100, 2, 3, 4, 5, 66]))
+    let computer = MixComputer::new();
 }
