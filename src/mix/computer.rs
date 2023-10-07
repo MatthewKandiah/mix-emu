@@ -96,7 +96,7 @@ impl Computer {
         (word.address() + self.index_value(word.index())) as u16
     }
 
-    fn word_to_load(self, instruction_word: Word) -> Word {
+    fn word_to_load(&self, instruction_word: Word) -> Word {
         let full_word = self
             .memory
             .contents(self.modified_address(instruction_word))
@@ -104,12 +104,46 @@ impl Computer {
         return Self::extract_bytes_from_word(full_word, instruction_word.modifier());
     }
 
-    fn lda(&mut self, word: Word) -> () {
-        self.r_a = self.word_to_load(word);
+    fn lda(&mut self, instruction_word: Word) -> () {
+        self.r_a = self.word_to_load(instruction_word);
     }
 
-    fn ldx(&mut self, word: Word) -> () {
-        self.r_x = self.word_to_load(word);
+    fn ldx(&mut self, instruction_word: Word) -> () {
+        self.r_x = self.word_to_load(instruction_word);
+    }
+
+    fn index_register_to_load(&self, instruction_word: Word) -> IndexRegister {
+        let full_word = self.word_to_load(instruction_word);
+        let sign = full_word.values[0];
+        let first_byte = full_word.values[4];
+        let second_byte = full_word.values[5];
+        return IndexRegister {
+            values: [sign, first_byte, second_byte],
+        };
+    }
+
+    fn ld1(&mut self, instruction_word: Word) -> () {
+        self.r_i1 = self.index_register_to_load(instruction_word);
+    }
+
+    fn ld2(&mut self, instruction_word: Word) -> () {
+        self.r_i2 = self.index_register_to_load(instruction_word);
+    }
+
+    fn ld3(&mut self, instruction_word: Word) -> () {
+        self.r_i3 = self.index_register_to_load(instruction_word);
+    }
+
+    fn ld4(&mut self, instruction_word: Word) -> () {
+        self.r_i4 = self.index_register_to_load(instruction_word);
+    }
+
+    fn ld5(&mut self, instruction_word: Word) -> () {
+        self.r_i5 = self.index_register_to_load(instruction_word);
+    }
+
+    fn ld6(&mut self, instruction_word: Word) -> () {
+        self.r_i6 = self.index_register_to_load(instruction_word);
     }
 }
 
