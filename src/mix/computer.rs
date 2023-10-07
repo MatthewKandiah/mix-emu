@@ -3,6 +3,7 @@ use super::{
     word::Word,
 };
 
+#[derive(Clone, Copy)]
 pub enum ComparisonIndicatorState {
     Less,
     Equal,
@@ -10,6 +11,7 @@ pub enum ComparisonIndicatorState {
     Off,
 }
 
+#[derive(Clone, Copy)]
 pub struct Computer {
     // main register
     r_a: Word,
@@ -50,12 +52,13 @@ impl Computer {
     pub fn handle_instruction(&mut self, instruction: Word) -> () {
         match instruction.op_code() {
             8 => Self::lda(self, instruction),
+            15 => Self::ldx(self, instruction),
             _ => panic!("Illegal op code"),
         }
     }
 
-    fn lda(&mut self, word: Word) -> () {
-        let index_value = match word.index() {
+    fn index_value(&self, index: u8) -> i16 {
+        match index {
             0 => 0,
             1 => self.r_i1.address(),
             2 => self.r_i2.address(),
@@ -64,11 +67,12 @@ impl Computer {
             5 => self.r_i5.address(),
             6 => self.r_i6.address(),
             _ => panic!("Illegal index register value"),
-        };
-        let modified_address = word.address() + index_value;
-        let full_contents = self.memory.contents(modified_address as u16).unwrap();
-        let left_limit = word.modifier() / 8;
-        let right_limit = word.modifier() % 8;
+        }
+    }
+
+    fn extract_bytes_from_word(full_contents: Word, modifier: u8) -> Word {
+        let left_limit = modifier / 8;
+        let right_limit = modifier % 8;
         if right_limit < left_limit {
             panic!("Illegal modifier range");
         }
@@ -83,9 +87,24 @@ impl Computer {
         for i in 0..buffer.len() {
             final_value[prepended_zero_count + i] = buffer[i];
         }
-        self.r_a = Word {
-            values: final_value,
-        };
+        return Word { values: final_value };
+    }
+
+    fn modified_address(&self, word: Word) -> u16 {
+        (word.address() + self.index_value(word.index())) as u16
+    }
+
+    fn word_to_load(self, instruction_word: Word) -> Word {
+        let full_word = self.memory.contents(self.modified_address(instruction_word)).unwrap();
+        return Self::extract_bytes_from_word(full_word, instruction_word.modifier());
+    }
+
+    fn lda(&mut self, word: Word) -> () {
+        self.r_a = self.word_to_load(word);
+    }
+
+    fn ldx(&mut self, word: Word) -> () {
+        self.r_x = self.word_to_load(word);
     }
 }
 

@@ -1,5 +1,6 @@
 use super::word::Word;
 
+#[derive(Clone, Copy)]
 pub struct Memory {
     pub value: [Word; 4000],
 }

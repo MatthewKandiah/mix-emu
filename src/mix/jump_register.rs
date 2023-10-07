@@ -1,5 +1,6 @@
 use super::{byte::Byte, byte_overflow::ByteOverflow};
 
+#[derive(Clone, Copy)]
 pub struct JumpRegister {
     values: [Byte; 2],
 }
