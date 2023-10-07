@@ -3,7 +3,7 @@ use super::byte_overflow::ByteOverflow;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Word {
-    values: [Byte; 6],
+    pub values: [Byte; 6],
 }
 
 impl Word {

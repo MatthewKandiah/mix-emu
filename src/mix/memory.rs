@@ -1,7 +1,7 @@
 use super::word::Word;
 
 pub struct Memory {
-    value: [Word; 4000],
+    pub value: [Word; 4000],
 }
 
 #[derive(Debug)]
