@@ -162,26 +162,46 @@ fn it_should_calculate_address_from_the_first_three_bytes() {
 }
 
 struct IndexRegister {
-    value: [Byte; 3],
+    values: [Byte; 3],
 }
 
 impl IndexRegister {
     fn zero() -> Self {
         Self {
-            value: [Byte::zero(); 3],
+            values: [Byte::zero(); 3],
         }
+    }
+
+    fn sign(&self) -> i8 {
+        match self.values[0].value {
+            0 => -1,
+            _ => 1,
+        }
+    }
+
+    fn address(&self) -> i16 {
+        let sign = self.sign() as i16;
+        let first_byte = self.values[1].value as i16;
+        let second_byte = self.values[2].value as i16;
+        sign * (first_byte * i16::pow(2, 6) + second_byte)
     }
 }
 
 struct JumpRegister {
-    value: [Byte; 2],
+    values: [Byte; 2],
 }
 
 impl JumpRegister {
     fn zero() -> Self {
         Self {
-            value: [Byte::zero(); 2],
+            values: [Byte::zero(); 2],
         }
+    }
+
+    fn address(&self) -> i16 {
+        let first_byte = self.values[0].value as i16;
+        let second_byte = self.values[1].value as i16;
+        first_byte * i16::pow(2, 6) + second_byte
     }
 }
 
@@ -211,6 +231,7 @@ impl Memory {
     }
 }
 
+#[derive(Debug)]
 struct AddressOutOfRange {
     value: u16,
 }
