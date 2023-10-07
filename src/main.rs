@@ -79,6 +79,33 @@ impl Word {
         }
         return Ok(Word { values: result });
     }
+
+    // true for +, false for -
+    fn sign(&self) -> i8 {
+        match self.values[0].value {
+            0 => -1,
+            _ => 1
+        }
+    }
+
+    fn address(&self) -> i16 {
+        let sign = self.sign() as i16;
+        let first_byte = self.values[1].value as i16;
+        let second_byte = self.values[2].value as i16;
+        sign * (first_byte * i16::pow(2, 6) + second_byte)
+    }
+
+    fn index(&self) -> u8 {
+        self.values[3].value
+    }
+
+    fn modifier(&self) -> u8 {
+        self.values[4].value
+    }
+
+    fn op_code(&self) -> u8 {
+        self.values[5].value
+    }
 }
 
 #[test]
@@ -101,9 +128,28 @@ fn it_should_make_a_word_from_u8_array() {
 #[test]
 fn it_should_return_overflow_error_containing_first_value_that_is_too_big() {
     assert_eq!(
-        Word::from_u8s([61,62,63,64,65,66,]).unwrap_err(),
-        ByteOverflow {value: 64},
+        Word::from_u8s([61, 62, 63, 64, 65, 66,]).unwrap_err(),
+        ByteOverflow { value: 64 },
         );
+}
+
+#[test]
+fn sign_should_be_positive_if_sign_byte_non_zero() {
+    assert_eq!(Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap().sign(), 1)
+}
+
+#[test]
+fn sign_should_be_negative_if_sign_byte_zero() {
+    assert_eq!(Word::from_u8s([0, 2, 3, 4, 5, 6]).unwrap().sign(), -1)
+}
+
+#[test]
+fn it_should_calculate_address_from_the_first_three_bytes() {
+    assert_eq!(Word::from_u8s([0,1,2,3,4,5]).unwrap().address(), -66);
+    assert_eq!(Word::from_u8s([1,2,3,4,5,6]).unwrap().address(), 131);
+    assert_eq!(Word::from_u8s([0,0,0,0,0,0]).unwrap().address(), 0);
+    assert_eq!(Word::from_u8s([63, 63, 63, 63, 63, 63]).unwrap().address(), 4095);
+    assert_eq!(Word::from_u8s([0, 63, 63, 63, 63, 63]).unwrap().address(), -4095);
 }
 
 type IndexRegister = [Byte; 3];
