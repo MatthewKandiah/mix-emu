@@ -52,6 +52,12 @@ impl Computer {
     pub fn handle_instruction(&mut self, instruction: Word) -> () {
         match instruction.op_code() {
             8 => Self::lda(self, instruction),
+            9 => Self::ld1(self, instruction),
+            10 => Self::ld2(self, instruction),
+            11 => Self::ld3(self, instruction),
+            12 => Self::ld4(self, instruction),
+            13 => Self::ld5(self, instruction),
+            14 => Self::ld6(self, instruction),
             15 => Self::ldx(self, instruction),
             _ => panic!("Illegal op code"),
         }
@@ -316,9 +322,9 @@ fn should_handle_ldi_instruction_with_negative_index_no_modifier() {
     let mut computer = Computer::new();
     computer.memory.value[1] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
     computer.memory.value[101] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
-    computer.r_i3 = IndexRegister::from_u8s([0, 1, 36]).unwrap();
+    computer.r_i4 = IndexRegister::from_u8s([0, 1, 36]).unwrap();
     assert_eq!(computer.r_i3, IndexRegister::zero());
-    computer.handle_instruction(Word::from_u8s([1, 1, 37, 3, 5, 11]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 1, 37, 4, 5, 11]).unwrap());
     assert_eq!(computer.r_i3, IndexRegister::from_u8s([1, 5, 6]).unwrap());
 }
 
@@ -349,16 +355,16 @@ fn should_handle_ldi_instruction_with_index_with_modifier() {
     let mut computer = Computer::new();
     computer.memory.value[7] = Word::from_u8s([7, 8, 9, 10, 11, 12]).unwrap();
     computer.memory.value[2007] = Word::from_u8s([13, 14, 15, 16, 17, 18]).unwrap();
-    computer.r_i5 = IndexRegister::from_u8s([2, 31, 16]).unwrap();
-    computer.r_i6 = IndexRegister::from_u8s([0, 31, 16]).unwrap();
+    computer.r_i1 = IndexRegister::from_u8s([2, 31, 16]).unwrap();
+    computer.r_i2 = IndexRegister::from_u8s([0, 31, 16]).unwrap();
     assert_eq!(computer.r_i5, IndexRegister::zero());
 
-    computer.handle_instruction(Word::from_u8s([1, 0, 7, 5, 13, 13]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 0, 7, 1, 13, 13]).unwrap());
     assert_eq!(
         computer.r_i5,
         IndexRegister::from_u8s([0, 17, 18]).unwrap()
     );
 
-    computer.handle_instruction(Word::from_u8s([1, 31, 23, 6, 2, 14]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 31, 23, 2, 2, 14]).unwrap());
     assert_eq!(computer.r_i6, IndexRegister::from_u8s([0, 8, 9]).unwrap());
 }
