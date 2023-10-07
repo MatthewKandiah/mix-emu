@@ -38,7 +38,7 @@ fn it_should_make_a_zero_byte() {
     assert_eq!(Byte::zero(), Byte { value: 0 });
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct Word {
     values: [Byte; 6],
 }
@@ -162,6 +162,23 @@ enum ComparisonIndicatorState {
     Off,
 }
 
+struct Memory {
+    value: [Word; 4000],
+}
+
+impl Memory {
+    fn contents(&self, address: u16) -> Result<Word, AddressOutOfRange> {
+        match address >= 4000 {
+            true => Err(AddressOutOfRange { value: address }),
+            false => Ok(self.value[address as usize]),
+        }
+    }
+}
+
+struct AddressOutOfRange {
+    value: u16,
+}
+
 struct MixComputer {
     // main register
     r_a: Word,
@@ -178,7 +195,7 @@ struct MixComputer {
     r_j: JumpRegister,
     overflow_toggle: bool,
     comparison_indicator: ComparisonIndicatorState,
-    memory: [Word; 4000],
+    memory: Memory,
 }
 
 fn main() {
