@@ -68,6 +68,7 @@ impl Computer {
             22 => Self::ld6n(self, instruction),
             23 => Self::ldxn(self, instruction),
             24 => Self::sta(self, instruction),
+            31 => Self::stx(self, instruction),
             _ => panic!("Illegal op code"),
         }
     }
@@ -190,8 +191,8 @@ impl Computer {
                 negated_sign_byte,
                 index_register.values[1],
                 index_register.values[2],
-            ]
-        }
+            ],
+        };
     }
 
     fn ldan(&mut self, instruction_word: Word) -> () {
@@ -226,8 +227,7 @@ impl Computer {
         self.r_i6 = self.negated_index_register_to_load(instruction_word);
     }
 
-    fn sta(&mut self, instruction_word: Word) -> () {
-        let full_word = self.r_a;
+    fn bytes_to_store(full_word: Word, instruction_word: Word) -> [Option<Byte>; 6] {
         let left_limit = instruction_word.modifier() / 8;
         let right_limit = instruction_word.modifier() % 8;
         if right_limit < left_limit {
@@ -239,10 +239,21 @@ impl Computer {
                 bytes_to_write[i as usize] = Some(full_word.values[i as usize]);
             }
         }
-        let result = self.memory.write(self.modified_address(instruction_word), bytes_to_write);
-        if result.is_err() {
-            panic!("Error writing to memory address {}", self.modified_address(instruction_word));
-        }
+        return bytes_to_write;
+    }
+
+    fn sta(&mut self, instruction_word: Word) -> () {
+        let bytes_to_write = Self::bytes_to_store(self.r_a, instruction_word);
+        let _ = self
+            .memory
+            .write(self.modified_address(instruction_word), bytes_to_write);
+    }
+
+    fn stx(&mut self, instruction_word: Word) -> () {
+        let bytes_to_write = Self::bytes_to_store(self.r_x, instruction_word);
+        let _ = self
+            .memory
+            .write(self.modified_address(instruction_word), bytes_to_write);
     }
 }
 
@@ -675,14 +686,41 @@ fn should_handle_ldin_instruction_with_index_with_modifier() {
 #[test]
 fn should_handle_sta_instruction() {
     let mut computer = Computer::new();
-    computer.memory.value[100] = Word::from_u8s([1,2,3,4,5,6]).unwrap();
-    computer.memory.value[101] = Word::from_u8s([2, 3 ,4, 5, 6, 7]).unwrap();
-    computer.r_a = Word::from_u8s([11,12,13,14,15,16]).unwrap();
+    computer.memory.value[100] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([2, 3, 4, 5, 6, 7]).unwrap();
+    computer.r_a = Word::from_u8s([11, 12, 13, 14, 15, 16]).unwrap();
     computer.r_i1 = IndexRegister::from_u8s([1, 0, 1]).unwrap();
-    
+
     computer.handle_instruction(Word::from_u8s([1, 1, 36, 0, 5, 24]).unwrap());
-    assert_eq!(computer.memory.contents(100).unwrap(), Word::from_u8s([11, 12, 13, 14, 15, 16]).unwrap());
+    assert_eq!(
+        computer.memory.contents(100).unwrap(),
+        Word::from_u8s([11, 12, 13, 14, 15, 16]).unwrap()
+    );
 
     computer.handle_instruction(Word::from_u8s([1, 1, 36, 1, 28, 24]).unwrap());
-    assert_eq!(computer.memory.contents(101).unwrap(), Word::from_u8s([2, 3, 4, 14, 15, 7]).unwrap());
+    assert_eq!(
+        computer.memory.contents(101).unwrap(),
+        Word::from_u8s([2, 3, 4, 14, 15, 7]).unwrap()
+    );
+}
+
+#[test]
+fn should_handle_stx_instruction() {
+    let mut computer = Computer::new();
+    computer.memory.value[100] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([2, 3, 4, 5, 6, 7]).unwrap();
+    computer.r_x = Word::from_u8s([11, 12, 13, 14, 15, 16]).unwrap();
+    computer.r_i1 = IndexRegister::from_u8s([1, 0, 1]).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 1, 36, 0, 5, 31]).unwrap());
+    assert_eq!(
+        computer.memory.contents(100).unwrap(),
+        Word::from_u8s([11, 12, 13, 14, 15, 16]).unwrap()
+    );
+
+    computer.handle_instruction(Word::from_u8s([1, 1, 36, 1, 28, 31]).unwrap());
+    assert_eq!(
+        computer.memory.contents(101).unwrap(),
+        Word::from_u8s([2, 3, 4, 14, 15, 7]).unwrap()
+    );
 }
