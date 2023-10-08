@@ -118,14 +118,6 @@ impl Computer {
         return Self::extract_bytes_from_word(full_word, instruction_word.modifier());
     }
 
-    fn lda(&mut self, instruction_word: Word) -> () {
-        self.r_a = self.word_to_load(instruction_word);
-    }
-
-    fn ldx(&mut self, instruction_word: Word) -> () {
-        self.r_x = self.word_to_load(instruction_word);
-    }
-
     fn index_register_to_load(&self, instruction_word: Word) -> IndexRegister {
         let full_word = self.word_to_load(instruction_word);
         let sign = full_word.values[0];
@@ -134,6 +126,14 @@ impl Computer {
         return IndexRegister {
             values: [sign, first_byte, second_byte],
         };
+    }
+
+    fn lda(&mut self, instruction_word: Word) -> () {
+        self.r_a = self.word_to_load(instruction_word);
+    }
+
+    fn ldx(&mut self, instruction_word: Word) -> () {
+        self.r_x = self.word_to_load(instruction_word);
     }
 
     fn ld1(&mut self, instruction_word: Word) -> () {
