@@ -2,7 +2,7 @@ use super::{byte::Byte, byte_overflow::ByteOverflow};
 
 #[derive(Clone, Copy)]
 pub struct JumpRegister {
-    values: [Byte; 2],
+    pub values: [Byte; 2],
 }
 
 impl JumpRegister {

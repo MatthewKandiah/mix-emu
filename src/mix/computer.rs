@@ -75,6 +75,8 @@ impl Computer {
             29 => Self::st5(self, instruction),
             30 => Self::st6(self, instruction),
             31 => Self::stx(self, instruction),
+            32 => Self::stj(self, instruction),
+            33 => Self::stz(self, instruction),
             _ => panic!("Illegal op code"),
         }
     }
@@ -265,6 +267,23 @@ impl Computer {
         return Self::bytes_to_store(equivalent_word, instruction_word);
     }
 
+    fn bytes_to_store_from_jump_register(
+        jump_register: JumpRegister,
+        instruction_word: Word,
+    ) -> [Option<Byte>; 6] {
+        let equivalent_index_register = IndexRegister {
+            values: [
+                Byte::from_u8(1).unwrap(),
+                jump_register.values[0],
+                jump_register.values[1],
+            ],
+        };
+        return Self::bytes_to_store_from_index_register(
+            equivalent_index_register,
+            instruction_word,
+        );
+    }
+
     fn sta(&mut self, instruction_word: Word) -> () {
         let bytes_to_write = Self::bytes_to_store(self.r_a, instruction_word);
         let _ = self
@@ -316,6 +335,20 @@ impl Computer {
 
     fn st6(&mut self, instruction_word: Word) -> () {
         let bytes_to_write = Self::bytes_to_store_from_index_register(self.r_i6, instruction_word);
+        let _ = self
+            .memory
+            .write(self.modified_address(instruction_word), bytes_to_write);
+    }
+
+    fn stj(&mut self, instruction_word: Word) -> () {
+        let bytes_to_write = Self::bytes_to_store_from_jump_register(self.r_j, instruction_word);
+        let _ = self
+            .memory
+            .write(self.modified_address(instruction_word), bytes_to_write);
+    }
+
+    fn stz(&mut self, instruction_word: Word) -> () {
+        let bytes_to_write = Self::bytes_to_store(Word::zero(), instruction_word);
         let _ = self
             .memory
             .write(self.modified_address(instruction_word), bytes_to_write);
@@ -810,3 +843,45 @@ fn should_handle_sti_instruction() {
         Word::from_u8s([2, 3, 4, 0, 15, 7]).unwrap()
     );
 }
+
+#[test]
+fn should_handle_stj_instruction() {
+    let mut computer = Computer::new();
+    computer.memory.value[100] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([2, 3, 4, 5, 6, 7]).unwrap();
+    computer.r_j = JumpRegister::from_u8s([15, 16]).unwrap();
+    computer.r_i1 = IndexRegister::from_u8s([1, 0, 1]).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 1, 36, 0, 5, 32]).unwrap());
+    assert_eq!(
+        computer.memory.contents(100).unwrap(),
+        Word::from_u8s([1, 0, 0, 0, 15, 16]).unwrap()
+    );
+
+    computer.handle_instruction(Word::from_u8s([1, 1, 36, 1, 28, 32]).unwrap());
+    assert_eq!(
+        computer.memory.contents(101).unwrap(),
+        Word::from_u8s([2, 3, 4, 0, 15, 7]).unwrap()
+    );
+}
+
+#[test]
+fn should_handle_stz_instruction() {
+    let mut computer = Computer::new();
+    computer.memory.value[100] = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.memory.value[101] = Word::from_u8s([2, 3, 4, 5, 6, 7]).unwrap();
+    computer.r_a = Word::from_u8s([11, 12, 13, 14, 15, 16]).unwrap();
+    computer.r_i1 = IndexRegister::from_u8s([1, 0, 1]).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 1, 36, 0, 5, 24]).unwrap());
+    assert_eq!(
+        computer.memory.contents(100).unwrap(),
+        Word::from_u8s([11, 12, 13, 14, 15, 16]).unwrap()
+    );
+    computer.handle_instruction(Word::from_u8s([1, 1, 36, 0, 5, 33]).unwrap());
+    assert_eq!(
+        computer.memory.contents(100).unwrap(),
+        Word::zero(),
+    );
+}
+
