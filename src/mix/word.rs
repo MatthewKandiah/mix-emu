@@ -72,6 +72,20 @@ impl Word {
     pub fn op_code(&self) -> u8 {
         self.values[5].value
     }
+
+    pub fn as_integer(&self) -> i32 {
+        let sign = self.sign() as i32;
+        let first_byte = self.values[1].value as i32;
+        let second_byte = self.values[2].value as i32;
+        let third_byte = self.values[3].value as i32;
+        let fourth_byte = self.values[4].value as i32;
+        let fifth_byte = self.values[5].value as i32;
+        sign * (first_byte * i32::pow(64, 4)
+            + second_byte * i32::pow(64, 3)
+            + third_byte * i32::pow(64, 2)
+            + fourth_byte * i32::pow(64, 1)
+            + fifth_byte * i32::pow(64, 0))
+    }
 }
 
 #[test]
@@ -122,4 +136,15 @@ fn it_should_calculate_address_from_the_first_three_bytes() {
         Word::from_u8s([0, 63, 63, 63, 63, 63]).unwrap().address(),
         -4095
     );
+}
+
+#[test]
+fn it_should_convert_to_an_integer() {
+    assert_eq!(Word::zero().as_integer(), 0);
+    assert_eq!(Word::from_u8s([1, 0, 0, 0, 0, 1]).unwrap().as_integer(), 1);
+    assert_eq!(Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap().as_integer(), -1);
+    assert_eq!(Word::from_u8s([1, 0, 0, 0, 1, 2]).unwrap().as_integer(), 66);
+    assert_eq!(Word::from_u8s([1, 0, 0, 1, 2, 3]).unwrap().as_integer(), 4227);
+    assert_eq!(Word::from_u8s([1, 0, 1, 2, 3, 4]).unwrap().as_integer(), 270532);
+    assert_eq!(Word::from_u8s([1, 1, 2, 3, 4, 5]).unwrap().as_integer(), 17314053);
 }

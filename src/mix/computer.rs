@@ -51,6 +51,10 @@ impl Computer {
 
     pub fn handle_instruction(&mut self, instruction: Word) -> () {
         match instruction.op_code() {
+            1 => Self::add(self, instruction),
+            2 => Self::sub(self, instruction),
+            3 => Self::mul(self, instruction),
+            4 => Self::div(self, instruction),
             8 => Self::lda(self, instruction),
             9 => Self::ld1(self, instruction),
             10 => Self::ld2(self, instruction),
@@ -352,6 +356,26 @@ impl Computer {
         let _ = self
             .memory
             .write(self.modified_address(instruction_word), bytes_to_write);
+    }
+
+    fn add(&mut self, instruction_word: Word) -> () {
+        let bytes_to_add = self.word_to_load(instruction_word);
+        unimplemented!();
+    }
+
+    fn sub(&mut self, instruction_word: Word) -> () {
+        let bytes_to_sub = self.word_to_load(instruction_word);
+        unimplemented!();
+    }
+
+    fn mul(&mut self, instruction_word: Word) -> () {
+        let bytes_to_mul = self.word_to_load(instruction_word);
+        unimplemented!();
+    }
+
+    fn div(&mut self, instruction_word: Word) -> () {
+        let bytes_to_div = self.word_to_load(instruction_word);
+        unimplemented!();
     }
 }
 
@@ -879,9 +903,5 @@ fn should_handle_stz_instruction() {
         Word::from_u8s([11, 12, 13, 14, 15, 16]).unwrap()
     );
     computer.handle_instruction(Word::from_u8s([1, 1, 36, 0, 5, 33]).unwrap());
-    assert_eq!(
-        computer.memory.contents(100).unwrap(),
-        Word::zero(),
-    );
+    assert_eq!(computer.memory.contents(100).unwrap(), Word::zero(),);
 }
-
