@@ -360,10 +360,10 @@ impl Computer {
 
     fn add(&mut self, instruction_word: Word) -> () {
         let bytes_to_add = self.word_to_load(instruction_word);
-        let sum = bytes_to_add.as_integer() + self.r_a.as_integer();
-        if sum == 0 {
+        if bytes_to_add.as_integer() == 0 {
             return;
         }
+        let sum = bytes_to_add.as_integer() + self.r_a.as_integer();
         let overflow = sum / 1_073_741_824;
         let remainder = sum % 1_073_741_824;
         self.overflow_toggle = overflow != 0;
@@ -372,7 +372,14 @@ impl Computer {
 
     fn sub(&mut self, instruction_word: Word) -> () {
         let bytes_to_sub = self.word_to_load(instruction_word);
-        unimplemented!();
+        if bytes_to_sub.as_integer() == 0 {
+            return;
+        }
+        let diff = self.r_a.as_integer() - bytes_to_sub.as_integer();
+        let overflow = diff / 1_073_741_824;
+        let remainder = diff % 1_073_741_824;
+        self.overflow_toggle = overflow != 0;
+        self.r_a = Word::from_i32(remainder).unwrap();
     }
 
     fn mul(&mut self, instruction_word: Word) -> () {
@@ -924,5 +931,19 @@ fn should_handle_add_instruction() {
     assert_eq!(computer.r_a, Word::from_u8s([1, 2, 3, 4, 5, 7]).unwrap());
 
     computer.handle_instruction(Word::from_u8s([1, 0, 11, 0, 5, 1]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap());
+}
+
+#[test]
+fn should_handle_sub_instruction() {
+    let mut computer = Computer::new();
+    computer.r_a = Word::from_u8s([1,2,3,4,5,6]).unwrap();
+    computer.memory.value[10] = Word::from_u8s([1, 0, 0, 0, 0, 1]).unwrap();
+    computer.memory.value[11] = Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 5, 2]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 2, 3, 4, 5, 5]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 11, 0, 5, 2]).unwrap());
     assert_eq!(computer.r_a, Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap());
 }
