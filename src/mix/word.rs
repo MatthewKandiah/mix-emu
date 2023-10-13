@@ -1,3 +1,5 @@
+use std::num::TryFromIntError;
+
 use super::byte::Byte;
 use super::byte_overflow::ByteOverflow;
 
@@ -41,6 +43,41 @@ impl Word {
             Err(x) => return Err(ByteOverflow { value: x.value }),
         }
         return Ok(Self { values: result });
+    }
+
+    pub fn from_i32(value: i32) -> Result<Self, TryFromIntError> {
+        let mut abs = value.abs();
+        let sign_byte_value = match value {
+            0.. => 1,
+            _ => 0,
+        };
+        let first_byte_value = abs / i32::pow(64, 4);
+        abs %= i32::pow(64, 4);
+        let second_byte_value = abs / i32::pow(64, 3);
+        abs %= i32::pow(64, 3);
+        let third_byte_value = abs / i32::pow(64, 2);
+        abs %= i32::pow(64, 2);
+        let fourth_byte_value = abs / 64;
+        abs %= 64;
+        let fifth_byte_value = abs;
+
+        let sign_byte = Byte::from_u8(sign_byte_value.try_into()?).unwrap();
+        let first_byte = Byte::from_u8(first_byte_value.try_into()?).unwrap();
+        let second_byte = Byte::from_u8(second_byte_value.try_into()?).unwrap();
+        let third_byte = Byte::from_u8(third_byte_value.try_into()?).unwrap();
+        let fourth_byte = Byte::from_u8(fourth_byte_value.try_into()?).unwrap();
+        let fifth_byte = Byte::from_u8(fifth_byte_value.try_into()?).unwrap();
+
+        Ok(Word {
+            values: [
+                sign_byte,
+                first_byte,
+                second_byte,
+                third_byte,
+                fourth_byte,
+                fifth_byte,
+            ],
+        })
     }
 
     pub fn zero() -> Self {
@@ -144,7 +181,16 @@ fn it_should_convert_to_an_integer() {
     assert_eq!(Word::from_u8s([1, 0, 0, 0, 0, 1]).unwrap().as_integer(), 1);
     assert_eq!(Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap().as_integer(), -1);
     assert_eq!(Word::from_u8s([1, 0, 0, 0, 1, 2]).unwrap().as_integer(), 66);
-    assert_eq!(Word::from_u8s([1, 0, 0, 1, 2, 3]).unwrap().as_integer(), 4227);
-    assert_eq!(Word::from_u8s([1, 0, 1, 2, 3, 4]).unwrap().as_integer(), 270532);
-    assert_eq!(Word::from_u8s([1, 1, 2, 3, 4, 5]).unwrap().as_integer(), 17314053);
+    assert_eq!(
+        Word::from_u8s([1, 0, 0, 1, 2, 3]).unwrap().as_integer(),
+        4227
+    );
+    assert_eq!(
+        Word::from_u8s([1, 0, 1, 2, 3, 4]).unwrap().as_integer(),
+        270532
+    );
+    assert_eq!(
+        Word::from_u8s([1, 1, 2, 3, 4, 5]).unwrap().as_integer(),
+        17314053
+    );
 }

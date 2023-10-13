@@ -360,7 +360,14 @@ impl Computer {
 
     fn add(&mut self, instruction_word: Word) -> () {
         let bytes_to_add = self.word_to_load(instruction_word);
-        unimplemented!();
+        let sum = bytes_to_add.as_integer() + self.r_a.as_integer();
+        if sum == 0 {
+            return;
+        }
+        let overflow = sum / 1_073_741_824;
+        let remainder = sum % 1_073_741_824;
+        self.overflow_toggle = overflow != 0;
+        self.r_a = Word::from_i32(remainder).unwrap();
     }
 
     fn sub(&mut self, instruction_word: Word) -> () {
@@ -904,4 +911,9 @@ fn should_handle_stz_instruction() {
     );
     computer.handle_instruction(Word::from_u8s([1, 1, 36, 0, 5, 33]).unwrap());
     assert_eq!(computer.memory.contents(100).unwrap(), Word::zero(),);
+}
+
+#[test]
+fn should_handle_add_instruction() {
+    unimplemented!();
 }
