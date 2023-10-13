@@ -384,12 +384,32 @@ impl Computer {
 
     fn mul(&mut self, instruction_word: Word) -> () {
         let bytes_to_mul = self.word_to_load(instruction_word);
-        unimplemented!();
+        let product: i64 = (bytes_to_mul.as_integer() as i64) * (self.r_a.as_integer() as i64);
+        let sign = product / product.abs();
+        let a_val = product.abs() / i64::pow(64, 5);
+        let x_val = product.abs() % i64::pow(64, 5);
+        self.r_a = Word::from_i32((sign * a_val).try_into().unwrap()).unwrap();
+        self.r_x = Word::from_i32((sign * x_val).try_into().unwrap()).unwrap();
     }
 
     fn div(&mut self, instruction_word: Word) -> () {
         let bytes_to_div = self.word_to_load(instruction_word);
-        unimplemented!();
+        if bytes_to_div.as_integer() == 0 {
+            self.r_a = Word::zero();
+            self.r_x = Word::zero();
+            self.overflow_toggle = true;
+        }
+        let original_a_val = self.r_a.as_integer().abs();
+        let original_x_val = self.r_x.as_integer().abs();
+        let original_value = (self.r_a.sign() as i32) * original_a_val * i32::pow(64, 5) + original_x_val;
+        let result = original_value / bytes_to_div.as_integer();
+        if result >= i32::pow(64, 5) {
+            self.r_a = Word::zero();
+            self.r_x = Word::zero();
+            self.overflow_toggle = true;
+        }
+        self.r_x = Word::from_i32((self.r_a.sign() as i32) * (original_value % bytes_to_div.as_integer())).unwrap();
+        self.r_a = Word::from_i32(result).unwrap();
     }
 }
 
@@ -946,4 +966,53 @@ fn should_handle_sub_instruction() {
 
     computer.handle_instruction(Word::from_u8s([1, 0, 11, 0, 5, 2]).unwrap());
     assert_eq!(computer.r_a, Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap());
+}
+
+#[test]
+fn should_not_change_sign_when_adding_zero() {
+    let mut computer = Computer::new();
+    computer.r_a = Word::from_u8s([0,0,0,0,0,1]).unwrap();
+    computer.memory.value[0] = Word::zero();
+
+    computer.handle_instruction(Word::from_u8s([1, 0,0,0,5,1]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0,0,0,0,0,1]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([0, 0,0,0,5,1]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0,0,0,0,0,1]).unwrap());
+}
+
+#[test]
+fn should_not_change_sign_when_subbing_zero() {
+    let mut computer = Computer::new();
+    computer.r_a = Word::from_u8s([0,0,0,0,0,1]).unwrap();
+    computer.memory.value[0] = Word::zero();
+
+    computer.handle_instruction(Word::from_u8s([1, 0,0,0,5,2]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0,0,0,0,0,1]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([0, 0,0,0,5,2]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0,0,0,0,0,1]).unwrap());
+}
+
+#[test]
+fn should_handle_mul_instruction() {
+    let mut computer = Computer::new();
+    computer.r_a = Word::from_u8s([1, 1, 1, 1, 1, 1]).unwrap();
+    computer.memory.value[1000] = Word::from_u8s([1, 1, 1, 1, 1, 1]).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 15, 40, 0, 5, 3]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 1, 2, 3, 4]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 5, 4, 3, 2, 1]).unwrap());
+}
+
+#[test]
+fn should_handle_div_instruction() {
+    let mut computer = Computer::new();
+    computer.r_a = Word::from_u8s([1,0,0,0,0,0]).unwrap();
+    computer.r_x = Word::from_u8s([0,0,0,0,0,17]).unwrap();
+    computer.memory.value[1000] = Word::from_u8s([1,0,0,0,0,3]).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 15, 40, 0, 5, 4]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0,0,0,0,5]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 0,0,0,0,2]).unwrap());
 }
