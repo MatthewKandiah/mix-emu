@@ -915,5 +915,14 @@ fn should_handle_stz_instruction() {
 
 #[test]
 fn should_handle_add_instruction() {
-    unimplemented!();
+    let mut computer = Computer::new();
+    computer.r_a = Word::from_u8s([1,2,3,4,5,6]).unwrap();
+    computer.memory.value[10] = Word::from_u8s([1, 0, 0, 0, 0, 1]).unwrap();
+    computer.memory.value[11] = Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 5, 1]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 2, 3, 4, 5, 7]).unwrap());
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 11, 0, 5, 1]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap());
 }
