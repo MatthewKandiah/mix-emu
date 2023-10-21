@@ -423,22 +423,24 @@ impl Computer {
         }
     }
 
-    fn enta(&mut self, instruction_word: Word) -> () {
+    fn word_to_enter(&self, instruction_word: Word) -> Word {
         let m = instruction_word.address();
         if m != 0 {
-            self.r_a = Word::from_i32(m.into()).unwrap();
-            return;
+            return Word::from_i32(m.into()).unwrap();
         }
         let index_value = self.index_value(instruction_word.index());
         if index_value != 0 {
-            self.r_a = Word::from_i32(index_value.into()).unwrap();
-            return;
+            return Word::from_i32(index_value.into()).unwrap();
         }
-        match instruction_word.sign() {
-            1 => self.r_a = Word::from_u8s([1, 0, 0, 0, 0, 0]).unwrap(),
-            -1 => self.r_a = Word::from_u8s([0, 0, 0, 0, 0, 0]).unwrap(),
+        return match instruction_word.sign() {
+            1 => Word::from_u8s([1,0,0,0,0,0]).unwrap(),
+            -1 => Word::from_u8s([0,0,0,0,0,0]).unwrap(),
             _ => panic!("Illegal sign"),
         }
+    }
+
+    fn enta(&mut self, instruction_word: Word) -> () {
+        self.r_a = self.word_to_enter(instruction_word);
     }
 }
 
