@@ -82,6 +82,7 @@ impl Computer {
             32 => Self::stj(self, instruction),
             33 => Self::stz(self, instruction),
             48 => Self::handle_48(self, instruction),
+            55 => Self::handle_55(self, instruction),
             _ => panic!("Illegal op code"),
         }
     }
@@ -423,6 +424,13 @@ impl Computer {
         }
     }
 
+    fn handle_55(&mut self, instruction_word: Word) -> () {
+        match instruction_word.modifier() {
+            2 => self.entx(instruction_word),
+            _ => panic!("Illegal modifier"),
+        }
+    }
+
     fn word_to_enter(&self, instruction_word: Word) -> Word {
         let m = instruction_word.address();
         if m != 0 {
@@ -441,6 +449,10 @@ impl Computer {
 
     fn enta(&mut self, instruction_word: Word) -> () {
         self.r_a = self.word_to_enter(instruction_word);
+    }
+
+    fn entx(&mut self, instruction_word: Word) -> () {
+        self.r_x = self.word_to_enter(instruction_word);
     }
 }
 
