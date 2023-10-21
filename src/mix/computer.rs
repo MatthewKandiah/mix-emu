@@ -81,6 +81,7 @@ impl Computer {
             31 => Self::stx(self, instruction),
             32 => Self::stj(self, instruction),
             33 => Self::stz(self, instruction),
+            48 => Self::handle_48(self, instruction),
             _ => panic!("Illegal op code"),
         }
     }
@@ -401,15 +402,43 @@ impl Computer {
         }
         let original_a_val = self.r_a.as_integer().abs();
         let original_x_val = self.r_x.as_integer().abs();
-        let original_value = (self.r_a.sign() as i32) * original_a_val * i32::pow(64, 5) + original_x_val;
+        let original_value =
+            (self.r_a.sign() as i32) * original_a_val * i32::pow(64, 5) + original_x_val;
         let result = original_value / bytes_to_div.as_integer();
         if result >= i32::pow(64, 5) {
             self.r_a = Word::zero();
             self.r_x = Word::zero();
             self.overflow_toggle = true;
         }
-        self.r_x = Word::from_i32((self.r_a.sign() as i32) * (original_value % bytes_to_div.as_integer())).unwrap();
+        self.r_x =
+            Word::from_i32((self.r_a.sign() as i32) * (original_value % bytes_to_div.as_integer()))
+                .unwrap();
         self.r_a = Word::from_i32(result).unwrap();
+    }
+
+    fn handle_48(&mut self, instruction_word: Word) -> () {
+        match instruction_word.modifier() {
+            2 => self.enta(instruction_word),
+            _ => panic!("Illegal modifier"),
+        }
+    }
+
+    fn enta(&mut self, instruction_word: Word) -> () {
+        let m = instruction_word.address();
+        if m != 0 {
+            self.r_a = Word::from_i32(m.into()).unwrap();
+            return;
+        }
+        let index_value = self.index_value(instruction_word.index());
+        if index_value != 0 {
+            self.r_a = Word::from_i32(index_value.into()).unwrap();
+            return;
+        }
+        match instruction_word.sign() {
+            1 => self.r_a = Word::from_u8s([1, 0, 0, 0, 0, 0]).unwrap(),
+            -1 => self.r_a = Word::from_u8s([0, 0, 0, 0, 0, 0]).unwrap(),
+            _ => panic!("Illegal sign"),
+        }
     }
 }
 
@@ -943,7 +972,7 @@ fn should_handle_stz_instruction() {
 #[test]
 fn should_handle_add_instruction() {
     let mut computer = Computer::new();
-    computer.r_a = Word::from_u8s([1,2,3,4,5,6]).unwrap();
+    computer.r_a = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
     computer.memory.value[10] = Word::from_u8s([1, 0, 0, 0, 0, 1]).unwrap();
     computer.memory.value[11] = Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap();
 
@@ -957,7 +986,7 @@ fn should_handle_add_instruction() {
 #[test]
 fn should_handle_sub_instruction() {
     let mut computer = Computer::new();
-    computer.r_a = Word::from_u8s([1,2,3,4,5,6]).unwrap();
+    computer.r_a = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
     computer.memory.value[10] = Word::from_u8s([1, 0, 0, 0, 0, 1]).unwrap();
     computer.memory.value[11] = Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap();
 
@@ -971,27 +1000,27 @@ fn should_handle_sub_instruction() {
 #[test]
 fn should_not_change_sign_when_adding_zero() {
     let mut computer = Computer::new();
-    computer.r_a = Word::from_u8s([0,0,0,0,0,1]).unwrap();
+    computer.r_a = Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap();
     computer.memory.value[0] = Word::zero();
 
-    computer.handle_instruction(Word::from_u8s([1, 0,0,0,5,1]).unwrap());
-    assert_eq!(computer.r_a, Word::from_u8s([0,0,0,0,0,1]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 0, 0, 0, 5, 1]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap());
 
-    computer.handle_instruction(Word::from_u8s([0, 0,0,0,5,1]).unwrap());
-    assert_eq!(computer.r_a, Word::from_u8s([0,0,0,0,0,1]).unwrap());
+    computer.handle_instruction(Word::from_u8s([0, 0, 0, 0, 5, 1]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap());
 }
 
 #[test]
 fn should_not_change_sign_when_subbing_zero() {
     let mut computer = Computer::new();
-    computer.r_a = Word::from_u8s([0,0,0,0,0,1]).unwrap();
+    computer.r_a = Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap();
     computer.memory.value[0] = Word::zero();
 
-    computer.handle_instruction(Word::from_u8s([1, 0,0,0,5,2]).unwrap());
-    assert_eq!(computer.r_a, Word::from_u8s([0,0,0,0,0,1]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 0, 0, 0, 5, 2]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap());
 
-    computer.handle_instruction(Word::from_u8s([0, 0,0,0,5,2]).unwrap());
-    assert_eq!(computer.r_a, Word::from_u8s([0,0,0,0,0,1]).unwrap());
+    computer.handle_instruction(Word::from_u8s([0, 0, 0, 0, 5, 2]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 0, 0, 0, 0, 1]).unwrap());
 }
 
 #[test]
@@ -1008,11 +1037,42 @@ fn should_handle_mul_instruction() {
 #[test]
 fn should_handle_div_instruction() {
     let mut computer = Computer::new();
-    computer.r_a = Word::from_u8s([1,0,0,0,0,0]).unwrap();
-    computer.r_x = Word::from_u8s([0,0,0,0,0,17]).unwrap();
-    computer.memory.value[1000] = Word::from_u8s([1,0,0,0,0,3]).unwrap();
+    computer.r_a = Word::from_u8s([1, 0, 0, 0, 0, 0]).unwrap();
+    computer.r_x = Word::from_u8s([0, 0, 0, 0, 0, 17]).unwrap();
+    computer.memory.value[1000] = Word::from_u8s([1, 0, 0, 0, 0, 3]).unwrap();
 
     computer.handle_instruction(Word::from_u8s([1, 15, 40, 0, 5, 4]).unwrap());
-    assert_eq!(computer.r_a, Word::from_u8s([1, 0,0,0,0,5]).unwrap());
-    assert_eq!(computer.r_x, Word::from_u8s([1, 0,0,0,0,2]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 0, 0, 5]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 0, 0, 0, 0, 2]).unwrap());
+}
+
+#[test]
+fn should_handle_enta_instruction() {
+    let mut computer = Computer::new();
+    computer.handle_instruction(Word::from_u8s([1, 2, 3, 0, 2, 48]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 0, 2, 3]).unwrap());
+}
+
+#[test]
+fn should_handle_enta_with_positive_zero() {
+    let mut computer = Computer::new();
+    computer.r_i3 = IndexRegister::from_u8s([0, 0, 0]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 0, 3, 2, 48]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 0, 0, 0]).unwrap());
+}
+
+#[test]
+fn should_handle_enta_with_negative_zero() {
+    let mut computer = Computer::new();
+    computer.r_i3 = IndexRegister::from_u8s([1, 0, 0]).unwrap();
+    computer.handle_instruction(Word::from_u8s([0, 0, 0, 3, 2, 48]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 0, 0, 0, 0, 0]).unwrap());
+}
+
+#[test]
+fn should_handle_enta_loading_index_register() {
+    let mut computer = Computer::new();
+    computer.r_i3 = IndexRegister::from_u8s([0, 7, 9]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 0, 3, 2, 48]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 0, 0, 0, 7, 9]).unwrap());
 }
