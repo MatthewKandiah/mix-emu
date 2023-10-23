@@ -1,3 +1,5 @@
+use std::num::TryFromIntError;
+
 use super::{byte::Byte, byte_overflow::ByteOverflow};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -25,6 +27,29 @@ impl IndexRegister {
             Err(x) => return Err(ByteOverflow { value: x.value }),
         }
         return Ok(Self { values: result });
+    }
+
+    pub fn from_i32(value: i32) -> Result<Self, TryFromIntError> {
+        let mut abs = value.abs();
+        let sign_byte_value = match value {
+            0.. => 1,
+            _ => 0,
+        };
+        let first_byte_value = abs / i32::pow(64, 4);
+        abs %= i32::pow(64, 4);
+        let second_byte_value = abs / i32::pow(64, 3);
+
+        let sign_byte = Byte::from_u8(sign_byte_value.try_into()?).unwrap();
+        let first_byte = Byte::from_u8(first_byte_value.try_into()?).unwrap();
+        let second_byte = Byte::from_u8(second_byte_value.try_into()?).unwrap();
+
+        Ok(Self {
+            values: [
+                sign_byte,
+                first_byte,
+                second_byte,
+            ],
+        })
     }
 
     pub fn zero() -> Self {
