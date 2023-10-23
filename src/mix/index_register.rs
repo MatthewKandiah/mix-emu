@@ -71,6 +71,18 @@ impl IndexRegister {
         let second_byte = self.values[2].value as i16;
         sign * (first_byte * i16::pow(2, 6) + second_byte)
     }
+
+    pub fn negate_sign(&self) -> Self {
+        let mut result_values = self.values;
+        result_values[0] = match self.sign() {
+            1 => Byte { value: 0 },
+            -1 => Byte { value: 1 },
+            _ => panic!("Failed to negate sign"),
+        };
+        return Self {
+            values: result_values,
+        };
+    }
 }
 
 #[test]

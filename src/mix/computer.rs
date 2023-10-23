@@ -426,6 +426,7 @@ impl Computer {
     fn handle_48(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             2 => self.enta(instruction_word),
+            3 => self.enna(instruction_word),
             _ => panic!("Illegal modifier"),
         }
     }
@@ -433,6 +434,7 @@ impl Computer {
     fn handle_49(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             2 => self.ent1(instruction_word),
+            3 => self.enn1(instruction_word),
             _ => panic!("Illegal modifier"),
         }
     }
@@ -440,6 +442,7 @@ impl Computer {
     fn handle_50(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             2 => self.ent2(instruction_word),
+            3 => self.enn2(instruction_word),
             _ => panic!("Illegal modifier"),
         }
     }
@@ -447,6 +450,7 @@ impl Computer {
     fn handle_51(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             2 => self.ent3(instruction_word),
+            3 => self.enn3(instruction_word),
             _ => panic!("Illegal modifier"),
         }
     }
@@ -454,6 +458,7 @@ impl Computer {
     fn handle_52(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             2 => self.ent4(instruction_word),
+            3 => self.enn4(instruction_word),
             _ => panic!("Illegal modifier"),
         }
     }
@@ -461,6 +466,7 @@ impl Computer {
     fn handle_53(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             2 => self.ent5(instruction_word),
+            3 => self.enn5(instruction_word),
             _ => panic!("Illegal modifier"),
         }
     }
@@ -468,6 +474,7 @@ impl Computer {
     fn handle_54(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             2 => self.ent6(instruction_word),
+            3 => self.enn6(instruction_word),
             _ => panic!("Illegal modifier"),
         }
     }
@@ -475,6 +482,7 @@ impl Computer {
     fn handle_55(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             2 => self.entx(instruction_word),
+            3 => self.ennx(instruction_word),
             _ => panic!("Illegal modifier"),
         }
     }
@@ -497,10 +505,10 @@ impl Computer {
             return Word::from_i32(value).unwrap();
         }
         return match instruction_word.sign() {
-            1 => Word::from_u8s([1,0,0,0,0,0]).unwrap(),
-            -1 => Word::from_u8s([0,0,0,0,0,0]).unwrap(),
+            1 => Word::from_u8s([1, 0, 0, 0, 0, 0]).unwrap(),
+            -1 => Word::from_u8s([0, 0, 0, 0, 0, 0]).unwrap(),
             _ => panic!("Illegal sign"),
-        }
+        };
     }
 
     fn index_register_to_enter(&self, instruction_word: Word) -> IndexRegister {
@@ -512,7 +520,7 @@ impl Computer {
             1 => IndexRegister::from_u8s([1, 0, 0]).unwrap(),
             -1 => IndexRegister::from_u8s([0, 0, 0]).unwrap(),
             _ => panic!("Illegal sign"),
-        }
+        };
     }
 
     fn enta(&mut self, instruction_word: Word) -> () {
@@ -545,6 +553,38 @@ impl Computer {
 
     fn ent6(&mut self, instruction_word: Word) -> () {
         self.r_i6 = self.index_register_to_enter(instruction_word);
+    }
+
+    fn enna(&mut self, instruction_word: Word) -> () {
+        self.r_a = self.word_to_enter(instruction_word).negate_sign();
+    }
+
+    fn ennx(&mut self, instruction_word: Word) -> () {
+        self.r_x = self.word_to_enter(instruction_word).negate_sign();
+    }
+
+    fn enn1(&mut self, instruction_word: Word) -> () {
+        self.r_i1 = self.index_register_to_enter(instruction_word).negate_sign();
+    }
+
+    fn enn2(&mut self, instruction_word: Word) -> () {
+        self.r_i2 = self.index_register_to_enter(instruction_word).negate_sign();
+    }
+
+    fn enn3(&mut self, instruction_word: Word) -> () {
+        self.r_i3 = self.index_register_to_enter(instruction_word).negate_sign();
+    }
+
+    fn enn4(&mut self, instruction_word: Word) -> () {
+        self.r_i4 = self.index_register_to_enter(instruction_word).negate_sign();
+    }
+
+    fn enn5(&mut self, instruction_word: Word) -> () {
+        self.r_i5 = self.index_register_to_enter(instruction_word).negate_sign();
+    }
+
+    fn enn6(&mut self, instruction_word: Word) -> () {
+        self.r_i6 = self.index_register_to_enter(instruction_word).negate_sign();
     }
 }
 

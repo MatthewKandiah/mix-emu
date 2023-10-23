@@ -123,6 +123,18 @@ impl Word {
             + fourth_byte * i32::pow(64, 1)
             + fifth_byte * i32::pow(64, 0))
     }
+
+    pub fn negate_sign(&self) -> Self {
+        let mut result_values = self.values;
+        result_values[0] = match self.sign() {
+            1 => Byte { value: 0 },
+            -1 => Byte { value: 1 },
+            _ => panic!("Failed to negate sign"),
+        };
+        return Word {
+            values: result_values,
+        };
+    }
 }
 
 #[test]
@@ -193,4 +205,16 @@ fn it_should_convert_to_an_integer() {
         Word::from_u8s([1, 1, 2, 3, 4, 5]).unwrap().as_integer(),
         17314053
     );
+}
+
+#[test]
+fn it_should_negate_sign() {
+    assert_eq!(
+        Word::from_u8s([0, 1, 1, 1, 1, 1]).unwrap().negate_sign(),
+        Word::from_u8s([1, 1, 1, 1, 1, 1]).unwrap()
+    );
+    assert_eq!(
+        Word::from_u8s([3, 1, 1, 1, 1, 1]).unwrap().negate_sign(),
+        Word::from_u8s([0, 1, 1, 1, 1, 1]).unwrap()
+    )
 }
