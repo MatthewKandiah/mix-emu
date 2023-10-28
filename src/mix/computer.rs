@@ -428,6 +428,7 @@ impl Computer {
     fn handle_48(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             0 => self.inca(instruction_word),
+            1 => self.deca(instruction_word),
             2 => self.enta(instruction_word),
             3 => self.enna(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -437,6 +438,7 @@ impl Computer {
     fn handle_49(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             0 => self.inc1(instruction_word),
+            1 => self.dec1(instruction_word),
             2 => self.ent1(instruction_word),
             3 => self.enn1(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -446,6 +448,7 @@ impl Computer {
     fn handle_50(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             0 => self.inc2(instruction_word),
+            1 => self.dec2(instruction_word),
             2 => self.ent2(instruction_word),
             3 => self.enn2(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -455,6 +458,7 @@ impl Computer {
     fn handle_51(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             0 => self.inc3(instruction_word),
+            1 => self.dec3(instruction_word),
             2 => self.ent3(instruction_word),
             3 => self.enn3(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -464,6 +468,7 @@ impl Computer {
     fn handle_52(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             0 => self.inc4(instruction_word),
+            1 => self.dec4(instruction_word),
             2 => self.ent4(instruction_word),
             3 => self.enn4(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -473,6 +478,7 @@ impl Computer {
     fn handle_53(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             0 => self.inc5(instruction_word),
+            1 => self.dec5(instruction_word),
             2 => self.ent5(instruction_word),
             3 => self.enn5(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -482,6 +488,7 @@ impl Computer {
     fn handle_54(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             0 => self.inc6(instruction_word),
+            1 => self.dec6(instruction_word),
             2 => self.ent6(instruction_word),
             3 => self.enn6(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -491,6 +498,7 @@ impl Computer {
     fn handle_55(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             0 => self.incx(instruction_word),
+            1 => self.decx(instruction_word),
             2 => self.entx(instruction_word),
             3 => self.ennx(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -598,13 +606,15 @@ impl Computer {
     }
 
     fn inca(&mut self, instruction_word: Word) -> () {
-        let (overflow, result) = self.do_add(instruction_word.address().into(), self.r_a.as_integer());
+        let (overflow, result) =
+            self.do_add(instruction_word.address().into(), self.r_a.as_integer());
         self.overflow_toggle = overflow;
         self.r_a = Word::from_i32(result).unwrap();
     }
 
     fn incx(&mut self, instruction_word: Word) -> () {
-        let (overflow, result) = self.do_add(instruction_word.address().into(), self.r_x.as_integer());
+        let (overflow, result) =
+            self.do_add(instruction_word.address().into(), self.r_x.as_integer());
         self.overflow_toggle = overflow;
         self.r_x = Word::from_i32(result).unwrap();
     }
@@ -638,6 +648,38 @@ impl Computer {
     fn inc6(&mut self, instruction_word: Word) -> () {
         let sum = instruction_word.address() + self.r_i6.as_integer();
         self.r_i6 = IndexRegister::from_i32(sum.into()).unwrap();
+    }
+
+    fn deca(&mut self, instruction_word: Word) -> () {
+        self.inca(instruction_word.negate_sign());
+    }
+
+    fn decx(&mut self, instruction_word: Word) -> () {
+        self.incx(instruction_word.negate_sign());
+    }
+
+    fn dec1(&mut self, instruction_word: Word) -> () {
+        self.inc1(instruction_word.negate_sign());
+    }
+
+    fn dec2(&mut self, instruction_word: Word) -> () {
+        self.inc2(instruction_word.negate_sign());
+    }
+
+    fn dec3(&mut self, instruction_word: Word) -> () {
+        self.inc3(instruction_word.negate_sign());
+    }
+
+    fn dec4(&mut self, instruction_word: Word) -> () {
+        self.inc4(instruction_word.negate_sign());
+    }
+
+    fn dec5(&mut self, instruction_word: Word) -> () {
+        self.inc5(instruction_word.negate_sign());
+    }
+
+    fn dec6(&mut self, instruction_word: Word) -> () {
+        self.inc6(instruction_word.negate_sign());
     }
 }
 
@@ -1309,26 +1351,83 @@ fn should_handle_valid_inci_instruction() {
     let mut computer = Computer::new();
 
     computer.r_i1 = IndexRegister::from_i32(5).unwrap();
-    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,49]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 0, 49]).unwrap());
     assert_eq!(computer.r_i1.as_integer(), 15);
 
     computer.r_i2 = IndexRegister::from_i32(5).unwrap();
-    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,50]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 0, 50]).unwrap());
     assert_eq!(computer.r_i2.as_integer(), 15);
 
     computer.r_i3 = IndexRegister::from_i32(5).unwrap();
-    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,51]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 0, 51]).unwrap());
     assert_eq!(computer.r_i3.as_integer(), 15);
 
     computer.r_i4 = IndexRegister::from_i32(5).unwrap();
-    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,52]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 0, 52]).unwrap());
     assert_eq!(computer.r_i4.as_integer(), 15);
 
     computer.r_i5 = IndexRegister::from_i32(5).unwrap();
-    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,53]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 0, 53]).unwrap());
     assert_eq!(computer.r_i5.as_integer(), 15);
 
     computer.r_i6 = IndexRegister::from_i32(5).unwrap();
-    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,54]).unwrap());
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 0, 54]).unwrap());
     assert_eq!(computer.r_i6.as_integer(), 15);
+}
+
+#[test]
+fn should_handle_deca_instruction() {
+    let mut computer = Computer::new();
+
+    computer.r_a = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 1, 48]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 2, 3, 4, 5, 3]).unwrap());
+
+    computer.r_a = Word::from_u8s([0, 63, 63, 63, 63, 63]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 1, 48]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([0, 0, 0, 0, 0, 2]).unwrap());
+    assert!(computer.overflow_toggle);
+}
+
+#[test]
+fn should_handle_decx_instruction() {
+    let mut computer = Computer::new();
+
+    computer.r_x = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 1, 55]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 2, 3, 4, 5, 3]).unwrap());
+
+    computer.r_x = Word::from_u8s([0, 63, 63, 63, 63, 63]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 1, 55]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([0, 0, 0, 0, 0, 2]).unwrap());
+    assert!(computer.overflow_toggle);
+}
+
+#[test]
+fn should_handle_valid_deci_instruction() {
+    let mut computer = Computer::new();
+
+    computer.r_i1 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 1, 49]).unwrap());
+    assert_eq!(computer.r_i1.as_integer(), -5);
+
+    computer.r_i2 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 1, 50]).unwrap());
+    assert_eq!(computer.r_i2.as_integer(), -5);
+
+    computer.r_i3 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 1, 51]).unwrap());
+    assert_eq!(computer.r_i3.as_integer(), -5);
+
+    computer.r_i4 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 1, 52]).unwrap());
+    assert_eq!(computer.r_i4.as_integer(), -5);
+
+    computer.r_i5 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 1, 53]).unwrap());
+    assert_eq!(computer.r_i5.as_integer(), -5);
+
+    computer.r_i6 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 1, 54]).unwrap());
+    assert_eq!(computer.r_i6.as_integer(), -5);
 }
