@@ -90,6 +90,13 @@ impl Computer {
             54 => Self::handle_54(self, instruction),
             55 => Self::handle_55(self, instruction),
             56 => Self::cmpa(self, instruction),
+            57 => Self::cmp1(self,instruction),
+            58 => Self::cmp2(self, instruction),
+            59 => Self::cmp3(self, instruction),
+            60 => Self::cmp4(self, instruction),
+            61 => Self::cmp5(self, instruction),
+            62 => Self::cmp6(self, instruction),
+            63 => Self::cmpx(self, instruction),
             _ => panic!("Illegal op code"),
         }
     }
@@ -683,14 +690,60 @@ impl Computer {
         self.inc6(instruction_word.negate_sign());
     }
 
-    fn cmpa(&mut self, instruction_word: Word) -> () {
-        let value_from_memory = self.word_to_load(instruction_word).as_integer();
-        let value_from_register = Self::extract_bytes_from_word(self.r_a, instruction_word.modifier()).as_integer();
+    fn do_comparison(&mut self, value_from_register: i32, value_from_memory: i32) -> () {
         match value_from_register - value_from_memory {
             0 => self.comparison_indicator = ComparisonIndicatorState::Equal,
             1..=i32::MAX => self.comparison_indicator = ComparisonIndicatorState::Greater,
             i32::MIN..=-1 => self.comparison_indicator = ComparisonIndicatorState::Less,
         }
+    }
+
+    fn cmpa(&mut self, instruction_word: Word) -> () {
+        let value_from_memory = self.word_to_load(instruction_word).as_integer();
+        let value_from_register = Self::extract_bytes_from_word(self.r_a, instruction_word.modifier()).as_integer();
+        self.do_comparison(value_from_register, value_from_memory);
+    }
+
+    fn cmpx(&mut self, instruction_word: Word) -> () {
+        let value_from_memory = self.word_to_load(instruction_word).as_integer();
+        let value_from_register = Self::extract_bytes_from_word(self.r_x, instruction_word.modifier()).as_integer();
+        self.do_comparison(value_from_register, value_from_memory);
+    }
+
+    fn cmp1(&mut self, instruction_word: Word) -> () {
+        let value_from_memory = self.word_to_load(instruction_word).as_integer();
+        let value_from_register = Self::extract_bytes_from_word(Word::from_i32(self.r_i1.as_integer().into()).unwrap(), instruction_word.modifier()).as_integer();
+        self.do_comparison(value_from_register, value_from_memory);
+    }
+
+    fn cmp2(&mut self, instruction_word: Word) -> () {
+        let value_from_memory = self.word_to_load(instruction_word).as_integer();
+        let value_from_register = Self::extract_bytes_from_word(Word::from_i32(self.r_i2.as_integer().into()).unwrap(), instruction_word.modifier()).as_integer();
+        self.do_comparison(value_from_register, value_from_memory);
+    }
+
+    fn cmp3(&mut self, instruction_word: Word) -> () {
+        let value_from_memory = self.word_to_load(instruction_word).as_integer();
+        let value_from_register = Self::extract_bytes_from_word(Word::from_i32(self.r_i3.as_integer().into()).unwrap(), instruction_word.modifier()).as_integer();
+        self.do_comparison(value_from_register, value_from_memory);
+    }
+
+    fn cmp4(&mut self, instruction_word: Word) -> () {
+        let value_from_memory = self.word_to_load(instruction_word).as_integer();
+        let value_from_register = Self::extract_bytes_from_word(Word::from_i32(self.r_i4.as_integer().into()).unwrap(), instruction_word.modifier()).as_integer();
+        self.do_comparison(value_from_register, value_from_memory);
+    }
+
+    fn cmp5(&mut self, instruction_word: Word) -> () {
+        let value_from_memory = self.word_to_load(instruction_word).as_integer();
+        let value_from_register = Self::extract_bytes_from_word(Word::from_i32(self.r_i5.as_integer().into()).unwrap(), instruction_word.modifier()).as_integer();
+        self.do_comparison(value_from_register, value_from_memory);
+    }
+
+    fn cmp6(&mut self, instruction_word: Word) -> () {
+        let value_from_memory = self.word_to_load(instruction_word).as_integer();
+        let value_from_register = Self::extract_bytes_from_word(Word::from_i32(self.r_i6.as_integer().into()).unwrap(), instruction_word.modifier()).as_integer();
+        self.do_comparison(value_from_register, value_from_memory);
     }
 }
 
@@ -1458,5 +1511,80 @@ fn should_handle_cmpa_instruction() {
     assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
 
     computer.handle_instruction(Word::from_u8s([1,0,3,0,5,56]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
+}
+
+#[test]
+fn should_handle_cmpx_instruction() {
+    let mut computer = Computer::new();
+    computer.r_x = Word::from_i32(10).unwrap();
+    computer.memory.value[1] = Word::from_i32(9).unwrap();
+    computer.memory.value[2] = Word::from_i32(10).unwrap();
+    computer.memory.value[3] = Word::from_i32(11).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 63]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Greater);
+
+    computer.handle_instruction(Word::from_u8s([1,0,2,0,5,63]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
+
+    computer.handle_instruction(Word::from_u8s([1,0,3,0,5,63]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
+}
+
+
+#[test]
+fn should_handle_cmpi_instruction() {
+    let mut computer = Computer::new();
+    computer.r_i1 = IndexRegister::from_i32(10).unwrap();
+    computer.r_i2 = IndexRegister::from_i32(10).unwrap();
+    computer.r_i3 = IndexRegister::from_i32(10).unwrap();
+    computer.r_i4 = IndexRegister::from_i32(10).unwrap();
+    computer.r_i5 = IndexRegister::from_i32(10).unwrap();
+    computer.r_i6 = IndexRegister::from_i32(10).unwrap();
+    computer.memory.value[1] = Word::from_i32(9).unwrap();
+    computer.memory.value[2] = Word::from_i32(10).unwrap();
+    computer.memory.value[3] = Word::from_i32(11).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 57]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Greater);
+    computer.handle_instruction(Word::from_u8s([1,0,2,0,5,57]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
+    computer.handle_instruction(Word::from_u8s([1,0,3,0,5,57]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 58]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Greater);
+    computer.handle_instruction(Word::from_u8s([1,0,2,0,5,58]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
+    computer.handle_instruction(Word::from_u8s([1,0,3,0,5,58]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 59]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Greater);
+    computer.handle_instruction(Word::from_u8s([1,0,2,0,5,59]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
+    computer.handle_instruction(Word::from_u8s([1,0,3,0,5,59]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 60]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Greater);
+    computer.handle_instruction(Word::from_u8s([1,0,2,0,5,60]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
+    computer.handle_instruction(Word::from_u8s([1,0,3,0,5,60]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 61]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Greater);
+    computer.handle_instruction(Word::from_u8s([1,0,2,0,5,61]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
+    computer.handle_instruction(Word::from_u8s([1,0,3,0,5,61]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 62]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Greater);
+    computer.handle_instruction(Word::from_u8s([1,0,2,0,5,62]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
+    computer.handle_instruction(Word::from_u8s([1,0,3,0,5,62]).unwrap());
     assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
 }
