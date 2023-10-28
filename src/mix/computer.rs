@@ -366,20 +366,18 @@ impl Computer {
             .write(self.modified_address(instruction_word), bytes_to_write);
     }
 
-    fn do_add(&mut self, int_to_add: i32) -> () {
-        if int_to_add == 0 {
-            return;
-        }
-        let sum = int_to_add + self.r_a.as_integer();
+    fn do_add(&mut self, int_to_add: i32, register_value_to_add: i32) -> (bool, i32) {
+        let sum = int_to_add + register_value_to_add;
         let overflow = sum / 1_073_741_824;
         let remainder = sum % 1_073_741_824;
-        self.overflow_toggle = overflow != 0;
-        self.r_a = Word::from_i32(remainder).unwrap();
+        return (overflow != 0, remainder);
     }
 
     fn add(&mut self, instruction_word: Word) -> () {
         let bytes_to_add = self.word_to_load(instruction_word);
-        self.do_add(bytes_to_add.as_integer());
+        let (overflow, result) = self.do_add(bytes_to_add.as_integer(), self.r_a.as_integer());
+        self.overflow_toggle = overflow;
+        self.r_a = Word::from_i32(result).unwrap();
     }
 
     fn sub(&mut self, instruction_word: Word) -> () {
@@ -600,11 +598,15 @@ impl Computer {
     }
 
     fn inca(&mut self, instruction_word: Word) -> () {
-        self.do_add(instruction_word.address().into());
+        let (overflow, result) = self.do_add(instruction_word.address().into(), self.r_a.as_integer());
+        self.overflow_toggle = overflow;
+        self.r_a = Word::from_i32(result).unwrap();
     }
 
     fn incx(&mut self, instruction_word: Word) -> () {
-        unimplemented!()
+        let (overflow, result) = self.do_add(instruction_word.address().into(), self.r_x.as_integer());
+        self.overflow_toggle = overflow;
+        self.r_x = Word::from_i32(result).unwrap();
     }
 
     fn inc1(&mut self, instruction_word: Word) -> () {
@@ -1278,5 +1280,19 @@ fn should_handle_inca_instruction() {
     computer.r_a = Word::from_u8s([63, 63, 63, 63, 63, 63]).unwrap();
     computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 0, 48]).unwrap());
     assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 0, 0, 2]).unwrap());
+    assert!(computer.overflow_toggle);
+}
+
+#[test]
+fn should_handle_incx_instruction() {
+    let mut computer = Computer::new();
+
+    computer.r_x = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 0, 55]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 2, 3, 4, 5, 9]).unwrap());
+
+    computer.r_x = Word::from_u8s([63, 63, 63, 63, 63, 63]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 0, 55]).unwrap());
+    assert_eq!(computer.r_x, Word::from_u8s([1, 0, 0, 0, 0, 2]).unwrap());
     assert!(computer.overflow_toggle);
 }
