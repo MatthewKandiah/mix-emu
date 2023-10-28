@@ -35,13 +35,13 @@ impl IndexRegister {
             0.. => 1,
             _ => 0,
         };
-        let first_byte_value = abs / i32::pow(64, 4);
-        abs %= i32::pow(64, 4);
-        let second_byte_value = abs / i32::pow(64, 3);
+        let first_byte_value = abs / 64;
+        abs %= 64;
+        let second_byte_value = abs;
 
-        let sign_byte = Byte::from_u8(sign_byte_value.try_into()?).unwrap();
-        let first_byte = Byte::from_u8(first_byte_value.try_into()?).unwrap();
-        let second_byte = Byte::from_u8(second_byte_value.try_into()?).unwrap();
+        let sign_byte = Byte::from_u8(sign_byte_value.try_into().unwrap()).unwrap();
+        let first_byte = Byte::from_u8(first_byte_value.try_into().unwrap()).unwrap();
+        let second_byte = Byte::from_u8(second_byte_value.try_into().unwrap()).unwrap();
 
         Ok(Self {
             values: [
@@ -65,7 +65,7 @@ impl IndexRegister {
         }
     }
 
-    pub fn address(&self) -> i16 {
+    pub fn as_integer(&self) -> i16 {
         let sign = self.sign() as i16;
         let first_byte = self.values[1].value as i16;
         let second_byte = self.values[2].value as i16;
@@ -92,12 +92,20 @@ fn it_should_return_correct_sign() {
 }
 
 #[test]
-fn it_should_return_correct_address() {
-    assert_eq!(IndexRegister::from_u8s([0, 1, 2]).unwrap().address(), -66);
-    assert_eq!(IndexRegister::from_u8s([1, 2, 3]).unwrap().address(), 131);
-    assert_eq!(IndexRegister::from_u8s([0, 0, 0]).unwrap().address(), 0);
+fn it_should_return_correct_integer_value() {
+    assert_eq!(IndexRegister::from_u8s([0, 1, 2]).unwrap().as_integer(), -66);
+    assert_eq!(IndexRegister::from_u8s([1, 2, 3]).unwrap().as_integer(), 131);
+    assert_eq!(IndexRegister::from_u8s([0, 0, 0]).unwrap().as_integer(), 0);
     assert_eq!(
-        IndexRegister::from_u8s([63, 63, 63]).unwrap().address(),
+        IndexRegister::from_u8s([63, 63, 63]).unwrap().as_integer(),
         4095
     );
+}
+
+#[test]
+fn it_should_return_correct_index_register_from_i32() {
+    assert_eq!(IndexRegister::from_i32(1).unwrap(), IndexRegister::from_u8s([1,0,1]).unwrap());
+    assert_eq!(IndexRegister::from_i32(128).unwrap(), IndexRegister::from_u8s([1,2,0]).unwrap());
+    assert_eq!(IndexRegister::from_i32(-1).unwrap(), IndexRegister::from_u8s([0,0,1]).unwrap());
+    assert_eq!(IndexRegister::from_i32(-128).unwrap(), IndexRegister::from_u8s([0,2,0]).unwrap());
 }

@@ -96,12 +96,12 @@ impl Computer {
     fn index_value(&self, index: u8) -> i16 {
         match index {
             0 => 0,
-            1 => self.r_i1.address(),
-            2 => self.r_i2.address(),
-            3 => self.r_i3.address(),
-            4 => self.r_i4.address(),
-            5 => self.r_i5.address(),
-            6 => self.r_i6.address(),
+            1 => self.r_i1.as_integer(),
+            2 => self.r_i2.as_integer(),
+            3 => self.r_i3.as_integer(),
+            4 => self.r_i4.as_integer(),
+            5 => self.r_i5.as_integer(),
+            6 => self.r_i6.as_integer(),
             _ => panic!("Illegal index register value"),
         }
     }
@@ -610,27 +610,34 @@ impl Computer {
     }
 
     fn inc1(&mut self, instruction_word: Word) -> () {
-        unimplemented!()
+        let sum = instruction_word.address() + self.r_i1.as_integer();
+        println!("sum = {}", sum);
+        self.r_i1 = IndexRegister::from_i32(sum.into()).unwrap();
     }
 
     fn inc2(&mut self, instruction_word: Word) -> () {
-        unimplemented!()
+        let sum = instruction_word.address() + self.r_i2.as_integer();
+        self.r_i2 = IndexRegister::from_i32(sum.into()).unwrap();
     }
 
     fn inc3(&mut self, instruction_word: Word) -> () {
-        unimplemented!()
+        let sum = instruction_word.address() + self.r_i3.as_integer();
+        self.r_i3 = IndexRegister::from_i32(sum.into()).unwrap();
     }
 
     fn inc4(&mut self, instruction_word: Word) -> () {
-        unimplemented!()
+        let sum = instruction_word.address() + self.r_i4.as_integer();
+        self.r_i4 = IndexRegister::from_i32(sum.into()).unwrap();
     }
 
     fn inc5(&mut self, instruction_word: Word) -> () {
-        unimplemented!()
+        let sum = instruction_word.address() + self.r_i5.as_integer();
+        self.r_i5 = IndexRegister::from_i32(sum.into()).unwrap();
     }
 
     fn inc6(&mut self, instruction_word: Word) -> () {
-        unimplemented!()
+        let sum = instruction_word.address() + self.r_i6.as_integer();
+        self.r_i6 = IndexRegister::from_i32(sum.into()).unwrap();
     }
 }
 
@@ -1295,4 +1302,33 @@ fn should_handle_incx_instruction() {
     computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 0, 55]).unwrap());
     assert_eq!(computer.r_x, Word::from_u8s([1, 0, 0, 0, 0, 2]).unwrap());
     assert!(computer.overflow_toggle);
+}
+
+#[test]
+fn should_handle_valid_inci_instruction() {
+    let mut computer = Computer::new();
+
+    computer.r_i1 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,49]).unwrap());
+    assert_eq!(computer.r_i1.as_integer(), 15);
+
+    computer.r_i2 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,50]).unwrap());
+    assert_eq!(computer.r_i2.as_integer(), 15);
+
+    computer.r_i3 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,51]).unwrap());
+    assert_eq!(computer.r_i3.as_integer(), 15);
+
+    computer.r_i4 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,52]).unwrap());
+    assert_eq!(computer.r_i4.as_integer(), 15);
+
+    computer.r_i5 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,53]).unwrap());
+    assert_eq!(computer.r_i5.as_integer(), 15);
+
+    computer.r_i6 = IndexRegister::from_i32(5).unwrap();
+    computer.handle_instruction(Word::from_u8s([1,0,10,0,0,54]).unwrap());
+    assert_eq!(computer.r_i6.as_integer(), 15);
 }

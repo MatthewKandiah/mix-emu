@@ -28,7 +28,7 @@ impl JumpRegister {
         return Ok(Self { values: result });
     }
 
-    pub fn address(&self) -> i16 {
+    pub fn as_integer(&self) -> i16 {
         let first_byte = self.values[0].value as i16;
         let second_byte = self.values[1].value as i16;
         first_byte * i16::pow(2, 6) + second_byte
@@ -36,9 +36,9 @@ impl JumpRegister {
 }
 
 #[test]
-fn it_should_return_correct_address() {
-    assert_eq!(JumpRegister::from_u8s([1, 2]).unwrap().address(), 66);
-    assert_eq!(JumpRegister::from_u8s([2, 3]).unwrap().address(), 131);
-    assert_eq!(JumpRegister::from_u8s([0, 0]).unwrap().address(), 0);
-    assert_eq!(JumpRegister::from_u8s([63, 63]).unwrap().address(), 4095);
+fn it_should_return_correct_integer() {
+    assert_eq!(JumpRegister::from_u8s([1, 2]).unwrap().as_integer(), 66);
+    assert_eq!(JumpRegister::from_u8s([2, 3]).unwrap().as_integer(), 131);
+    assert_eq!(JumpRegister::from_u8s([0, 0]).unwrap().as_integer(), 0);
+    assert_eq!(JumpRegister::from_u8s([63, 63]).unwrap().as_integer(), 4095);
 }
