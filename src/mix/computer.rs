@@ -366,16 +366,20 @@ impl Computer {
             .write(self.modified_address(instruction_word), bytes_to_write);
     }
 
-    fn add(&mut self, instruction_word: Word) -> () {
-        let bytes_to_add = self.word_to_load(instruction_word);
-        if bytes_to_add.as_integer() == 0 {
+    fn do_add(&mut self, int_to_add: i32) -> () {
+        if int_to_add == 0 {
             return;
         }
-        let sum = bytes_to_add.as_integer() + self.r_a.as_integer();
+        let sum = int_to_add + self.r_a.as_integer();
         let overflow = sum / 1_073_741_824;
         let remainder = sum % 1_073_741_824;
         self.overflow_toggle = overflow != 0;
         self.r_a = Word::from_i32(remainder).unwrap();
+    }
+
+    fn add(&mut self, instruction_word: Word) -> () {
+        let bytes_to_add = self.word_to_load(instruction_word);
+        self.do_add(bytes_to_add.as_integer());
     }
 
     fn sub(&mut self, instruction_word: Word) -> () {
@@ -425,6 +429,7 @@ impl Computer {
 
     fn handle_48(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
+            0 => self.inca(instruction_word),
             2 => self.enta(instruction_word),
             3 => self.enna(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -433,6 +438,7 @@ impl Computer {
 
     fn handle_49(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
+            0 => self.inc1(instruction_word),
             2 => self.ent1(instruction_word),
             3 => self.enn1(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -441,6 +447,7 @@ impl Computer {
 
     fn handle_50(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
+            0 => self.inc2(instruction_word),
             2 => self.ent2(instruction_word),
             3 => self.enn2(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -449,6 +456,7 @@ impl Computer {
 
     fn handle_51(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
+            0 => self.inc3(instruction_word),
             2 => self.ent3(instruction_word),
             3 => self.enn3(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -457,6 +465,7 @@ impl Computer {
 
     fn handle_52(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
+            0 => self.inc4(instruction_word),
             2 => self.ent4(instruction_word),
             3 => self.enn4(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -465,6 +474,7 @@ impl Computer {
 
     fn handle_53(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
+            0 => self.inc5(instruction_word),
             2 => self.ent5(instruction_word),
             3 => self.enn5(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -473,6 +483,7 @@ impl Computer {
 
     fn handle_54(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
+            0 => self.inc6(instruction_word),
             2 => self.ent6(instruction_word),
             3 => self.enn6(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -481,6 +492,7 @@ impl Computer {
 
     fn handle_55(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
+            0 => self.incx(instruction_word),
             2 => self.entx(instruction_word),
             3 => self.ennx(instruction_word),
             _ => panic!("Illegal modifier"),
@@ -585,6 +597,38 @@ impl Computer {
 
     fn enn6(&mut self, instruction_word: Word) -> () {
         self.r_i6 = self.index_register_to_enter(instruction_word).negate_sign();
+    }
+
+    fn inca(&mut self, instruction_word: Word) -> () {
+        self.do_add(instruction_word.address().into());
+    }
+
+    fn incx(&mut self, instruction_word: Word) -> () {
+        unimplemented!()
+    }
+
+    fn inc1(&mut self, instruction_word: Word) -> () {
+        unimplemented!()
+    }
+
+    fn inc2(&mut self, instruction_word: Word) -> () {
+        unimplemented!()
+    }
+
+    fn inc3(&mut self, instruction_word: Word) -> () {
+        unimplemented!()
+    }
+
+    fn inc4(&mut self, instruction_word: Word) -> () {
+        unimplemented!()
+    }
+
+    fn inc5(&mut self, instruction_word: Word) -> () {
+        unimplemented!()
+    }
+
+    fn inc6(&mut self, instruction_word: Word) -> () {
+        unimplemented!()
     }
 }
 
@@ -1221,4 +1265,18 @@ fn should_handle_enta_loading_index_register() {
     computer.r_i3 = IndexRegister::from_u8s([0, 7, 9]).unwrap();
     computer.handle_instruction(Word::from_u8s([1, 0, 0, 3, 2, 48]).unwrap());
     assert_eq!(computer.r_a, Word::from_u8s([0, 0, 0, 0, 7, 9]).unwrap());
+}
+
+#[test]
+fn should_handle_inca_instruction() {
+    let mut computer = Computer::new();
+
+    computer.r_a = Word::from_u8s([1, 2, 3, 4, 5, 6]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 0, 48]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 2, 3, 4, 5, 9]).unwrap());
+
+    computer.r_a = Word::from_u8s([63, 63, 63, 63, 63, 63]).unwrap();
+    computer.handle_instruction(Word::from_u8s([1, 0, 3, 0, 0, 48]).unwrap());
+    assert_eq!(computer.r_a, Word::from_u8s([1, 0, 0, 0, 0, 2]).unwrap());
+    assert!(computer.overflow_toggle);
 }
