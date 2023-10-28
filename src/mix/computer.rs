@@ -3,7 +3,7 @@ use super::{
     word::Word,
 };
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ComparisonIndicatorState {
     Less,
     Equal,
@@ -89,6 +89,7 @@ impl Computer {
             53 => Self::handle_53(self, instruction),
             54 => Self::handle_54(self, instruction),
             55 => Self::handle_55(self, instruction),
+            56 => Self::cmpa(self, instruction),
             _ => panic!("Illegal op code"),
         }
     }
@@ -680,6 +681,16 @@ impl Computer {
 
     fn dec6(&mut self, instruction_word: Word) -> () {
         self.inc6(instruction_word.negate_sign());
+    }
+
+    fn cmpa(&mut self, instruction_word: Word) -> () {
+        let value_from_memory = self.word_to_load(instruction_word).as_integer();
+        let value_from_register = Self::extract_bytes_from_word(self.r_a, instruction_word.modifier()).as_integer();
+        match value_from_register - value_from_memory {
+            0 => self.comparison_indicator = ComparisonIndicatorState::Equal,
+            1..=i32::MAX => self.comparison_indicator = ComparisonIndicatorState::Greater,
+            i32::MIN..=-1 => self.comparison_indicator = ComparisonIndicatorState::Less,
+        }
     }
 }
 
@@ -1430,4 +1441,22 @@ fn should_handle_valid_deci_instruction() {
     computer.r_i6 = IndexRegister::from_i32(5).unwrap();
     computer.handle_instruction(Word::from_u8s([1, 0, 10, 0, 1, 54]).unwrap());
     assert_eq!(computer.r_i6.as_integer(), -5);
+}
+
+#[test]
+fn should_handle_cmpa_instruction() {
+    let mut computer = Computer::new();
+    computer.r_a = Word::from_i32(10).unwrap();
+    computer.memory.value[1] = Word::from_i32(9).unwrap();
+    computer.memory.value[2] = Word::from_i32(10).unwrap();
+    computer.memory.value[3] = Word::from_i32(11).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1, 0, 1, 0, 5, 56]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Greater);
+
+    computer.handle_instruction(Word::from_u8s([1,0,2,0,5,56]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
+
+    computer.handle_instruction(Word::from_u8s([1,0,3,0,5,56]).unwrap());
+    assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
 }
