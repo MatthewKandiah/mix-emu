@@ -81,6 +81,7 @@ impl Computer {
             31 => Self::stx(self, instruction),
             32 => Self::stj(self, instruction),
             33 => Self::stz(self, instruction),
+            39 => Self::handle_39(self, instruction),
             48 => Self::handle_48(self, instruction),
             49 => Self::handle_49(self, instruction),
             50 => Self::handle_50(self, instruction),
@@ -433,6 +434,22 @@ impl Computer {
         self.r_a = Word::from_i32(result).unwrap();
     }
 
+    fn handle_39(&mut self, instruction_word: Word) -> () {
+        match instruction_word.modifier() {
+            0 => self.jmp(instruction_word),
+            1 => self.jsj(instruction_word),
+            2 => self.jov(instruction_word),
+            3 => self.jnov(instruction_word),
+            4 => self.jl(instruction_word),
+            5 => self.je(instruction_word),
+            6 => self.jg(instruction_word),
+            7 => self.jge(instruction_word),
+            8 => self.jne(instruction_word),
+            9 => self.jle(instruction_word),
+            _ => panic!("Illegal modifier"),
+        }
+    }
+
     fn handle_48(&mut self, instruction_word: Word) -> () {
         match instruction_word.modifier() {
             0 => self.inca(instruction_word),
@@ -744,6 +761,50 @@ impl Computer {
         let value_from_memory = self.word_to_load(instruction_word).as_integer();
         let value_from_register = Self::extract_bytes_from_word(Word::from_i32(self.r_i6.as_integer().into()).unwrap(), instruction_word.modifier()).as_integer();
         self.do_comparison(value_from_register, value_from_memory);
+    }
+
+    fn jmp(&mut self, instruction_word: Word) -> () {
+        // TODO - refactor this nightmare
+        // TODO - I think I might need a `next_instruction` field as well as the jump register, we
+        // load an instruction into `next_instruction`, then update r_j, then handle
+        // `next_instruction`
+        self.r_j = JumpRegister::from_i32(self.memory.contents(instruction_word.address().try_into().unwrap()).unwrap().as_integer()).unwrap();
+    }
+
+    fn jsj(&mut self, instruction_word: Word) -> () {
+        unimplemented!();
+    }
+
+    fn jov(&mut self, instruction_word: Word) -> () {
+        unimplemented!();
+    }
+
+    fn jnov(&mut self, instruction_word: Word) -> () {
+        unimplemented!();
+    }
+
+    fn jl(&mut self, instruction_word: Word) -> () {
+        unimplemented!();
+    }
+
+    fn je(&mut self, instruction_word: Word) -> () {
+        unimplemented!();
+    }
+
+    fn jg(&mut self, instruction_word: Word) -> () {
+        unimplemented!();
+    }
+
+    fn jge(&mut self, instruction_word: Word) -> () {
+        unimplemented!();
+    }
+
+    fn jne(&mut self, instruction_word: Word) -> () {
+        unimplemented!();
+    }
+
+    fn jle(&mut self, instruction_word: Word) -> () {
+        unimplemented!();
     }
 }
 
@@ -1587,4 +1648,14 @@ fn should_handle_cmpi_instruction() {
     assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Equal);
     computer.handle_instruction(Word::from_u8s([1,0,3,0,5,62]).unwrap());
     assert_eq!(computer.comparison_indicator, ComparisonIndicatorState::Less);
+}
+
+#[test]
+fn should_handle_jmp_instruction() {
+    let mut computer = Computer::new();
+    computer.memory.value[100] = Word::from_i32(101).unwrap();
+    computer.memory.value[101] = Word::from_i32(5).unwrap();
+
+    computer.handle_instruction(Word::from_u8s([1,1,34,0,0,39]).unwrap());
+    assert_eq!(computer.r_j, JumpRegister::from_u8s([0, 5]).unwrap());
 }
