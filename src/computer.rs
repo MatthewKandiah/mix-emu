@@ -80,6 +80,7 @@ fn should_make_correct_byte_for_i32_value() {
     assert_eq!(Byte::from_i32(-1), Err(ByteValueError::Underflow(-1)));
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum Sign {
     PLUS,
     MINUS,
@@ -92,24 +93,91 @@ impl Sign {
             Self::MINUS => -1,
         }
     }
+
+    pub fn from_i32(value: i32) -> Self {
+        match value >= 0 {
+            true => Self::PLUS,
+            false => Self::MINUS,
+        }
+    }
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct Word (Sign, Byte, Byte, Byte, Byte, Byte);
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum WordValueError {
+    Overflow (i32),
+    Underflow (i32),
+}
 
 impl Word {
     pub const ZERO: Self = Self (Sign::PLUS, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
+
+    pub const MAX: Self = Self (Sign::PLUS, Byte::MAX, Byte::MAX, Byte::MAX, Byte::MAX, Byte::MAX);
+
+    pub const MIN: Self = Self (Sign::MINUS, Byte::MAX, Byte::MAX, Byte::MAX, Byte::MAX, Byte::MAX);
+
+    pub fn to_i32(&self) -> i32 {
+        self.0.value() * (64_i32.pow(4) * self.1.to_i32() + 64_i32.pow(3) * self.2.to_i32() + 64_i32.pow(2) * self.3.to_i32() + 64 * self.4.to_i32() + self.5.to_i32())
+    }
+
+    pub fn from_i32(value: i32) -> Result<Self, WordValueError> {
+        if value > 1_073_741_823 {
+            return Err(WordValueError::Overflow(value));
+        }
+        if value < -1_073_741_823 {
+            return Err(WordValueError::Underflow(value));
+        }
+        let sign = Sign::from_i32(value);
+        let mut x = value.abs();
+        let first_byte = Byte::from_i32(x / 64_i32.pow(4)).unwrap();
+        x = x % 64_i32.pow(4);
+        let second_byte = Byte::from_i32(x / 64_i32.pow(3)).unwrap();
+        x = x % 64_i32.pow(3);
+        let third_byte = Byte::from_i32(x / 64_i32.pow(2)).unwrap();
+        x = x % 64_i32.pow(2);
+        let fourth_byte = Byte::from_i32(x / 64).unwrap();
+        x = x % 64;
+        let fifth_byte = Byte::from_i32(x).unwrap();
+        Ok(Word (sign, first_byte, second_byte, third_byte, fourth_byte, fifth_byte))
+    }
+}
+
+#[test]
+fn should_return_word_value_as_i32() {
+    assert_eq!(Word::ZERO.to_i32(), 0);
+    assert_eq!(Word::MAX.to_i32(), 1_073_741_823);
+    assert_eq!(Word::MIN.to_i32(), -1_073_741_823);
+    assert_eq!(Word (Sign::PLUS, Byte::from_i32(1).unwrap(), Byte::from_i32(2).unwrap(), Byte::from_i32(3).unwrap(), Byte::from_i32(4).unwrap(), Byte::from_i32(5).unwrap()).to_i32(), 17_314_053);
+}
+
+#[test]
+fn should_make_correct_word_for_i32_value() {
+    assert_eq!(Word::from_i32(0), Ok(Word::ZERO));
+    assert_eq!(Word::from_i32(1_073_741_823), Ok(Word::MAX));
+    assert_eq!(Word::from_i32(-1_073_741_823), Ok(Word::MIN));
+    assert_eq!(Word::from_i32(17_314_053), Ok(Word (Sign::PLUS, Byte::from_i32(1).unwrap(), Byte::from_i32(2).unwrap(), Byte::from_i32(3).unwrap(), Byte::from_i32(4).unwrap(), Byte::from_i32(5).unwrap())));
+    assert_eq!(Word::from_i32(1_073_741_824), Err(WordValueError::Overflow(1_073_741_824)));
+    assert_eq!(Word::from_i32(-1_073_741_824), Err(WordValueError::Underflow(-1_073_741_824)));
 }
 
 pub struct Index (Sign, Byte, Byte);
 
 impl Index {
     pub const ZERO: Self = Self (Sign::PLUS, Byte::ZERO, Byte::ZERO);
+
+    pub const MAX: Self = Self (Sign::PLUS, Byte::MAX, Byte::MAX);
+
+    pub const MIN: Self = Self (Sign::MINUS, Byte::MAX, Byte::MAX);
 }
 
 pub struct JumpAddress (Byte, Byte);
 
 impl JumpAddress {
     pub const ZERO: Self = Self (Byte::ZERO, Byte::ZERO);
+
+    pub const MAX: Self = Self (Byte::MAX, Byte::MAX);
 }
 
 pub enum ComparisonIndicatorState {
