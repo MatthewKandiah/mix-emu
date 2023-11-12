@@ -8,7 +8,7 @@ pub enum ComparisonIndicatorState {
 }
 
 pub struct Computer {
-    loaded_instruction: Option<Word>,
+    current_instruction_address: Option<i32>,
     r_a: Word,
     r_x: Word,
     r_i1: Index,
@@ -26,7 +26,7 @@ pub struct Computer {
 impl Computer {
     pub fn new() -> Self {
         Self {
-            loaded_instruction: None,
+            current_instruction_address: None,
             r_a: Word::ZERO,
             r_x: Word::ZERO,
             r_i1: Index::ZERO,
