@@ -244,6 +244,22 @@ impl Word {
             fifth_byte,
         ))
     }
+
+    pub fn address(&self) -> i32 {
+        self.0.value() * (self.1.to_i32() * 64 + self.2.to_i32())
+    }
+
+    pub fn index(&self) -> i32 {
+        self.3.to_i32()
+    }
+
+    pub fn field(&self) -> i32 {
+        self.4.to_i32()
+    }
+
+    pub fn code(&self) -> i32 {
+        self.5.to_i32()
+    }
 }
 
 #[test]
