@@ -162,7 +162,14 @@ fn should_make_correct_word_for_i32_value() {
     assert_eq!(Word::from_i32(-1_073_741_824), Err(WordValueError::Underflow(-1_073_741_824)));
 }
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct Index (Sign, Byte, Byte);
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum IndexValueError {
+    Overflow (i32),
+    Underflow (i32),
+}
 
 impl Index {
     pub const ZERO: Self = Self (Sign::PLUS, Byte::ZERO, Byte::ZERO);
@@ -170,6 +177,44 @@ impl Index {
     pub const MAX: Self = Self (Sign::PLUS, Byte::MAX, Byte::MAX);
 
     pub const MIN: Self = Self (Sign::MINUS, Byte::MAX, Byte::MAX);
+
+    pub fn to_i32(&self) -> i32 {
+        self.0.value() * (self.1.to_i32() * 64 + self.2.to_i32())
+    }
+
+    pub fn from_i32(value: i32) -> Result<Self, IndexValueError> {
+        if value > 4095 {
+            return Err(IndexValueError::Overflow(value));
+        }
+        if value < -4095 {
+            return Err(IndexValueError::Underflow(value));
+        }
+        let sign = Sign::from_i32(value);
+        let first_byte = Byte::from_i32(value.abs() / 64).unwrap();
+        let second_byte = Byte::from_i32(value.abs() % 64).unwrap();
+        Ok(Self (sign, first_byte, second_byte))
+
+    }
+}
+
+#[test]
+fn should_return_index_value_as_i32() {
+    assert_eq!(Index (Sign::PLUS, Byte::ZERO, Byte::ZERO).to_i32(), 0);
+    assert_eq!(Index (Sign::PLUS, Byte::MAX, Byte::MAX).to_i32(), 4095);
+    assert_eq!(Index (Sign::MINUS, Byte::MAX, Byte::MAX).to_i32(), -4095);
+    assert_eq!(Index (Sign::MINUS, Byte::ZERO, Byte::MAX).to_i32(), -63);
+    assert_eq!(Index (Sign::PLUS, Byte::from_i32(2).unwrap(), Byte::from_i32(3).unwrap()).to_i32(), 131);
+}
+
+#[test]
+fn should_make_correct_index_for_i32_value() {
+    assert_eq!(Index::from_i32(0), Ok(Index::ZERO));
+    assert_eq!(Index::from_i32(4095), Ok(Index::MAX));
+    assert_eq!(Index::from_i32(-4095), Ok(Index::MIN));
+    assert_eq!(Index::from_i32(-63), Ok(Index (Sign::MINUS, Byte::ZERO, Byte::MAX)));
+    assert_eq!(Index::from_i32(131), Ok(Index (Sign::PLUS, Byte::from_i32(2).unwrap(), Byte::from_i32(3).unwrap())));
+    assert_eq!(Index::from_i32(4096), Err(IndexValueError::Overflow(4096)));
+    assert_eq!(Index::from_i32(-4096), Err(IndexValueError::Underflow(-4096)));
 }
 
 pub struct JumpAddress (Byte, Byte);
