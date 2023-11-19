@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Bit {
     ZERO,
     ONE,
@@ -20,7 +20,7 @@ impl Bit {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Byte(Bit, Bit, Bit, Bit, Bit, Bit);
 
 #[derive(Debug, PartialEq, Eq)]
@@ -149,7 +149,7 @@ fn should_make_correct_byte_for_i32_value() {
     assert_eq!(Byte::from_i32(-1), Err(ByteValueError::Underflow(-1)));
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Sign {
     PLUS,
     MINUS,
@@ -171,7 +171,7 @@ impl Sign {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Word {
     sign: Sign,
     bytes: (Byte, Byte, Byte, Byte, Byte),
