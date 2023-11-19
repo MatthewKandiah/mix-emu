@@ -20,8 +20,7 @@ impl Memory {
     };
 
     pub fn get(&self, address: i32) -> Result<Word, AccessError> {
-        let usize_address: Result<usize, _> = address.try_into();
-        match usize_address {
+        match address.try_into() {
             Err(_) => Err(AccessError::InvalidAddress(address)),
             Ok(x) => match x {
                 SIZE.. => Err(AccessError::InvalidAddress(address)),
@@ -31,8 +30,7 @@ impl Memory {
     }
 
     pub fn set(&mut self, address: i32, value: Word) -> Result<(), SetError> {
-        let usize_address: Result<usize, _> = address.try_into();
-        match usize_address {
+        match address.try_into() {
             Err(_) => Err(SetError::InvalidAddress(address)),
             Ok(x) => match x {
                 SIZE.. => Err(SetError::InvalidAddress(address)),
