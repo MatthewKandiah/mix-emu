@@ -6,6 +6,7 @@ pub struct Memory {
     content: [Word; SIZE],
 }
 
+#[derive(Debug)]
 pub enum AccessError {
     InvalidAddress(i32),
 }
