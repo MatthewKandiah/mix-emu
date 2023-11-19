@@ -1,8 +1,13 @@
 use crate::data_types::Word;
 
-pub struct Memory([Word; 4000]);
+pub const SIZE: usize = 4000;
 
-impl Memory {
-    pub const ZERO: Self = Self([Word::ZERO; 4000]);
+pub struct Memory {
+    content: [Word; SIZE],
 }
 
+impl Memory {
+    pub const ZERO: Self = Self {
+        content: [Word::ZERO; SIZE],
+    };
+}
