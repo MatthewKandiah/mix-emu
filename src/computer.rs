@@ -1,4 +1,4 @@
-use crate::data_types::{Word, Index, JumpAddress};
+use crate::data_types::{Byte, Index, JumpAddress, Word};
 use crate::memory::Memory;
 
 pub enum ComparisonIndicatorState {
@@ -132,7 +132,53 @@ impl Computer {
 
     fn mov(&mut self, instruction: Word) {}
 
-    fn lda(&mut self, instruction: Word) {}
+    // TODO: unit test
+    fn lda(&mut self, instruction: Word) {
+        let address = instruction.address();
+        let contents = self.memory.get(address).unwrap();
+        let field_specifier = instruction.field();
+        if !field_specifier.is_valid() {
+            panic!("illegal field specifier: {:?}", field_specifier);
+        }
+
+        let sign_to_load = match field_specifier.inclusive_range().contains(&0) {
+            true => contents.sign,
+            false => self.r_a.sign,
+        };
+
+        let mut bytes_to_load = Vec::<Byte>::new();
+        let prepend_zero_byte = |bytes_to_copy: &mut Vec<Byte>| {
+            bytes_to_copy.reverse();
+            bytes_to_copy.push(Byte::ZERO);
+            bytes_to_copy.reverse();
+        };
+        match field_specifier.inclusive_range().contains(&1) {
+            true => bytes_to_load.push(contents.bytes.0),
+            false => prepend_zero_byte(&mut bytes_to_load),
+        };
+        match field_specifier.inclusive_range().contains(&2) {
+            true => bytes_to_load.push(contents.bytes.1),
+            false => prepend_zero_byte(&mut bytes_to_load),
+        };
+        match field_specifier.inclusive_range().contains(&3) {
+            true => bytes_to_load.push(contents.bytes.2),
+            false => prepend_zero_byte(&mut bytes_to_load),
+        };
+        match field_specifier.inclusive_range().contains(&4) {
+            true => bytes_to_load.push(contents.bytes.3),
+            false => prepend_zero_byte(&mut bytes_to_load),
+        };
+        match field_specifier.inclusive_range().contains(&5) {
+            true => bytes_to_load.push(contents.bytes.4),
+            false => prepend_zero_byte(&mut bytes_to_load),
+        };
+        let bytes_to_load = (bytes_to_load[0], bytes_to_load[1], bytes_to_load[2], bytes_to_load[3], bytes_to_load[4]);
+
+        self.r_a = Word {
+            sign: sign_to_load,
+            bytes: bytes_to_load,
+        };
+    }
 
     fn ld1(&mut self, instruction: Word) {}
 

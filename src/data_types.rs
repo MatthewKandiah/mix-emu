@@ -1,3 +1,5 @@
+use std::ops::RangeInclusive;
+
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub enum Bit {
     ZERO,
@@ -171,10 +173,29 @@ impl Sign {
     }
 }
 
+#[derive(Debug)]
+pub struct FieldSpecification {
+    pub left: i32,
+    pub right: i32,
+}
+
+impl FieldSpecification {
+    pub fn is_valid(&self) -> bool {
+        let valid_range = 0..6;
+        self.left <= self.right
+            && valid_range.contains(&self.left)
+            && valid_range.contains(&self.right)
+    }
+
+    pub fn inclusive_range(&self) -> RangeInclusive<i32> {
+        self.left..=self.right
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct Word {
-    sign: Sign,
-    bytes: (Byte, Byte, Byte, Byte, Byte),
+    pub sign: Sign,
+    pub bytes: (Byte, Byte, Byte, Byte, Byte),
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -240,8 +261,12 @@ impl Word {
         self.bytes.2.to_i32()
     }
 
-    pub fn field(&self) -> i32 {
-        self.bytes.3.to_i32()
+    pub fn field(&self) -> FieldSpecification {
+        let value = self.bytes.3.to_i32();
+        FieldSpecification {
+            left: value / 8,
+            right: value % 8,
+        }
     }
 
     pub fn code(&self) -> i32 {
@@ -299,7 +324,10 @@ fn should_make_correct_word_for_i32_value() {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub struct Index{sign: Sign, bytes: (Byte, Byte)}
+pub struct Index {
+    sign: Sign,
+    bytes: (Byte, Byte),
+}
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum IndexValueError {
@@ -308,11 +336,20 @@ pub enum IndexValueError {
 }
 
 impl Index {
-    pub const ZERO: Self = Self{sign: Sign::PLUS, bytes: (Byte::ZERO, Byte::ZERO)};
+    pub const ZERO: Self = Self {
+        sign: Sign::PLUS,
+        bytes: (Byte::ZERO, Byte::ZERO),
+    };
 
-    pub const MAX: Self = Self{sign: Sign::PLUS, bytes: ( Byte::MAX, Byte::MAX)};
+    pub const MAX: Self = Self {
+        sign: Sign::PLUS,
+        bytes: (Byte::MAX, Byte::MAX),
+    };
 
-    pub const MIN: Self = Self{sign: Sign::MINUS, bytes: (Byte::MAX, Byte::MAX)};
+    pub const MIN: Self = Self {
+        sign: Sign::MINUS,
+        bytes: (Byte::MAX, Byte::MAX),
+    };
 
     pub fn to_i32(&self) -> i32 {
         self.sign.value() * (self.bytes.0.to_i32() * 64 + self.bytes.1.to_i32())
@@ -328,22 +365,52 @@ impl Index {
         let sign = Sign::from_i32(value);
         let first_byte = Byte::from_i32(value.abs() / 64).unwrap();
         let second_byte = Byte::from_i32(value.abs() % 64).unwrap();
-        Ok(Self{sign, bytes: ( first_byte, second_byte)})
+        Ok(Self {
+            sign,
+            bytes: (first_byte, second_byte),
+        })
     }
 }
 
 #[test]
 fn should_return_index_value_as_i32() {
-    assert_eq!(Index{sign: Sign::PLUS, bytes: (Byte::ZERO, Byte::ZERO)}.to_i32(), 0);
-    assert_eq!(Index{sign: Sign::PLUS, bytes: (Byte::MAX, Byte::MAX)}.to_i32(), 4095);
-    assert_eq!(Index{sign: Sign::MINUS, bytes: (Byte::MAX, Byte::MAX)}.to_i32(), -4095);
-    assert_eq!(Index{sign: Sign::MINUS, bytes: (Byte::ZERO, Byte::MAX)}.to_i32(), -63);
     assert_eq!(
-        Index{
+        Index {
             sign: Sign::PLUS,
-            bytes: (Byte::from_i32(2).unwrap(),
-            Byte::from_i32(3).unwrap()
-        )}
+            bytes: (Byte::ZERO, Byte::ZERO)
+        }
+        .to_i32(),
+        0
+    );
+    assert_eq!(
+        Index {
+            sign: Sign::PLUS,
+            bytes: (Byte::MAX, Byte::MAX)
+        }
+        .to_i32(),
+        4095
+    );
+    assert_eq!(
+        Index {
+            sign: Sign::MINUS,
+            bytes: (Byte::MAX, Byte::MAX)
+        }
+        .to_i32(),
+        -4095
+    );
+    assert_eq!(
+        Index {
+            sign: Sign::MINUS,
+            bytes: (Byte::ZERO, Byte::MAX)
+        }
+        .to_i32(),
+        -63
+    );
+    assert_eq!(
+        Index {
+            sign: Sign::PLUS,
+            bytes: (Byte::from_i32(2).unwrap(), Byte::from_i32(3).unwrap())
+        }
         .to_i32(),
         131
     );
@@ -356,15 +423,17 @@ fn should_make_correct_index_for_i32_value() {
     assert_eq!(Index::from_i32(-4095), Ok(Index::MIN));
     assert_eq!(
         Index::from_i32(-63),
-        Ok(Index{sign: Sign::MINUS, bytes: (Byte::ZERO, Byte::MAX)})
+        Ok(Index {
+            sign: Sign::MINUS,
+            bytes: (Byte::ZERO, Byte::MAX)
+        })
     );
     assert_eq!(
         Index::from_i32(131),
-        Ok(Index{
+        Ok(Index {
             sign: Sign::PLUS,
-            bytes: (Byte::from_i32(2).unwrap(),
-            Byte::from_i32(3).unwrap()
-        )})
+            bytes: (Byte::from_i32(2).unwrap(), Byte::from_i32(3).unwrap())
+        })
     );
     assert_eq!(Index::from_i32(4096), Err(IndexValueError::Overflow(4096)));
     assert_eq!(
