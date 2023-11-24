@@ -308,7 +308,10 @@ impl Computer {
 
 #[cfg(test)]
 mod lda_tests {
-    use crate::{computer::Computer, data_types::{Word, Sign, Index}};
+    use crate::{
+        computer::Computer,
+        data_types::{Byte, Index, Sign, Word},
+    };
 
     #[test]
     fn should_load_value_from_memory_into_a() {
@@ -327,7 +330,10 @@ mod lda_tests {
         let mut computer = Computer::new();
         let content = Word::from_i32(2345).unwrap();
         computer.memory.set(101, content).unwrap();
-        computer.memory.set(200, Word::from_i32(5432).unwrap()).unwrap();
+        computer
+            .memory
+            .set(200, Word::from_i32(5432).unwrap())
+            .unwrap();
         computer.r_i4 = Index::from_i32(-99).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 200, 4, 5, 8).unwrap();
@@ -349,7 +355,24 @@ mod lda_tests {
         assert_eq!(computer.r_a.to_i32(), 1);
     }
 
+    #[test]
     fn should_load_part_of_value_into_a() {
-        unimplemented!()
+        let mut computer = Computer::new();
+        let content = Word {
+            sign: Sign::MINUS,
+            bytes: (
+                Byte::from_i32(1).unwrap(),
+                Byte::from_i32(2).unwrap(),
+                Byte::from_i32(3).unwrap(),
+                Byte::from_i32(4).unwrap(),
+                Byte::from_i32(5).unwrap(),
+            ),
+        };
+        computer.memory.set(10, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, 20, 8).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a.to_i32(), 2 * 64_i32.pow(2) + 3 * 64 + 4);
     }
 }
