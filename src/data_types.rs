@@ -204,6 +204,14 @@ pub enum WordValueError {
     Underflow(i32),
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub enum InstructionValueError {
+    Address(i32),
+    Field(i32),
+    Index(i32),
+    Code(i32),
+}
+
 impl Word {
     pub const ZERO: Self = Self {
         sign: Sign::PLUS,
@@ -250,6 +258,37 @@ impl Word {
         Ok(Word {
             sign,
             bytes: (first_byte, second_byte, third_byte, fourth_byte, fifth_byte),
+        })
+    }
+
+    pub fn from_instruction_parts(
+        sign: Sign,
+        address: i32,
+        index: i32,
+        field: i32,
+        code: i32,
+    ) -> Result<Self, InstructionValueError> {
+        if address.abs() > 4095 {
+            return Err(InstructionValueError::Address(address));
+        }
+        if index < 0 || index > 6 {
+            return Err(InstructionValueError::Index(index));
+        }
+        if field < 0 || field > 63 {
+            return Err(InstructionValueError::Field(field));
+        }
+        if code < 0 || code > 63 {
+            return Err(InstructionValueError::Code(code));
+        }
+        Ok(Word {
+            sign,
+            bytes: (
+                Byte::from_i32(address / 64).unwrap(),
+                Byte::from_i32(address % 64).unwrap(),
+                Byte::from_i32(index).unwrap(),
+                Byte::from_i32(field).unwrap(),
+                Byte::from_i32(code).unwrap(),
+            ),
         })
     }
 

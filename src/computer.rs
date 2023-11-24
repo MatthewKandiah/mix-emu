@@ -132,9 +132,18 @@ impl Computer {
 
     fn mov(&mut self, instruction: Word) {}
 
-    // TODO: unit test
     fn lda(&mut self, instruction: Word) {
-        let address = instruction.address();
+        let index_modifier = match instruction.index() {
+            0 => 0,
+            1 => self.r_i1.to_i32(),
+            2 => self.r_i2.to_i32(),
+            3 => self.r_i3.to_i32(),
+            4 => self.r_i4.to_i32(),
+            5 => self.r_i5.to_i32(),
+            6 => self.r_i6.to_i32(),
+            _ => panic!("Invalid index"),
+        };
+        let address = instruction.address() + index_modifier;
         let contents = self.memory.get(address).unwrap();
         let field_specifier = instruction.field();
         if !field_specifier.is_valid() {
@@ -172,7 +181,13 @@ impl Computer {
             true => bytes_to_load.push(contents.bytes.4),
             false => prepend_zero_byte(&mut bytes_to_load),
         };
-        let bytes_to_load = (bytes_to_load[0], bytes_to_load[1], bytes_to_load[2], bytes_to_load[3], bytes_to_load[4]);
+        let bytes_to_load = (
+            bytes_to_load[0],
+            bytes_to_load[1],
+            bytes_to_load[2],
+            bytes_to_load[3],
+            bytes_to_load[4],
+        );
 
         self.r_a = Word {
             sign: sign_to_load,
@@ -289,4 +304,52 @@ impl Computer {
     fn cmp6(&mut self, instruction: Word) {}
 
     fn cmpx(&mut self, instruction: Word) {}
+}
+
+#[cfg(test)]
+mod lda_tests {
+    use crate::{computer::Computer, data_types::{Word, Sign, Index}};
+
+    #[test]
+    fn should_load_value_from_memory_into_a() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 8).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a.to_i32(), content.to_i32());
+    }
+
+    #[test]
+    fn should_load_value_from_index_modified_address() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(2345).unwrap();
+        computer.memory.set(101, content).unwrap();
+        computer.memory.set(200, Word::from_i32(5432).unwrap()).unwrap();
+        computer.r_i4 = Index::from_i32(-99).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 200, 4, 5, 8).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a.to_i32(), content.to_i32());
+    }
+
+    #[test]
+    fn should_load_value_into_a_without_changing_sign() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(-1).unwrap();
+        computer.memory.set(5, content).unwrap();
+        computer.r_a = Word::MAX;
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 5, 0, 13, 8).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a.to_i32(), 1);
+    }
+
+    fn should_load_part_of_value_into_a() {
+        unimplemented!()
+    }
 }

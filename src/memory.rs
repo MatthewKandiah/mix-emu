@@ -11,6 +11,7 @@ pub enum AccessError {
     InvalidAddress(i32),
 }
 
+#[derive(Debug)]
 pub enum SetError {
     InvalidAddress(i32),
 }
