@@ -1,4 +1,4 @@
-use crate::data_types::{Byte, Index, JumpAddress, Word};
+use crate::data_types::{Byte, Index, JumpAddress, Word, FieldSpecification, Sign};
 use crate::memory::Memory;
 
 pub enum ComparisonIndicatorState {
@@ -132,7 +132,7 @@ impl Computer {
 
     fn mov(&mut self, instruction: Word) {}
 
-    fn lda(&mut self, instruction: Word) {
+    fn modified_address(&self, instruction: Word) -> i32{
         let index_modifier = match instruction.index() {
             0 => 0,
             1 => self.r_i1.to_i32(),
@@ -143,18 +143,17 @@ impl Computer {
             6 => self.r_i6.to_i32(),
             _ => panic!("Invalid index"),
         };
-        let address = instruction.address() + index_modifier;
-        let contents = self.memory.get(address).unwrap();
-        let field_specifier = instruction.field();
-        if !field_specifier.is_valid() {
-            panic!("illegal field specifier: {:?}", field_specifier);
-        }
+        instruction.address() + index_modifier
+    }
 
-        let sign_to_load = match field_specifier.inclusive_range().contains(&0) {
+    fn sign_to_load(field_specifier: &FieldSpecification, contents: Word, original_value: Sign) -> Sign {
+        match field_specifier.inclusive_range().contains(&0) {
             true => contents.sign,
-            false => self.r_a.sign,
-        };
+            false => original_value,
+        }
+    }
 
+    fn bytes_to_load_word(field_specifier: &FieldSpecification, contents: Word) -> (Byte, Byte, Byte, Byte, Byte) {
         let mut bytes_to_load = Vec::<Byte>::new();
         let prepend_zero_byte = |bytes_to_copy: &mut Vec<Byte>| {
             bytes_to_copy.reverse();
@@ -181,17 +180,40 @@ impl Computer {
             true => bytes_to_load.push(contents.bytes.4),
             false => prepend_zero_byte(&mut bytes_to_load),
         };
-        let bytes_to_load = (
+        (
             bytes_to_load[0],
             bytes_to_load[1],
             bytes_to_load[2],
             bytes_to_load[3],
             bytes_to_load[4],
-        );
+        )
+    }
+
+    fn lda(&mut self, instruction: Word) {
+        let address = self.modified_address(instruction);
+        let contents = self.memory.get(address).unwrap();
+        let field_specifier = instruction.field();
+        if !field_specifier.is_valid() {
+            panic!("illegal field specifier: {:?}", field_specifier);
+        }
 
         self.r_a = Word {
-            sign: sign_to_load,
-            bytes: bytes_to_load,
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_a.sign),
+            bytes: Self::bytes_to_load_word(&field_specifier, contents),
+        };
+    }
+
+    fn ldx(&mut self, instruction: Word) {
+        let address = self.modified_address(instruction);
+        let contents = self.memory.get(address).unwrap();
+        let field_specifier = instruction.field();
+        if !field_specifier.is_valid() {
+            panic!("illegal field specifier: {:?}", field_specifier);
+        }
+
+        self.r_x = Word {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_x.sign),
+            bytes: Self::bytes_to_load_word(&field_specifier, contents),
         };
     }
 
@@ -206,8 +228,6 @@ impl Computer {
     fn ld5(&mut self, instruction: Word) {}
 
     fn ld6(&mut self, instruction: Word) {}
-
-    fn ldx(&mut self, instruction: Word) {}
 
     fn ldan(&mut self, instruction: Word) {}
 
@@ -374,5 +394,76 @@ mod lda_tests {
         computer.handle_instruction(instruction);
 
         assert_eq!(computer.r_a.to_i32(), 2 * 64_i32.pow(2) + 3 * 64 + 4);
+    }
+}
+
+#[cfg(test)]
+mod ldx_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Byte, Index, Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory_into_a() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 15).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_x.to_i32(), content.to_i32());
+    }
+
+    #[test]
+    fn should_load_value_from_index_modified_address() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(2345).unwrap();
+        computer.memory.set(101, content).unwrap();
+        computer
+            .memory
+            .set(200, Word::from_i32(5432).unwrap())
+            .unwrap();
+        computer.r_i3 = Index::from_i32(-99).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 200, 3, 5, 15).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_x.to_i32(), content.to_i32());
+    }
+
+    #[test]
+    fn should_load_value_into_a_without_changing_sign() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(-1).unwrap();
+        computer.memory.set(5, content).unwrap();
+        computer.r_x = Word::MAX;
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 5, 0, 13, 15).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_x.to_i32(), 1);
+    }
+
+    #[test]
+    fn should_load_part_of_value_into_a() {
+        let mut computer = Computer::new();
+        let content = Word {
+            sign: Sign::MINUS,
+            bytes: (
+                Byte::from_i32(1).unwrap(),
+                Byte::from_i32(2).unwrap(),
+                Byte::from_i32(3).unwrap(),
+                Byte::from_i32(4).unwrap(),
+                Byte::from_i32(5).unwrap(),
+            ),
+        };
+        computer.memory.set(10, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, 20, 15).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_x.to_i32(), 2 * 64_i32.pow(2) + 3 * 64 + 4);
     }
 }
