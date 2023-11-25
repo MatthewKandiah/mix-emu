@@ -189,6 +189,14 @@ impl Computer {
         )
     }
 
+    fn bytes_to_load_index(field_specifier: &FieldSpecification, contents: Word) -> (Byte, Byte) {
+        let bytes_for_word = Self::bytes_to_load_word(field_specifier, contents);
+        if bytes_for_word.0 != Byte::ZERO || bytes_for_word.1 != Byte::ZERO || bytes_for_word.2 != Byte::ZERO {
+            panic!("Attempting to load too many bytes into index register");
+        }
+        (bytes_for_word.3, bytes_for_word.4)
+    }
+
     fn lda(&mut self, instruction: Word) {
         let address = self.modified_address(instruction);
         let contents = self.memory.get(address).unwrap();
@@ -217,7 +225,19 @@ impl Computer {
         };
     }
 
-    fn ld1(&mut self, instruction: Word) {}
+    fn ld1(&mut self, instruction: Word) {
+        let address = self.modified_address(instruction);
+        let contents = self.memory.get(address).unwrap();
+        let field_specifier = instruction.field();
+        if !field_specifier.is_valid() {
+            panic!("illegal field speficier: {:?}", field_specifier);
+        }
+
+        self.r_i1 = Index {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_i1.sign),
+            bytes: Self::bytes_to_load_index(&field_specifier, contents),
+        };
+    }
 
     fn ld2(&mut self, instruction: Word) {}
 
@@ -405,7 +425,7 @@ mod ldx_tests {
     };
 
     #[test]
-    fn should_load_value_from_memory_into_a() {
+    fn should_load_value_from_memory_into_x() {
         let mut computer = Computer::new();
         let content = Word::from_i32(1234).unwrap();
         computer.memory.set(1, content).unwrap();
@@ -434,7 +454,7 @@ mod ldx_tests {
     }
 
     #[test]
-    fn should_load_value_into_a_without_changing_sign() {
+    fn should_load_value_into_x_without_changing_sign() {
         let mut computer = Computer::new();
         let content = Word::from_i32(-1).unwrap();
         computer.memory.set(5, content).unwrap();
@@ -447,7 +467,7 @@ mod ldx_tests {
     }
 
     #[test]
-    fn should_load_part_of_value_into_a() {
+    fn should_load_part_of_value_into_x() {
         let mut computer = Computer::new();
         let content = Word {
             sign: Sign::MINUS,
@@ -465,5 +485,76 @@ mod ldx_tests {
         computer.handle_instruction(instruction);
 
         assert_eq!(computer.r_x.to_i32(), 2 * 64_i32.pow(2) + 3 * 64 + 4);
+    }
+}
+
+#[cfg(test)]
+mod ld1_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Byte, Index, Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory_into_1() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 9).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i1.to_i32(), content.to_i32());
+    }
+
+    #[test]
+    fn should_load_value_from_index_modified_address() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(2345).unwrap();
+        computer.memory.set(101, content).unwrap();
+        computer
+            .memory
+            .set(200, Word::from_i32(5432).unwrap())
+            .unwrap();
+        computer.r_i2 = Index::from_i32(-99).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 200, 2, 5, 9).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i1.to_i32(), content.to_i32());
+    }
+
+    #[test]
+    fn should_load_value_into_1_without_changing_sign() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(-1).unwrap();
+        computer.memory.set(5, content).unwrap();
+        computer.r_i1 = Index::MAX;
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 5, 0, 13, 9).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i1.to_i32(), 1);
+    }
+
+    #[test]
+    fn should_load_part_of_value_into_1() {
+        let mut computer = Computer::new();
+        let content = Word {
+            sign: Sign::MINUS,
+            bytes: (
+                Byte::from_i32(1).unwrap(),
+                Byte::from_i32(2).unwrap(),
+                Byte::from_i32(3).unwrap(),
+                Byte::from_i32(4).unwrap(),
+                Byte::from_i32(5).unwrap(),
+            ),
+        };
+        computer.memory.set(10, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, 28, 9).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i1.to_i32(), 3 * 64 + 4);
     }
 }

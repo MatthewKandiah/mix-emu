@@ -364,8 +364,8 @@ fn should_make_correct_word_for_i32_value() {
 
 #[derive(Debug, PartialEq, Eq)]
 pub struct Index {
-    sign: Sign,
-    bytes: (Byte, Byte),
+    pub sign: Sign,
+    pub bytes: (Byte, Byte),
 }
 
 #[derive(Debug, PartialEq, Eq)]
