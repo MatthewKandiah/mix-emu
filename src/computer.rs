@@ -281,21 +281,69 @@ impl Computer {
         };
     }
 
-    fn ldan(&mut self, instruction: Word) {}
+    fn ldan(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        self.r_a = Word {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_a.sign).opposite(),
+            bytes: Self::bytes_to_load_word(&field_specifier, contents),
+        };
+    }
 
-    fn ld1n(&mut self, instruction: Word) {}
+    fn ld1n(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        self.r_i1 = Index {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_i1.sign).opposite(),
+            bytes: Self::bytes_to_load_index(&field_specifier, contents),
+        };
+    }
 
-    fn ld2n(&mut self, instruction: Word) {}
+    fn ld2n(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        self.r_i2 = Index {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_i2.sign).opposite(),
+            bytes: Self::bytes_to_load_index(&field_specifier, contents),
+        };
+    }
 
-    fn ld3n(&mut self, instruction: Word) {}
+    fn ld3n(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        self.r_i3 = Index {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_i3.sign).opposite(),
+            bytes: Self::bytes_to_load_index(&field_specifier, contents),
+        };
+    }
 
-    fn ld4n(&mut self, instruction: Word) {}
+    fn ld4n(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        self.r_i4 = Index {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_i4.sign).opposite(),
+            bytes: Self::bytes_to_load_index(&field_specifier, contents),
+        };
+    }
 
-    fn ld5n(&mut self, instruction: Word) {}
+    fn ld5n(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        self.r_i5 = Index {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_i5.sign).opposite(),
+            bytes: Self::bytes_to_load_index(&field_specifier, contents),
+        };
+    }
 
-    fn ld6n(&mut self, instruction: Word) {}
+    fn ld6n(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        self.r_i6 = Index {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_i6.sign).opposite(),
+            bytes: Self::bytes_to_load_index(&field_specifier, contents),
+        };
+    }
 
-    fn ldxn(&mut self, instruction: Word) {}
+    fn ldxn(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        self.r_x = Word {
+            sign: Self::sign_to_load(&field_specifier, contents, self.r_x.sign).opposite(),
+            bytes: Self::bytes_to_load_word(&field_specifier, contents),
+        };
+    }
 
     fn sta(&mut self, instruction: Word) {}
 
@@ -943,5 +991,216 @@ mod ld6_tests {
         computer.handle_instruction(instruction);
 
         assert_eq!(computer.r_i6.to_i32(), 3 * 64 + 4);
+    }
+}
+
+#[cfg(test)]
+mod ldan_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Byte, Index, Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 16).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a.to_i32(), -1234);
+    }
+
+    #[test]
+    fn should_load_value_from_index_modified_address() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(-2345).unwrap();
+        computer.memory.set(101, content).unwrap();
+        computer
+            .memory
+            .set(200, Word::from_i32(5432).unwrap())
+            .unwrap();
+        computer.r_i4 = Index::from_i32(-99).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 200, 4, 5, 16).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a.to_i32(), content.to_i32() * (-1));
+    }
+
+    #[test]
+    fn should_load_value_and_change_sign() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(-1).unwrap();
+        computer.memory.set(5, content).unwrap();
+        computer.r_a = Word::MAX;
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 5, 0, 13, 16).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a.to_i32(), -1);
+    }
+
+    #[test]
+    fn should_load_part_of_value() {
+        let mut computer = Computer::new();
+        let content = Word {
+            sign: Sign::MINUS,
+            bytes: (
+                Byte::from_i32(1).unwrap(),
+                Byte::from_i32(2).unwrap(),
+                Byte::from_i32(3).unwrap(),
+                Byte::from_i32(4).unwrap(),
+                Byte::from_i32(5).unwrap(),
+            ),
+        };
+        computer.memory.set(10, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, 20, 16).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a.to_i32(), (-1) * (2 * 64_i32.pow(2) + 3 * 64 + 4));
+    }
+}
+
+#[cfg(test)]
+mod ldxn_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 23).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_x.to_i32(), -1234);
+    }
+}
+
+#[cfg(test)]
+mod ld1n_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 17).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i1.to_i32(), -1234);
+    }
+}
+
+#[cfg(test)]
+mod ld2n_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 18).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i2.to_i32(), -1234);
+    }
+}
+
+#[cfg(test)]
+mod ld3n_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 19).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i3.to_i32(), -1234);
+    }
+}
+
+#[cfg(test)]
+mod ld4n_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 20).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i4.to_i32(), -1234);
+    }
+}
+
+#[cfg(test)]
+mod ld5n_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 21).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i5.to_i32(), -1234);
+    }
+}
+
+#[cfg(test)]
+mod ld6n_tests {
+    use crate::{
+        computer::Computer,
+        data_types::{Sign, Word},
+    };
+
+    #[test]
+    fn should_load_value_from_memory() {
+        let mut computer = Computer::new();
+        let content = Word::from_i32(1234).unwrap();
+        computer.memory.set(1, content).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 22).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_i6.to_i32(), -1234);
     }
 }

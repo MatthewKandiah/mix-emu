@@ -171,6 +171,13 @@ impl Sign {
             false => Self::MINUS,
         }
     }
+
+    pub fn opposite(&self) -> Self {
+        match self {
+            Self::PLUS => Self::MINUS,
+            Self::MINUS => Self::PLUS,
+        }
+    }
 }
 
 #[derive(Debug)]
