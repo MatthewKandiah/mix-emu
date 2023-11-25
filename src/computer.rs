@@ -354,7 +354,7 @@ mod lda_tests {
     };
 
     #[test]
-    fn should_load_value_from_memory_into_a() {
+    fn should_load_value_from_memory() {
         let mut computer = Computer::new();
         let content = Word::from_i32(1234).unwrap();
         computer.memory.set(1, content).unwrap();
@@ -383,7 +383,7 @@ mod lda_tests {
     }
 
     #[test]
-    fn should_load_value_into_a_without_changing_sign() {
+    fn should_load_value_without_changing_sign() {
         let mut computer = Computer::new();
         let content = Word::from_i32(-1).unwrap();
         computer.memory.set(5, content).unwrap();
@@ -396,7 +396,7 @@ mod lda_tests {
     }
 
     #[test]
-    fn should_load_part_of_value_into_a() {
+    fn should_load_part_of_value() {
         let mut computer = Computer::new();
         let content = Word {
             sign: Sign::MINUS,
@@ -425,7 +425,7 @@ mod ldx_tests {
     };
 
     #[test]
-    fn should_load_value_from_memory_into_x() {
+    fn should_load_value_from_memory() {
         let mut computer = Computer::new();
         let content = Word::from_i32(1234).unwrap();
         computer.memory.set(1, content).unwrap();
@@ -454,7 +454,7 @@ mod ldx_tests {
     }
 
     #[test]
-    fn should_load_value_into_x_without_changing_sign() {
+    fn should_load_value_without_changing_sign() {
         let mut computer = Computer::new();
         let content = Word::from_i32(-1).unwrap();
         computer.memory.set(5, content).unwrap();
@@ -467,7 +467,7 @@ mod ldx_tests {
     }
 
     #[test]
-    fn should_load_part_of_value_into_x() {
+    fn should_load_part_of_value() {
         let mut computer = Computer::new();
         let content = Word {
             sign: Sign::MINUS,
@@ -496,7 +496,7 @@ mod ld1_tests {
     };
 
     #[test]
-    fn should_load_value_from_memory_into_1() {
+    fn should_load_value_from_memory() {
         let mut computer = Computer::new();
         let content = Word::from_i32(1234).unwrap();
         computer.memory.set(1, content).unwrap();
@@ -525,7 +525,7 @@ mod ld1_tests {
     }
 
     #[test]
-    fn should_load_value_into_1_without_changing_sign() {
+    fn should_load_value_without_changing_sign() {
         let mut computer = Computer::new();
         let content = Word::from_i32(-1).unwrap();
         computer.memory.set(5, content).unwrap();
@@ -538,7 +538,7 @@ mod ld1_tests {
     }
 
     #[test]
-    fn should_load_part_of_value_into_1() {
+    fn should_load_part_of_value() {
         let mut computer = Computer::new();
         let content = Word {
             sign: Sign::MINUS,
