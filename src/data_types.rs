@@ -299,6 +299,40 @@ impl Word {
         })
     }
 
+    pub fn from_byte_values(
+        sign: Sign,
+        value1: i32,
+        value2: i32,
+        value3: i32,
+        value4: i32,
+        value5: i32,
+    ) -> Result<Word, WordValueError> {
+        let byte1 = match Byte::from_i32(value1) {
+            Ok(x) => x,
+            Err(_) => return Err(WordValueError::Overflow(value1)),
+        };
+        let byte2 = match Byte::from_i32(value2) {
+            Ok(x) => x,
+            Err(_) => return Err(WordValueError::Overflow(value2)),
+        };
+        let byte3 = match Byte::from_i32(value3) {
+            Ok(x) => x,
+            Err(_) => return Err(WordValueError::Overflow(value3)),
+        };
+        let byte4 = match Byte::from_i32(value4) {
+            Ok(x) => x,
+            Err(_) => return Err(WordValueError::Overflow(value4)),
+        };
+        let byte5 = match Byte::from_i32(value5) {
+            Ok(x) => x,
+            Err(_) => return Err(WordValueError::Overflow(value5)),
+        };
+        Ok(Word {
+            sign,
+            bytes: (byte1, byte2, byte3, byte4, byte5),
+        })
+    }
+
     pub fn address(&self) -> i32 {
         self.sign.value() * (self.bytes.0.to_i32() * 64 + self.bytes.1.to_i32())
     }

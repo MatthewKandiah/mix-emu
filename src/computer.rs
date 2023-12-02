@@ -157,8 +157,8 @@ impl Computer {
         }
     }
 
-    fn sign_to_store(field_specifier: &FieldSpecification, contents: Word) -> Sign {
-        Self::sign_to_load(field_specifier, contents, contents.sign)
+    fn sign_to_store(field_specifier: &FieldSpecification, contents: Word, original_value: Sign) -> Sign {
+        Self::sign_to_load(field_specifier, contents, original_value)
     }
 
     fn bytes_to_load_word(
@@ -383,10 +383,12 @@ impl Computer {
             bytes_to_store.0 = next_byte;
         }
 
+        let original_sign = self.memory.get(self.modified_address(instruction)).unwrap().sign;
+
         self.memory.set(
             self.modified_address(instruction),
             Word {
-                sign: Self::sign_to_store(&field_specifier, contents),
+                sign: Self::sign_to_store(&field_specifier, self.r_a, original_sign),
                 bytes: bytes_to_store,
             },
         ).unwrap();
