@@ -146,7 +146,7 @@ impl Computer {
         instruction.address() + index_modifier
     }
 
-    fn sign_to_load(
+    fn sign_to_load_or_store(
         field_specifier: &FieldSpecification,
         contents: Word,
         original_value: Sign,
@@ -155,10 +155,6 @@ impl Computer {
             true => contents.sign,
             false => original_value,
         }
-    }
-
-    fn sign_to_store(field_specifier: &FieldSpecification, contents: Word, original_value: Sign) -> Sign {
-        Self::sign_to_load(field_specifier, contents, original_value)
     }
 
     fn bytes_to_load_word(
@@ -219,7 +215,7 @@ impl Computer {
     fn lda(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_a = Word {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_a.sign),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_a.sign),
             bytes: Self::bytes_to_load_word(&field_specifier, contents),
         };
     }
@@ -227,7 +223,7 @@ impl Computer {
     fn ld1(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i1 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i1.sign),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i1.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -235,7 +231,7 @@ impl Computer {
     fn ld2(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i2 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i2.sign),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i2.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -243,7 +239,7 @@ impl Computer {
     fn ld3(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i3 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i3.sign),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i3.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -251,7 +247,7 @@ impl Computer {
     fn ld4(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i4 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i4.sign),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i4.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -259,7 +255,7 @@ impl Computer {
     fn ld5(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i5 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i5.sign),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i5.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -267,7 +263,7 @@ impl Computer {
     fn ld6(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i6 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i6.sign),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i6.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -275,7 +271,7 @@ impl Computer {
     fn ldx(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_x = Word {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_x.sign),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_x.sign),
             bytes: Self::bytes_to_load_word(&field_specifier, contents),
         };
     }
@@ -283,7 +279,7 @@ impl Computer {
     fn ldan(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_a = Word {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_a.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_a.sign).opposite(),
             bytes: Self::bytes_to_load_word(&field_specifier, contents),
         };
     }
@@ -291,7 +287,7 @@ impl Computer {
     fn ld1n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i1 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i1.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i1.sign).opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -299,7 +295,7 @@ impl Computer {
     fn ld2n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i2 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i2.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i2.sign).opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -307,7 +303,7 @@ impl Computer {
     fn ld3n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i3 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i3.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i3.sign).opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -315,7 +311,7 @@ impl Computer {
     fn ld4n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i4 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i4.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i4.sign).opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -323,7 +319,7 @@ impl Computer {
     fn ld5n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i5 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i5.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i5.sign).opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -331,7 +327,7 @@ impl Computer {
     fn ld6n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i6 = Index {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_i6.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i6.sign).opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -339,59 +335,75 @@ impl Computer {
     fn ldxn(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_x = Word {
-            sign: Self::sign_to_load(&field_specifier, contents, self.r_x.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_x.sign).opposite(),
             bytes: Self::bytes_to_load_word(&field_specifier, contents),
         };
+    }
+
+    fn bytes_to_store(
+        memory_contents: Word,
+        register_contents: Word,
+        field_specifier: &FieldSpecification,
+    ) -> (Byte, Byte, Byte, Byte, Byte) {
+        let mut bytes_to_store = memory_contents.bytes;
+        let mut number_of_bytes_altered = 0;
+        let get_next_byte =
+            |number_of_bytes_altered: i32, bytes: (Byte, Byte, Byte, Byte, Byte)| -> Byte {
+                match number_of_bytes_altered {
+                    0 => bytes.4,
+                    1 => bytes.3,
+                    2 => bytes.2,
+                    3 => bytes.1,
+                    4 => bytes.0,
+                    _ => panic!("invalid byte access"),
+                }
+            };
+        let mut next_byte = get_next_byte(number_of_bytes_altered, register_contents.bytes);
+
+        if field_specifier.inclusive_range().contains(&5) {
+            bytes_to_store.4 = next_byte;
+            number_of_bytes_altered += 1;
+            next_byte = get_next_byte(number_of_bytes_altered, register_contents.bytes);
+        }
+        if field_specifier.inclusive_range().contains(&4) {
+            bytes_to_store.3 = next_byte;
+            number_of_bytes_altered += 1;
+            next_byte = get_next_byte(number_of_bytes_altered, register_contents.bytes);
+        }
+        if field_specifier.inclusive_range().contains(&3) {
+            bytes_to_store.2 = next_byte;
+            number_of_bytes_altered += 1;
+            next_byte = get_next_byte(number_of_bytes_altered, register_contents.bytes);
+        }
+        if field_specifier.inclusive_range().contains(&2) {
+            bytes_to_store.1 = next_byte;
+            number_of_bytes_altered += 1;
+            next_byte = get_next_byte(number_of_bytes_altered, register_contents.bytes);
+        }
+        if field_specifier.inclusive_range().contains(&1) {
+            bytes_to_store.0 = next_byte;
+        }
+        bytes_to_store
     }
 
     fn sta(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
 
-        let mut bytes_to_store = contents.bytes;
-        let mut number_of_bytes_altered = 0;
-        let get_next_byte = |number_of_bytes_altered: i32, bytes: (Byte, Byte, Byte, Byte, Byte)| -> Byte {match number_of_bytes_altered {
-            0 => bytes.4,
-            1 => bytes.3,
-            2 => bytes.2,
-            3 => bytes.1,
-            4 => bytes.0,
-            _ => panic!("invalid byte access"),
-        }};
-        let mut next_byte = get_next_byte(number_of_bytes_altered, self.r_a.bytes);
+        let original_sign = self
+            .memory
+            .get(self.modified_address(instruction))
+            .unwrap()
+            .sign;
 
-        if field_specifier.inclusive_range().contains(&5) {
-            bytes_to_store.4 = next_byte;
-            number_of_bytes_altered += 1;
-            next_byte = get_next_byte(number_of_bytes_altered, self.r_a.bytes);
-        }
-        if field_specifier.inclusive_range().contains(&4) {
-            bytes_to_store.3 = next_byte;
-            number_of_bytes_altered += 1;
-            next_byte = get_next_byte(number_of_bytes_altered, self.r_a.bytes);
-        }
-        if field_specifier.inclusive_range().contains(&3) {
-            bytes_to_store.2 = next_byte;
-            number_of_bytes_altered += 1;
-            next_byte = get_next_byte(number_of_bytes_altered, self.r_a.bytes);
-        }
-        if field_specifier.inclusive_range().contains(&2) {
-            bytes_to_store.1 = next_byte;
-            number_of_bytes_altered += 1;
-            next_byte = get_next_byte(number_of_bytes_altered, self.r_a.bytes);
-        }
-        if field_specifier.inclusive_range().contains(&1) {
-            bytes_to_store.0 = next_byte;
-        }
-
-        let original_sign = self.memory.get(self.modified_address(instruction)).unwrap().sign;
-
-        self.memory.set(
-            self.modified_address(instruction),
-            Word {
-                sign: Self::sign_to_store(&field_specifier, self.r_a, original_sign),
-                bytes: bytes_to_store,
-            },
-        ).unwrap();
+        self.memory
+            .set(
+                self.modified_address(instruction),
+                Word {
+                    sign: Self::sign_to_load_or_store(&field_specifier, self.r_a, original_sign),
+                    bytes: Self::bytes_to_store(contents, self.r_a, &field_specifier),
+                },
+            )
+            .unwrap();
     }
 
     fn st1(&mut self, instruction: Word) {}
@@ -406,7 +418,25 @@ impl Computer {
 
     fn st6(&mut self, instruction: Word) {}
 
-    fn stx(&mut self, instruction: Word) {}
+    fn stx(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+
+        let original_sign = self
+            .memory
+            .get(self.modified_address(instruction))
+            .unwrap()
+            .sign;
+
+        self.memory
+            .set(
+                self.modified_address(instruction),
+                Word {
+                    sign: Self::sign_to_load_or_store(&field_specifier, self.r_x, original_sign),
+                    bytes: Self::bytes_to_store(contents, self.r_x, &field_specifier),
+                },
+            )
+            .unwrap();
+    }
 
     fn stj(&mut self, instruction: Word) {}
 
