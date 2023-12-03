@@ -406,7 +406,13 @@ impl Computer {
             .unwrap();
     }
 
-    fn st1(&mut self, instruction: Word) {}
+    fn st1(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        let original_sign = self.memory.get(self.modified_address(instruction)).unwrap().sign;
+        let word_from_index = Word::from_i32(self.r_i1.to_i32()).unwrap();
+
+        self.memory.set(self.modified_address(instruction), Word {sign: Self::sign_to_load_or_store(&field_specifier, word_from_index, original_sign), bytes: Self::bytes_to_store(contents, word_from_index, &field_specifier)}).unwrap();
+    }
 
     fn st2(&mut self, instruction: Word) {}
 
