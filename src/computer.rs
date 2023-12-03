@@ -394,7 +394,6 @@ impl Computer {
 
     fn sta(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-
         let original_sign = self
             .memory
             .get(self.modified_address(instruction))
@@ -558,7 +557,6 @@ impl Computer {
 
     fn stx(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-
         let original_sign = self
             .memory
             .get(self.modified_address(instruction))
