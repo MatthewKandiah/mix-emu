@@ -287,7 +287,8 @@ impl Computer {
     fn ld1n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i1 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i1.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i1.sign)
+                .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -295,7 +296,8 @@ impl Computer {
     fn ld2n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i2 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i2.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i2.sign)
+                .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -303,7 +305,8 @@ impl Computer {
     fn ld3n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i3 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i3.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i3.sign)
+                .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -311,7 +314,8 @@ impl Computer {
     fn ld4n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i4 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i4.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i4.sign)
+                .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -319,7 +323,8 @@ impl Computer {
     fn ld5n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i5 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i5.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i5.sign)
+                .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -327,7 +332,8 @@ impl Computer {
     fn ld6n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         self.r_i6 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i6.sign).opposite(),
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i6.sign)
+                .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
@@ -408,15 +414,75 @@ impl Computer {
 
     fn st1(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        let original_sign = self.memory.get(self.modified_address(instruction)).unwrap().sign;
+        let original_sign = self
+            .memory
+            .get(self.modified_address(instruction))
+            .unwrap()
+            .sign;
         let word_from_index = Word::from_i32(self.r_i1.to_i32()).unwrap();
 
-        self.memory.set(self.modified_address(instruction), Word {sign: Self::sign_to_load_or_store(&field_specifier, word_from_index, original_sign), bytes: Self::bytes_to_store(contents, word_from_index, &field_specifier)}).unwrap();
+        self.memory
+            .set(
+                self.modified_address(instruction),
+                Word {
+                    sign: Self::sign_to_load_or_store(
+                        &field_specifier,
+                        word_from_index,
+                        original_sign,
+                    ),
+                    bytes: Self::bytes_to_store(contents, word_from_index, &field_specifier),
+                },
+            )
+            .unwrap();
     }
 
-    fn st2(&mut self, instruction: Word) {}
+    fn st2(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        let original_sign = self
+            .memory
+            .get(self.modified_address(instruction))
+            .unwrap()
+            .sign;
+        let word_from_index = Word::from_i32(self.r_i2.to_i32()).unwrap();
 
-    fn st3(&mut self, instruction: Word) {}
+        self.memory
+            .set(
+                self.modified_address(instruction),
+                Word {
+                    sign: Self::sign_to_load_or_store(
+                        &field_specifier,
+                        word_from_index,
+                        original_sign,
+                    ),
+                    bytes: Self::bytes_to_store(contents, word_from_index, &field_specifier),
+                },
+            )
+            .unwrap();
+    }
+
+    fn st3(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        let original_sign = self
+            .memory
+            .get(self.modified_address(instruction))
+            .unwrap()
+            .sign;
+        let word_from_index = Word::from_i32(self.r_i3.to_i32()).unwrap();
+
+        self.memory
+            .set(
+                self.modified_address(instruction),
+                Word {
+                    sign: Self::sign_to_load_or_store(
+                        &field_specifier,
+                        word_from_index,
+                        original_sign,
+                    ),
+                    bytes: Self::bytes_to_store(contents, word_from_index, &field_specifier),
+                },
+            )
+            .unwrap();
+    }
 
     fn st4(&mut self, instruction: Word) {}
 
