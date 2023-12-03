@@ -570,6 +570,26 @@ impl JumpAddress {
         let second_byte = Byte::from_i32(value % 64).unwrap();
         Ok(Self(first_byte, second_byte))
     }
+
+    pub fn from_byte_values(value1: i32, value2: i32) -> Result<Self, JumpAddressValueError> {
+        let first_byte = match Byte::from_i32(value1) {
+            Ok(x) => x,
+            Err(x) => match x {
+                ByteValueError::Overflow(v) => return Err(JumpAddressValueError::Overflow(v)),
+                ByteValueError::Underflow(v) => return Err(JumpAddressValueError::Underflow(v)),
+            },
+        };
+
+        let second_byte = match Byte::from_i32(value2) {
+            Ok(x) => x,
+            Err(x) => match x {
+                ByteValueError::Overflow(v) => return Err(JumpAddressValueError::Overflow(v)),
+                ByteValueError::Underflow(v) => return Err(JumpAddressValueError::Underflow(v)),
+            },
+        };
+
+        Ok(Self(first_byte, second_byte))
+    }
 }
 
 #[test]
