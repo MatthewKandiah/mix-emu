@@ -39,7 +39,7 @@ mod sta_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 24).unwrap();
         computer.handle_instruction(instruction);
@@ -51,7 +51,7 @@ mod sta_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 24).unwrap();
@@ -105,7 +105,7 @@ mod stx_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 31).unwrap();
         computer.handle_instruction(instruction);
@@ -117,7 +117,7 @@ mod stx_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 31).unwrap();
@@ -171,7 +171,7 @@ mod st1_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 25).unwrap();
         computer.handle_instruction(instruction);
@@ -183,7 +183,7 @@ mod st1_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 25).unwrap();
@@ -237,7 +237,7 @@ mod st2_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 26).unwrap();
         computer.handle_instruction(instruction);
@@ -249,7 +249,7 @@ mod st2_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 26).unwrap();
@@ -303,7 +303,7 @@ mod st3_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 27).unwrap();
         computer.handle_instruction(instruction);
@@ -315,7 +315,7 @@ mod st3_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 27).unwrap();
@@ -369,7 +369,7 @@ mod st4_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 28).unwrap();
         computer.handle_instruction(instruction);
@@ -381,7 +381,7 @@ mod st4_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i2 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 2, 45, 28).unwrap();
@@ -435,7 +435,7 @@ mod st5_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 29).unwrap();
         computer.handle_instruction(instruction);
@@ -447,7 +447,7 @@ mod st5_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 29).unwrap();
@@ -501,7 +501,7 @@ mod st6_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 30).unwrap();
         computer.handle_instruction(instruction);
@@ -513,7 +513,7 @@ mod st6_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 30).unwrap();
@@ -567,7 +567,7 @@ mod stj_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 32).unwrap();
         computer.handle_instruction(instruction);
@@ -579,7 +579,7 @@ mod stj_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 32).unwrap();
@@ -633,7 +633,7 @@ mod stz_tests {
     }
 
     #[test]
-    fn should_store_contents_in_index_adjusted_address() {
+    fn should_store_part_of_contents() {
         let mut computer = setup_computer();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 2000, 0, 19, 33).unwrap();
         computer.handle_instruction(instruction);
@@ -645,7 +645,7 @@ mod stz_tests {
     }
 
     #[test]
-    fn should_store_part_of_contents_in_memory() {
+    fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
         computer.r_i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 33).unwrap();
