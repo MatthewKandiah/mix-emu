@@ -454,20 +454,27 @@ impl Index {
     pub fn from_byte_values(sign: Sign, value1: i32, value2: i32) -> Result<Self, IndexValueError> {
         let byte1 = match Byte::from_i32(value1) {
             Ok(x) => x,
-            Err(x) => return Err(match x {
-                ByteValueError::Overflow(x) => IndexValueError::Overflow(x),
-                ByteValueError::Underflow(x) => IndexValueError::Underflow(x),
-            }),
+            Err(x) => {
+                return Err(match x {
+                    ByteValueError::Overflow(x) => IndexValueError::Overflow(x),
+                    ByteValueError::Underflow(x) => IndexValueError::Underflow(x),
+                })
+            }
         };
 
         let byte2 = match Byte::from_i32(value2) {
             Ok(x) => x,
-            Err(x) => return Err( match x {
-                ByteValueError::Overflow(x) => IndexValueError::Overflow(x),
-                ByteValueError::Underflow(x) => IndexValueError::Underflow(x),
-            }),
+            Err(x) => {
+                return Err(match x {
+                    ByteValueError::Overflow(x) => IndexValueError::Overflow(x),
+                    ByteValueError::Underflow(x) => IndexValueError::Underflow(x),
+                })
+            }
         };
-        Ok(Index {sign, bytes: (byte1, byte2)})
+        Ok(Index {
+            sign,
+            bytes: (byte1, byte2),
+        })
     }
 }
 

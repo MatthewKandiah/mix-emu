@@ -578,16 +578,46 @@ impl Computer {
 
     fn stj(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        let original_sign = self.memory.get(self.modified_address(instruction)).unwrap().sign;
+        let original_sign = self
+            .memory
+            .get(self.modified_address(instruction))
+            .unwrap()
+            .sign;
         let word_from_jump_address = Word::from_i32(self.r_j.to_i32()).unwrap();
 
-        self.memory.set(self.modified_address(instruction), Word {
-            sign: Self::sign_to_load_or_store(&field_specifier,word_from_jump_address, original_sign),
-            bytes: Self::bytes_to_store(contents ,word_from_jump_address, &field_specifier),
-        }).unwrap();
+        self.memory
+            .set(
+                self.modified_address(instruction),
+                Word {
+                    sign: Self::sign_to_load_or_store(
+                        &field_specifier,
+                        word_from_jump_address,
+                        original_sign,
+                    ),
+                    bytes: Self::bytes_to_store(contents, word_from_jump_address, &field_specifier),
+                },
+            )
+            .unwrap();
     }
 
-    fn stz(&mut self, instruction: Word) {}
+    fn stz(&mut self, instruction: Word) {
+        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
+        let original_sign = self
+            .memory
+            .get(self.modified_address(instruction))
+            .unwrap()
+            .sign;
+
+        self.memory
+            .set(
+                self.modified_address(instruction),
+                Word {
+                    sign: Self::sign_to_load_or_store(&field_specifier, Word::ZERO, original_sign),
+                    bytes: Self::bytes_to_store(contents, Word::ZERO, &field_specifier),
+                },
+            )
+            .unwrap();
+    }
 
     fn jbus(&mut self, instruction: Word) {}
 
