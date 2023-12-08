@@ -198,16 +198,19 @@ impl Computer {
         (field_specifier, contents)
     }
 
-    fn add(&mut self, instruction: Word) {
+    fn get_v(&self, instruction: Word) -> i32 {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
         let needed_bytes = Self::bytes_to_load_word(&field_specifier, contents);
-        let v = contents.sign.value()
+        contents.sign.value()
             * (needed_bytes.0.to_i32() * 64_i32.pow(4)
                 + needed_bytes.1.to_i32() * 64_i32.pow(3)
                 + needed_bytes.2.to_i32() * 64_i32.pow(2)
                 + needed_bytes.3.to_i32() * 64
-                + needed_bytes.4.to_i32());
-        let result = self.r_a.to_i32() + v;
+                + needed_bytes.4.to_i32())
+    }
+
+    fn add(&mut self, instruction: Word) {
+        let result = self.r_a.to_i32() + self.get_v(instruction);
         if result == 0 {
             self.r_a.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
             return;
@@ -219,15 +222,7 @@ impl Computer {
     }
 
     fn sub(&mut self, instruction: Word) {
-        let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        let needed_bytes = Self::bytes_to_load_word(&field_specifier, contents);
-        let v = -contents.sign.value()
-            * (needed_bytes.0.to_i32() * 64_i32.pow(4)
-                + needed_bytes.1.to_i32() * 64_i32.pow(3)
-                + needed_bytes.2.to_i32() * 64_i32.pow(2)
-                + needed_bytes.3.to_i32() * 64
-                + needed_bytes.4.to_i32());
-        let result = self.r_a.to_i32() + v;
+        let result = self.r_a.to_i32() - self.get_v(instruction);
         if result == 0 {
             self.r_a.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
             return;
@@ -238,7 +233,23 @@ impl Computer {
         self.r_a = Word::from_i32(result % 64_i32.pow(5)).unwrap();
     }
 
-    fn mul(&mut self, instruction: Word) {}
+    fn mul(&mut self, instruction: Word) {
+        let result = self.r_a.to_i32() * self.get_v(instruction);
+        let (_, contents) = self.field_specifier_and_contents(instruction);
+        let result_sign = match self.r_a.sign == contents.sign {
+            true => Sign::PLUS,
+            false => Sign::MINUS,
+        };
+        let a_value = result.abs() % 64_i32.pow(5);
+        let full_x_value = result.abs() / 64_i32.pow(5);
+        let x_value = full_x_value % 64_i32.pow(5);
+        let did_overflow = full_x_value / 64_i32.pow(5) != 0;
+        if did_overflow {
+            self.overflow = true;
+        }
+        self.r_x = Word::from_i32(x_value).unwrap().with_sign(result_sign);
+        self.r_a = Word::from_i32(a_value).unwrap().with_sign(result_sign);
+    }
 
     fn div(&mut self, instruction: Word) {}
 

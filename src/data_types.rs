@@ -333,6 +333,12 @@ impl Word {
         })
     }
 
+    pub fn with_sign(&self, sign: Sign) -> Self {
+        Self {
+            sign, bytes: self.bytes
+        }
+    }
+
     pub fn address(&self) -> i32 {
         self.sign.value() * (self.bytes.0.to_i32() * 64 + self.bytes.1.to_i32())
     }
