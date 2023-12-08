@@ -42,6 +42,7 @@ impl Computer {
         }
     }
 
+    // TODO - add tests for this!
     pub fn handle_next_instruction(&mut self) {
         let current_instruction = self.memory.get(self.current_instruction_address).unwrap();
         self.current_instruction_address += 1;
