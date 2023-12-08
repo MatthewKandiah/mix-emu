@@ -234,21 +234,21 @@ impl Computer {
     }
 
     fn mul(&mut self, instruction: Word) {
-        let result = self.r_a.to_i32() * self.get_v(instruction);
+        // Word::MAX * Word::MAX too large to store in i32
+        let result: i64 = <i32 as Into<i64>>::into(self.r_a.to_i32()) * <i32 as Into<i64>>::into(self.get_v(instruction));
         let (_, contents) = self.field_specifier_and_contents(instruction);
         let result_sign = match self.r_a.sign == contents.sign {
             true => Sign::PLUS,
             false => Sign::MINUS,
         };
-        let a_value = result.abs() % 64_i32.pow(5);
-        let full_x_value = result.abs() / 64_i32.pow(5);
-        let x_value = full_x_value % 64_i32.pow(5);
-        let did_overflow = full_x_value / 64_i32.pow(5) != 0;
-        if did_overflow {
-            self.overflow = true;
-        }
-        self.r_x = Word::from_i32(x_value).unwrap().with_sign(result_sign);
-        self.r_a = Word::from_i32(a_value).unwrap().with_sign(result_sign);
+        let a_value = result.abs() % 64_i64.pow(5);
+        let full_x_value = result.abs() / 64_i64.pow(5);
+        let x_value = full_x_value % 64_i64.pow(5);
+        // multiplication cannot overflow, consider the largest possible absolute value
+        // (64^5-1)*(64^5-1) < 64^10-1
+        // so result can always fit in 10 bytes!
+        self.r_x = Word::from_i32(x_value.try_into().unwrap()).unwrap().with_sign(result_sign);
+        self.r_a = Word::from_i32(a_value.try_into().unwrap()).unwrap().with_sign(result_sign);
     }
 
     fn div(&mut self, instruction: Word) {}

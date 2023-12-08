@@ -335,7 +335,8 @@ impl Word {
 
     pub fn with_sign(&self, sign: Sign) -> Self {
         Self {
-            sign, bytes: self.bytes
+            sign,
+            bytes: self.bytes,
         }
     }
 
