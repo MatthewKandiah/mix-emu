@@ -434,4 +434,28 @@ mod div {
             Word::from_byte_values(Sign::MINUS, 0, 0, 0, 1, 1).unwrap()
         );
     }
+
+    #[test]
+    fn should_overflow_and_not_panic_on_divide_by_zero() {
+        let mut computer = Computer::new();
+        computer.memory.set(1, Word::ZERO).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 4).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert!(computer.overflow);
+    }
+
+    #[test]
+    fn should_overflow_and_not_panic_on_result_overflow() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::MIN;
+        computer.r_x = Word::MAX;
+        computer.memory.set(1, Word::from_i32(1).unwrap()).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, 5, 4).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert!(computer.overflow);
+    }
 }
