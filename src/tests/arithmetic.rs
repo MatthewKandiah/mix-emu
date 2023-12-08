@@ -110,12 +110,21 @@ mod add {
     fn should_match_example_from_book() {
         let mut computer = Computer::new();
         computer.r_a = Word::from_instruction_parts(Sign::PLUS, 1234, 1, 2, 22).unwrap();
-        computer.memory.set(1000, Word::from_instruction_parts(Sign::PLUS, 100, 5, 0, 50).unwrap()).unwrap();
+        computer
+            .memory
+            .set(
+                1000,
+                Word::from_instruction_parts(Sign::PLUS, 100, 5, 0, 50).unwrap(),
+            )
+            .unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1000, 0, 5, 1).unwrap();
         computer.handle_instruction(instruction);
 
-        assert_eq!(computer.r_a, Word::from_instruction_parts(Sign::PLUS, 1334, 6, 3, 8).unwrap());
+        assert_eq!(
+            computer.r_a,
+            Word::from_instruction_parts(Sign::PLUS, 1334, 6, 3, 8).unwrap()
+        );
     }
 }
 
@@ -231,12 +240,21 @@ mod sub {
     fn should_agree_with_example_from_book() {
         let mut computer = Computer::new();
         computer.r_a = Word::from_instruction_parts(Sign::MINUS, 1234, 0, 0, 9).unwrap();
-        computer.memory.set(1000, Word::from_instruction_parts(Sign::MINUS, 2000, 2, 22, 0).unwrap()).unwrap();
+        computer
+            .memory
+            .set(
+                1000,
+                Word::from_instruction_parts(Sign::MINUS, 2000, 2, 22, 0).unwrap(),
+            )
+            .unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1000, 0, 5, 2).unwrap();
         computer.handle_instruction(instruction);
 
-        assert_eq!(computer.r_a, Word::from_instruction_parts(Sign::PLUS, 766, 2, 21, 55).unwrap());
+        assert_eq!(
+            computer.r_a,
+            Word::from_instruction_parts(Sign::PLUS, 766, 2, 21, 55).unwrap()
+        );
     }
 }
 
@@ -305,7 +323,7 @@ mod mul {
         computer.r_a.sign = Sign::PLUS;
 
         computer.handle_instruction(test_instruction());
-        
+
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
         assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
     }
@@ -316,7 +334,7 @@ mod mul {
         computer.r_a.sign = Sign::PLUS;
 
         computer.handle_instruction(test_instruction());
-        
+
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
         assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
     }
@@ -327,7 +345,7 @@ mod mul {
         computer.r_a.sign = Sign::MINUS;
 
         computer.handle_instruction(test_instruction());
-        
+
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
         assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
     }
@@ -338,7 +356,7 @@ mod mul {
         computer.r_a.sign = Sign::MINUS;
 
         computer.handle_instruction(test_instruction());
-        
+
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
         assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
     }
@@ -347,12 +365,73 @@ mod mul {
     fn should_agree_with_example_from_book() {
         let mut computer = Computer::new();
         computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 1, 1, 1, 1).unwrap();
-        computer.memory.set(1000, Word::from_byte_values(Sign::PLUS, 1, 1, 1, 1, 1).unwrap()).unwrap();
+        computer
+            .memory
+            .set(
+                1000,
+                Word::from_byte_values(Sign::PLUS, 1, 1, 1, 1, 1).unwrap(),
+            )
+            .unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1000, 0, 5, 3).unwrap();
         computer.handle_instruction(instruction);
 
-        assert_eq!(computer.r_a, Word::from_byte_values(Sign::PLUS, 0, 1, 2, 3, 4).unwrap());
-        assert_eq!(computer.r_x, Word::from_byte_values(Sign::PLUS, 5, 4, 3, 2, 1).unwrap());
+        assert_eq!(
+            computer.r_a,
+            Word::from_byte_values(Sign::PLUS, 0, 1, 2, 3, 4).unwrap()
+        );
+        assert_eq!(
+            computer.r_x,
+            Word::from_byte_values(Sign::PLUS, 5, 4, 3, 2, 1).unwrap()
+        );
+    }
+}
+
+mod div {
+    use crate::computer::*;
+    use crate::data_types::*;
+
+    #[test]
+    fn should_agree_with_first_book_example() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::ZERO.with_sign(Sign::PLUS);
+        computer.r_x = Word::from_i32(-17).unwrap();
+        computer
+            .memory
+            .set(1000, Word::from_i32(3).unwrap())
+            .unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1000, 0, 5, 4).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a, Word::from_i32(5).unwrap());
+        assert_eq!(computer.r_x, Word::from_i32(2).unwrap());
+    }
+
+    #[test]
+    fn should_agree_with_second_book_example() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::from_byte_values(Sign::MINUS, 0, 0, 0, 0, 0).unwrap();
+        computer.r_x = Word::from_instruction_parts(Sign::PLUS, 1235, 0, 3, 1).unwrap();
+        computer
+            .memory
+            .set(
+                1000,
+                Word::from_byte_values(Sign::MINUS, 0, 0, 0, 2, 0).unwrap(),
+            )
+            .unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1000, 0, 5, 4).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(
+            computer.r_a,
+            Word::from_byte_values(Sign::PLUS, 0, 617 / 64, 617 % 64, 2049 / 64, 2049 % 64)
+                .unwrap()
+        );
+        assert_eq!(
+            computer.r_x,
+            Word::from_byte_values(Sign::MINUS, 0, 0, 0, 1, 1).unwrap()
+        );
     }
 }

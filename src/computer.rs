@@ -235,7 +235,8 @@ impl Computer {
 
     fn mul(&mut self, instruction: Word) {
         // Word::MAX * Word::MAX too large to store in i32
-        let result: i64 = <i32 as Into<i64>>::into(self.r_a.to_i32()) * <i32 as Into<i64>>::into(self.get_v(instruction));
+        let result: i64 = <i32 as Into<i64>>::into(self.r_a.to_i32())
+            * <i32 as Into<i64>>::into(self.get_v(instruction));
         let (_, contents) = self.field_specifier_and_contents(instruction);
         let result_sign = match self.r_a.sign == contents.sign {
             true => Sign::PLUS,
@@ -247,11 +248,65 @@ impl Computer {
         // multiplication cannot overflow, consider the largest possible absolute value
         // (64^5-1)*(64^5-1) < 64^10-1
         // so result can always fit in 10 bytes!
-        self.r_a = Word::from_i32(a_value.try_into().unwrap()).unwrap().with_sign(result_sign);
-        self.r_x = Word::from_i32(x_value.try_into().unwrap()).unwrap().with_sign(result_sign);
+        self.r_a = Word::from_i32(a_value.try_into().unwrap())
+            .unwrap()
+            .with_sign(result_sign);
+        self.r_x = Word::from_i32(x_value.try_into().unwrap())
+            .unwrap()
+            .with_sign(result_sign);
     }
 
-    fn div(&mut self, instruction: Word) {}
+    fn div(&mut self, instruction: Word) {
+        let numerator: i64 = <i32 as Into<i64>>::into(self.r_a.to_i32()) * 64_i64.pow(5)
+            + <i32 as Into<i64>>::into(self.r_x.to_i32());
+        let v = self.get_v(instruction);
+        if v == 0 {
+            self.overflow = true;
+            return;
+        }
+
+        let x_sign = self.r_a.sign;
+        let (_, contents) = self.field_specifier_and_contents(instruction);
+        let a_sign = match self.r_a.sign == contents.sign {
+            true => Sign::PLUS,
+            false => Sign::MINUS,
+        };
+
+        let a_result_value: i32 = match (numerator / <i32 as Into<i64>>::into(v)).try_into() {
+            Ok(x) => x,
+            Err(_) => {
+                self.overflow = true;
+                return;
+            }
+        };
+        let a_result_word = match Word::from_i32(a_result_value) {
+            Ok(x) => x,
+            Err(_) => {
+                self.overflow = true;
+                return;
+            }
+        }
+        .with_sign(a_sign);
+
+        let x_result_value: i32 = match (numerator % <i32 as Into<i64>>::into(v)).try_into() {
+            Ok(x) => x,
+            Err(_) => {
+                self.overflow = true;
+                return;
+            }
+        };
+        let x_result_word = match Word::from_i32(x_result_value) {
+            Ok(x) => x,
+            Err(_) => {
+                self.overflow = true;
+                return;
+            }
+        }
+        .with_sign(x_sign);
+
+        self.r_x = x_result_word;
+        self.r_a = a_result_word;
+    }
 
     fn handle_5(&mut self, instruction: Word) {}
 
