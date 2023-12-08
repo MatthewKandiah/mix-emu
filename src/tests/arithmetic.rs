@@ -105,6 +105,18 @@ mod add {
         computer.handle_instruction(instruction3);
         assert_eq!(computer.r_a.to_i32(), 137 - 192 - 4);
     }
+
+    #[test]
+    fn should_match_example_from_book() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::from_instruction_parts(Sign::PLUS, 1234, 1, 2, 22).unwrap();
+        computer.memory.set(1000, Word::from_instruction_parts(Sign::PLUS, 100, 5, 0, 50).unwrap()).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1000, 0, 5, 1).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a, Word::from_instruction_parts(Sign::PLUS, 1334, 6, 3, 8).unwrap());
+    }
 }
 
 mod sub {
@@ -213,6 +225,18 @@ mod sub {
         let instruction3 = Word::from_instruction_parts(Sign::PLUS, 1000, 0, 28, 2).unwrap();
         computer.handle_instruction(instruction3);
         assert_eq!(computer.r_a.to_i32(), 137 - 192 - 4);
+    }
+
+    #[test]
+    fn should_agree_with_example_from_book() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::from_instruction_parts(Sign::MINUS, 1234, 0, 0, 9).unwrap();
+        computer.memory.set(1000, Word::from_instruction_parts(Sign::MINUS, 2000, 2, 22, 0).unwrap()).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1000, 0, 5, 2).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a, Word::from_instruction_parts(Sign::PLUS, 766, 2, 21, 55).unwrap());
     }
 }
 
