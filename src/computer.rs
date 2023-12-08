@@ -241,14 +241,14 @@ impl Computer {
             true => Sign::PLUS,
             false => Sign::MINUS,
         };
-        let a_value = result.abs() % 64_i64.pow(5);
-        let full_x_value = result.abs() / 64_i64.pow(5);
-        let x_value = full_x_value % 64_i64.pow(5);
+        let x_value = result.abs() % 64_i64.pow(5);
+        let full_a_value = result.abs() / 64_i64.pow(5);
+        let a_value = full_a_value % 64_i64.pow(5);
         // multiplication cannot overflow, consider the largest possible absolute value
         // (64^5-1)*(64^5-1) < 64^10-1
         // so result can always fit in 10 bytes!
-        self.r_x = Word::from_i32(x_value.try_into().unwrap()).unwrap().with_sign(result_sign);
         self.r_a = Word::from_i32(a_value.try_into().unwrap()).unwrap().with_sign(result_sign);
+        self.r_x = Word::from_i32(x_value.try_into().unwrap()).unwrap().with_sign(result_sign);
     }
 
     fn div(&mut self, instruction: Word) {}

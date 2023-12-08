@@ -236,42 +236,42 @@ mod mul {
     }
 
     #[test]
-    fn should_handle_positive_values_that_do_not_overflow_r_a() {
+    fn should_handle_positive_values_that_do_not_overflow_r_x() {
         let mut computer = set_up_computer(3, 5);
         computer.handle_instruction(test_instruction());
-        assert_eq!(computer.r_a.to_i32(), 15);
-        assert_eq!(computer.r_x.to_i32(), 0);
-        assert_eq!(computer.r_x.sign, Sign::PLUS);
-        assert_eq!(computer.overflow, false);
-    }
-
-    #[test]
-    fn should_handle_negative_values_that_do_not_overflow_r_a() {
-        let mut computer = set_up_computer(-4, 3);
-        computer.handle_instruction(test_instruction());
-        assert_eq!(computer.r_a.to_i32(), -12);
-        assert_eq!(computer.r_x.to_i32(), 0);
-        assert_eq!(computer.r_x.sign, Sign::MINUS);
-        assert_eq!(computer.overflow, false);
-    }
-
-    #[test]
-    fn should_handle_positive_values_that_overflow_r_a_but_not_r_x() {
-        let mut computer = set_up_computer(64_i32.pow(3), 64_i32.pow(4));
-        computer.handle_instruction(test_instruction());
+        assert_eq!(computer.r_x.to_i32(), 15);
         assert_eq!(computer.r_a.to_i32(), 0);
         assert_eq!(computer.r_a.sign, Sign::PLUS);
-        assert_eq!(computer.r_x.to_i32(), 64_i32.pow(2));
         assert_eq!(computer.overflow, false);
     }
 
     #[test]
-    fn should_handle_negative_values_that_overflow_r_a_but_not_r_x() {
-        let mut computer = set_up_computer(-64_i32.pow(3), 64_i32.pow(4));
+    fn should_handle_negative_values_that_do_not_overflow_r_x() {
+        let mut computer = set_up_computer(-4, 3);
         computer.handle_instruction(test_instruction());
+        assert_eq!(computer.r_x.to_i32(), -12);
         assert_eq!(computer.r_a.to_i32(), 0);
         assert_eq!(computer.r_a.sign, Sign::MINUS);
-        assert_eq!(computer.r_x.to_i32(), -64_i32.pow(2));
+        assert_eq!(computer.overflow, false);
+    }
+
+    #[test]
+    fn should_handle_positive_values_that_overflow_r_x_but_not_r_a() {
+        let mut computer = set_up_computer(64_i32.pow(3), 64_i32.pow(4));
+        computer.handle_instruction(test_instruction());
+        assert_eq!(computer.r_x.to_i32(), 0);
+        assert_eq!(computer.r_x.sign, Sign::PLUS);
+        assert_eq!(computer.r_a.to_i32(), 64_i32.pow(2));
+        assert_eq!(computer.overflow, false);
+    }
+
+    #[test]
+    fn should_handle_negative_values_that_overflow_r_x_but_not_r_a() {
+        let mut computer = set_up_computer(-64_i32.pow(3), 64_i32.pow(4));
+        computer.handle_instruction(test_instruction());
+        assert_eq!(computer.r_x.to_i32(), 0);
+        assert_eq!(computer.r_x.sign, Sign::MINUS);
+        assert_eq!(computer.r_a.to_i32(), -64_i32.pow(2));
         assert_eq!(computer.overflow, false);
     }
 
@@ -283,7 +283,7 @@ mod mul {
         computer.handle_instruction(test_instruction());
         
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
     }
 
     #[test]
@@ -294,7 +294,7 @@ mod mul {
         computer.handle_instruction(test_instruction());
         
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
@@ -305,7 +305,7 @@ mod mul {
         computer.handle_instruction(test_instruction());
         
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
@@ -316,6 +316,19 @@ mod mul {
         computer.handle_instruction(test_instruction());
         
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
+    }
+
+    #[test]
+    fn should_agree_with_example_from_book() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 1, 1, 1, 1).unwrap();
+        computer.memory.set(1000, Word::from_byte_values(Sign::PLUS, 1, 1, 1, 1, 1).unwrap()).unwrap();
+
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 1000, 0, 5, 3).unwrap();
+        computer.handle_instruction(instruction);
+
+        assert_eq!(computer.r_a, Word::from_byte_values(Sign::PLUS, 0, 1, 2, 3, 4).unwrap());
+        assert_eq!(computer.r_x, Word::from_byte_values(Sign::PLUS, 5, 4, 3, 2, 1).unwrap());
     }
 }
