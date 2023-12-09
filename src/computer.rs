@@ -795,10 +795,20 @@ impl Computer {
 
     fn handle_49(&mut self, instruction: Word) {
         match instruction.field().value() {
+            0 => self.inc1(instruction),
             2 => self.ent1(instruction),
             3 => self.enn1(instruction),
             _ => panic!("Illegal field in code 49 instruction"),
         }
+    }
+
+    fn inc1(&mut self, instruction: Word) {
+        let result = self.r_i1.to_i32() + self.modified_address(instruction);
+        if result == 0 {
+            self.r_i1.bytes = (Byte::ZERO, Byte::ZERO);
+            return;
+        }
+        self.r_i1 = Index::from_i32(result).unwrap();
     }
 
     fn ent1(&mut self, instruction: Word) {
@@ -811,10 +821,20 @@ impl Computer {
 
     fn handle_50(&mut self, instruction: Word) {
         match instruction.field().value() {
+            0 => self.inc2(instruction),
             2 => self.ent2(instruction),
             3 => self.enn2(instruction),
             _ => panic!("Illegal field in code 50 instruction"),
         };
+    }
+
+    fn inc2(&mut self, instruction: Word) {
+        let result = self.r_i2.to_i32() + self.modified_address(instruction);
+        if result == 0 {
+            self.r_i2.bytes = (Byte::ZERO, Byte::ZERO);
+            return;
+        }
+        self.r_i2 = Index::from_i32(result).unwrap();
     }
 
     fn ent2(&mut self, instruction: Word) {
@@ -827,10 +847,20 @@ impl Computer {
 
     fn handle_51(&mut self, instruction: Word) {
         match instruction.field().value() {
+            0 => self.inc3(instruction),
             2 => self.ent3(instruction),
             3 => self.enn3(instruction),
             _ => panic!("Illegal field in code 51 instruction"),
         };
+    }
+
+    fn inc3(&mut self, instruction: Word) {
+        let result = self.r_i3.to_i32() + self.modified_address(instruction);
+        if result == 0 {
+            self.r_i3.bytes = (Byte::ZERO, Byte::ZERO);
+            return;
+        }
+        self.r_i3 = Index::from_i32(result).unwrap();
     }
 
     fn ent3(&mut self, instruction: Word) {
@@ -843,10 +873,20 @@ impl Computer {
 
     fn handle_52(&mut self, instruction: Word) {
         match instruction.field().value() {
+            0 => self.inc4(instruction),
             2 => self.ent4(instruction),
             3 => self.enn4(instruction),
             _ => panic!("Illegal field in code 52 instruction"),
         };
+    }
+
+    fn inc4(&mut self, instruction: Word) {
+        let result = self.r_i4.to_i32() + self.modified_address(instruction);
+        if result == 0 {
+            self.r_i4.bytes = (Byte::ZERO, Byte::ZERO);
+            return;
+        }
+        self.r_i4 = Index::from_i32(result).unwrap();
     }
 
     fn ent4(&mut self, instruction: Word) {
@@ -859,10 +899,20 @@ impl Computer {
 
     fn handle_53(&mut self, instruction: Word) {
         match instruction.field().value() {
+            0 => self.inc5(instruction),
             2 => self.ent5(instruction),
             3 => self.enn5(instruction),
             _ => panic!("Illegal field in code 53 instruction"),
         };
+    }
+
+    fn inc5(&mut self, instruction: Word) {
+        let result = self.r_i5.to_i32() + self.modified_address(instruction);
+        if result == 0 {
+            self.r_i5.bytes = (Byte::ZERO, Byte::ZERO);
+            return;
+        }
+        self.r_i5 = Index::from_i32(result).unwrap();
     }
 
     fn ent5(&mut self, instruction: Word) {
@@ -875,10 +925,20 @@ impl Computer {
 
     fn handle_54(&mut self, instruction: Word) {
         match instruction.field().value() {
+            0 => self.inc6(instruction),
             2 => self.ent6(instruction),
             3 => self.enn6(instruction),
             _ => panic!("Illegal field in code 54 instruction"),
         };
+    }
+
+    fn inc6(&mut self, instruction: Word) {
+        let result = self.r_i6.to_i32() + self.modified_address(instruction);
+        if result == 0 {
+            self.r_i6.bytes = (Byte::ZERO, Byte::ZERO);
+            return;
+        }
+        self.r_i6 = Index::from_i32(result).unwrap();
     }
 
     fn ent6(&mut self, instruction: Word) {
@@ -891,10 +951,23 @@ impl Computer {
 
     fn handle_55(&mut self, instruction: Word) {
         match instruction.field().value() {
+            0 => self.incx(instruction),
             2 => self.entx(instruction),
             3 => self.ennx(instruction),
             _ => panic!("Illegal field in code 55 instruction"),
         }
+    }
+
+    fn incx(&mut self, instruction: Word) {
+        let result = self.r_x.to_i32() + self.modified_address(instruction);
+        if result == 0 {
+            self.r_x.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
+            return;
+        }
+        if result / 64_i32.pow(5) != 0 {
+            self.overflow = true;
+        }
+        self.r_x = Word::from_i32(result % 64_i32.pow(5)).unwrap();
     }
 
     fn entx(&mut self, instruction: Word) {
