@@ -1029,7 +1029,6 @@ impl Computer {
             sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
         };
-        println!("register: {}, memory: {}", register_word.to_i32(), memory_word.to_i32());
         self.comparison_indicator = Some(match register_word.to_i32() - memory_word.to_i32() {
             ..=-1 => ComparisonIndicatorState::LESS,
             0 => ComparisonIndicatorState::EQUAL,
