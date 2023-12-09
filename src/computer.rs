@@ -801,6 +801,7 @@ impl Computer {
     fn handle_49(&mut self, instruction: Word) {
         match instruction.field().value() {
             0 => self.inc1(instruction),
+            1 => self.dec1(instruction),
             2 => self.ent1(instruction),
             3 => self.enn1(instruction),
             _ => panic!("Illegal field in code 49 instruction"),
@@ -816,6 +817,10 @@ impl Computer {
         self.r_i1 = Index::from_i32(result).unwrap();
     }
 
+    fn dec1(&mut self, instruction: Word) {
+        self.inc1(instruction.with_opposite_sign());
+    }
+
     fn ent1(&mut self, instruction: Word) {
         self.r_i1 = self.index_to_enter(instruction);
     }
@@ -827,6 +832,7 @@ impl Computer {
     fn handle_50(&mut self, instruction: Word) {
         match instruction.field().value() {
             0 => self.inc2(instruction),
+            1 => self.dec2(instruction),
             2 => self.ent2(instruction),
             3 => self.enn2(instruction),
             _ => panic!("Illegal field in code 50 instruction"),
@@ -842,6 +848,10 @@ impl Computer {
         self.r_i2 = Index::from_i32(result).unwrap();
     }
 
+    fn dec2(&mut self, instruction: Word) {
+        self.inc2(instruction.with_opposite_sign());
+    }
+
     fn ent2(&mut self, instruction: Word) {
         self.r_i2 = self.index_to_enter(instruction);
     }
@@ -853,6 +863,7 @@ impl Computer {
     fn handle_51(&mut self, instruction: Word) {
         match instruction.field().value() {
             0 => self.inc3(instruction),
+            1 => self.dec3(instruction),
             2 => self.ent3(instruction),
             3 => self.enn3(instruction),
             _ => panic!("Illegal field in code 51 instruction"),
@@ -868,6 +879,10 @@ impl Computer {
         self.r_i3 = Index::from_i32(result).unwrap();
     }
 
+    fn dec3(&mut self, instruction: Word) {
+        self.inc3(instruction.with_opposite_sign());
+    }
+
     fn ent3(&mut self, instruction: Word) {
         self.r_i3 = self.index_to_enter(instruction);
     }
@@ -879,6 +894,7 @@ impl Computer {
     fn handle_52(&mut self, instruction: Word) {
         match instruction.field().value() {
             0 => self.inc4(instruction),
+            1 => self.dec4(instruction),
             2 => self.ent4(instruction),
             3 => self.enn4(instruction),
             _ => panic!("Illegal field in code 52 instruction"),
@@ -894,6 +910,10 @@ impl Computer {
         self.r_i4 = Index::from_i32(result).unwrap();
     }
 
+    fn dec4(&mut self, instruction: Word) {
+        self.inc4(instruction.with_opposite_sign());
+    }
+
     fn ent4(&mut self, instruction: Word) {
         self.r_i4 = self.index_to_enter(instruction);
     }
@@ -905,6 +925,7 @@ impl Computer {
     fn handle_53(&mut self, instruction: Word) {
         match instruction.field().value() {
             0 => self.inc5(instruction),
+            1 => self.dec5(instruction),
             2 => self.ent5(instruction),
             3 => self.enn5(instruction),
             _ => panic!("Illegal field in code 53 instruction"),
@@ -920,6 +941,10 @@ impl Computer {
         self.r_i5 = Index::from_i32(result).unwrap();
     }
 
+    fn dec5(&mut self ,instruction: Word) {
+        self.inc5(instruction.with_opposite_sign());
+    }
+
     fn ent5(&mut self, instruction: Word) {
         self.r_i5 = self.index_to_enter(instruction);
     }
@@ -931,6 +956,7 @@ impl Computer {
     fn handle_54(&mut self, instruction: Word) {
         match instruction.field().value() {
             0 => self.inc6(instruction),
+            1 => self.dec6(instruction),
             2 => self.ent6(instruction),
             3 => self.enn6(instruction),
             _ => panic!("Illegal field in code 54 instruction"),
@@ -944,6 +970,10 @@ impl Computer {
             return;
         }
         self.r_i6 = Index::from_i32(result).unwrap();
+    }
+
+    fn dec6(&mut self, instruction: Word) {
+        self.inc6(instruction.with_opposite_sign());
     }
 
     fn ent6(&mut self, instruction: Word) {
@@ -978,7 +1008,7 @@ impl Computer {
 
     fn decx(&mut self, instruction: Word) {
         self.incx(instruction.with_opposite_sign());
-    }
+   }
 
     fn entx(&mut self, instruction: Word) {
         self.r_x = self.word_to_enter(instruction);
