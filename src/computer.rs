@@ -763,21 +763,41 @@ impl Computer {
         m
     }
 
+    fn index_to_enter(&self, instruction: Word) -> Index {
+        let mut m = Index::from_i32(self.modified_address(instruction)).unwrap();
+        if m.to_i32() == 0 {
+            m = m.with_sign(instruction.sign);
+        }
+        m
+    }
+
     fn enta(&mut self, instruction: Word) {
         self.r_a = self.word_to_enter(instruction);
     }
 
-    fn handle_49(&mut self, instruction: Word) {}
+    fn handle_49(&mut self, instruction: Word) {
+        self.r_i1 = self.index_to_enter(instruction);
+    }
 
-    fn handle_50(&mut self, instruction: Word) {}
+    fn handle_50(&mut self, instruction: Word) {
+        self.r_i2 = self.index_to_enter(instruction);
+    }
 
-    fn handle_51(&mut self, instruction: Word) {}
+    fn handle_51(&mut self, instruction: Word) {
+        self.r_i3 = self.index_to_enter(instruction);
+    }
 
-    fn handle_52(&mut self, instruction: Word) {}
+    fn handle_52(&mut self, instruction: Word) {
+        self.r_i4 = self.index_to_enter(instruction);
+    }
 
-    fn handle_53(&mut self, instruction: Word) {}
+    fn handle_53(&mut self, instruction: Word) {
+        self.r_i5 = self.index_to_enter(instruction);
+    }
 
-    fn handle_54(&mut self, instruction: Word) {}
+    fn handle_54(&mut self, instruction: Word) {
+        self.r_i6 = self.index_to_enter(instruction);
+    }
 
     fn handle_55(&mut self, instruction: Word) {
         self.r_x = self.word_to_enter(instruction);

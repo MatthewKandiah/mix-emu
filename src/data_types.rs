@@ -487,6 +487,10 @@ impl Index {
             bytes: (byte1, byte2),
         })
     }
+
+    pub fn with_sign(&self, sign:Sign) -> Self {
+        Self {sign, bytes: self.bytes}
+    }
 }
 
 #[test]
