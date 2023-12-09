@@ -1,6 +1,7 @@
 use crate::data_types::{Byte, FieldSpecification, Index, JumpAddress, Sign, Word};
 use crate::memory::Memory;
 
+#[derive(Debug, PartialEq, Eq)]
 pub enum ComparisonIndicatorState {
     EQUAL,
     GREATER,
@@ -793,7 +794,7 @@ impl Computer {
     fn enta(&mut self, instruction: Word) {
         self.r_a = self.word_to_enter(instruction);
     }
-    
+
     fn enna(&mut self, instruction: Word) {
         self.r_a = self.word_to_enter(instruction).with_opposite_sign();
     }
@@ -941,7 +942,7 @@ impl Computer {
         self.r_i5 = Index::from_i32(result).unwrap();
     }
 
-    fn dec5(&mut self ,instruction: Word) {
+    fn dec5(&mut self, instruction: Word) {
         self.inc5(instruction.with_opposite_sign());
     }
 
@@ -1008,7 +1009,7 @@ impl Computer {
 
     fn decx(&mut self, instruction: Word) {
         self.incx(instruction.with_opposite_sign());
-   }
+    }
 
     fn entx(&mut self, instruction: Word) {
         self.r_x = self.word_to_enter(instruction);
@@ -1018,7 +1019,23 @@ impl Computer {
         self.r_x = self.word_to_enter(instruction).with_opposite_sign();
     }
 
-    fn cmpa(&mut self, instruction: Word) {}
+    fn cmpa(&mut self, instruction: Word) {
+        let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
+        let register_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, self.r_a, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, self.r_a),
+        };
+        let memory_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
+        };
+        println!("register: {}, memory: {}", register_word.to_i32(), memory_word.to_i32());
+        self.comparison_indicator = Some(match register_word.to_i32() - memory_word.to_i32() {
+            ..=-1 => ComparisonIndicatorState::LESS,
+            0 => ComparisonIndicatorState::EQUAL,
+            1.. => ComparisonIndicatorState::GREATER,
+        });
+    }
 
     fn cmp1(&mut self, instruction: Word) {}
 
