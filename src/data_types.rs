@@ -199,7 +199,7 @@ impl FieldSpecification {
     }
 
     pub fn value(&self) -> i32 {
-        self.left*8 + self.right
+        self.left * 8 + self.right
     }
 }
 
@@ -340,6 +340,13 @@ impl Word {
     pub fn with_sign(&self, sign: Sign) -> Self {
         Self {
             sign,
+            bytes: self.bytes,
+        }
+    }
+
+    pub fn with_opposite_sign(&self) -> Self {
+        Self {
+            sign: self.sign.opposite(),
             bytes: self.bytes,
         }
     }
@@ -488,8 +495,18 @@ impl Index {
         })
     }
 
-    pub fn with_sign(&self, sign:Sign) -> Self {
-        Self {sign, bytes: self.bytes}
+    pub fn with_sign(&self, sign: Sign) -> Self {
+        Self {
+            sign,
+            bytes: self.bytes,
+        }
+    }
+
+    pub fn with_opposite_sign(&self) -> Self {
+        Self {
+            sign: self.sign.opposite(),
+            bytes: self.bytes,
+        }
     }
 }
 

@@ -748,13 +748,6 @@ impl Computer {
 
     fn handle_47(&mut self, instruction: Word) {}
 
-    fn handle_48(&mut self, instruction: Word) {
-        match instruction.field().value() {
-            2 => self.enta(instruction),
-            _ => panic!("Illegal field in code 48 instruction"),
-        };
-    }
-
     fn word_to_enter(&self, instruction: Word) -> Word {
         let mut m = Word::from_i32(self.modified_address(instruction)).unwrap();
         if m.to_i32() == 0 {
@@ -771,36 +764,132 @@ impl Computer {
         m
     }
 
+    fn handle_48(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.enta(instruction),
+            3 => self.enna(instruction),
+            _ => panic!("Illegal field in code 48 instruction"),
+        };
+    }
+
     fn enta(&mut self, instruction: Word) {
         self.r_a = self.word_to_enter(instruction);
     }
+    
+    fn enna(&mut self, instruction: Word) {
+        self.r_a = self.word_to_enter(instruction).with_opposite_sign();
+    }
 
     fn handle_49(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.ent1(instruction),
+            3 => self.enn1(instruction),
+            _ => panic!("Illegal field in code 49 instruction"),
+        }
+    }
+
+    fn ent1(&mut self, instruction: Word) {
         self.r_i1 = self.index_to_enter(instruction);
     }
 
+    fn enn1(&mut self, instruction: Word) {
+        self.r_i1 = self.index_to_enter(instruction).with_opposite_sign();
+    }
+
     fn handle_50(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.ent2(instruction),
+            3 => self.enn2(instruction),
+            _ => panic!("Illegal field in code 50 instruction"),
+        };
+    }
+
+    fn ent2(&mut self, instruction: Word) {
         self.r_i2 = self.index_to_enter(instruction);
     }
 
+    fn enn2(&mut self, instruction: Word) {
+        self.r_i2 = self.index_to_enter(instruction).with_opposite_sign();
+    }
+
     fn handle_51(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.ent3(instruction),
+            3 => self.enn3(instruction),
+            _ => panic!("Illegal field in code 51 instruction"),
+        };
+    }
+
+    fn ent3(&mut self, instruction: Word) {
         self.r_i3 = self.index_to_enter(instruction);
     }
 
+    fn enn3(&mut self, instruction: Word) {
+        self.r_i3 = self.index_to_enter(instruction).with_opposite_sign();
+    }
+
     fn handle_52(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.ent4(instruction),
+            3 => self.enn4(instruction),
+            _ => panic!("Illegal field in code 52 instruction"),
+        };
+    }
+
+    fn ent4(&mut self, instruction: Word) {
         self.r_i4 = self.index_to_enter(instruction);
     }
 
+    fn enn4(&mut self, instruction: Word) {
+        self.r_i4 = self.index_to_enter(instruction).with_opposite_sign();
+    }
+
     fn handle_53(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.ent5(instruction),
+            3 => self.enn5(instruction),
+            _ => panic!("Illegal field in code 53 instruction"),
+        };
+    }
+
+    fn ent5(&mut self, instruction: Word) {
         self.r_i5 = self.index_to_enter(instruction);
     }
 
+    fn enn5(&mut self, instruction: Word) {
+        self.r_i5 = self.index_to_enter(instruction).with_opposite_sign();
+    }
+
     fn handle_54(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.ent6(instruction),
+            3 => self.enn6(instruction),
+            _ => panic!("Illegal field in code 54 instruction"),
+        };
+    }
+
+    fn ent6(&mut self, instruction: Word) {
         self.r_i6 = self.index_to_enter(instruction);
     }
 
+    fn enn6(&mut self, instruction: Word) {
+        self.r_i6 = self.index_to_enter(instruction).with_opposite_sign();
+    }
+
     fn handle_55(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.entx(instruction),
+            3 => self.ennx(instruction),
+            _ => panic!("Illegal field in code 55 instruction"),
+        }
+    }
+
+    fn entx(&mut self, instruction: Word) {
         self.r_x = self.word_to_enter(instruction);
+    }
+
+    fn ennx(&mut self, instruction: Word) {
+        self.r_x = self.word_to_enter(instruction).with_opposite_sign();
     }
 
     fn cmpa(&mut self, instruction: Word) {}
