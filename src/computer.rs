@@ -1054,15 +1054,75 @@ impl Computer {
         self.do_comparison(register_word, memory_word);
     }
 
-    fn cmp2(&mut self, instruction: Word) {}
+    fn cmp2(&mut self, instruction: Word) {
+        let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
+        let memory_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
+        };
+        let index_value_as_word = Word::from_i32(self.r_i2.to_i32()).unwrap();
+        let register_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
+        };
+        self.do_comparison(register_word, memory_word);
+    }
 
-    fn cmp3(&mut self, instruction: Word) {}
+    fn cmp3(&mut self, instruction: Word) {
+        let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
+        let memory_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
+        };
+        let index_value_as_word = Word::from_i32(self.r_i3.to_i32()).unwrap();
+        let register_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
+        };
+        self.do_comparison(register_word, memory_word);
+    }
 
-    fn cmp4(&mut self, instruction: Word) {}
+    fn cmp4(&mut self, instruction: Word) {
+        let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
+        let memory_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
+        };
+        let index_value_as_word = Word::from_i32(self.r_i4.to_i32()).unwrap();
+        let register_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
+        };
+        self.do_comparison(register_word, memory_word);
+    }
 
-    fn cmp5(&mut self, instruction: Word) {}
+    fn cmp5(&mut self, instruction: Word) {
+        let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
+        let memory_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
+        };
+        let index_value_as_word = Word::from_i32(self.r_i5.to_i32()).unwrap();
+        let register_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
+        };
+        self.do_comparison(register_word, memory_word);
+    }
 
-    fn cmp6(&mut self, instruction: Word) {}
+    fn cmp6(&mut self, instruction: Word) {
+        let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
+        let memory_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
+        };
+        let index_value_as_word = Word::from_i32(self.r_i6.to_i32()).unwrap();
+        let register_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
+        };
+        self.do_comparison(register_word, memory_word);
+    }
 
     fn cmpx(&mut self, instruction: Word) {
         let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
