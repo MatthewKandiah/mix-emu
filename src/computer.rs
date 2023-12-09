@@ -755,12 +755,16 @@ impl Computer {
         };
     }
 
-    fn enta(&mut self, instruction: Word) {
+    fn word_to_enter(&self, instruction: Word) -> Word {
         let mut m = Word::from_i32(self.modified_address(instruction)).unwrap();
         if m.to_i32() == 0 {
             m = m.with_sign(instruction.sign);
         }
-        self.r_a = m;
+        m
+    }
+
+    fn enta(&mut self, instruction: Word) {
+        self.r_a = self.word_to_enter(instruction);
     }
 
     fn handle_49(&mut self, instruction: Word) {}
@@ -775,7 +779,9 @@ impl Computer {
 
     fn handle_54(&mut self, instruction: Word) {}
 
-    fn handle_55(&mut self, instruction: Word) {}
+    fn handle_55(&mut self, instruction: Word) {
+        self.r_x = self.word_to_enter(instruction);
+    }
 
     fn cmpa(&mut self, instruction: Word) {}
 
