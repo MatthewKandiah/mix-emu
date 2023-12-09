@@ -1493,3 +1493,73 @@ mod inc6 {
         assert!(!computer.overflow);
     }
 }
+
+mod deca {
+    use crate::computer::*;
+    use crate::data_types::*;
+
+    const CODE: i32 = 48;
+    const FIELD: i32 = 1;
+
+    #[test]
+    fn should_subtract_positive_number() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::from_i32(1).unwrap();
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
+        computer.handle_instruction(instruction);
+        assert_eq!(computer.r_a.to_i32(), -788);
+        assert!(!computer.overflow);
+    }
+
+    #[test]
+    fn should_subtract_negative_number() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::from_i32(1).unwrap();
+        let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
+        computer.handle_instruction(instruction);
+        assert_eq!(computer.r_a.to_i32(), 790);
+        assert!(!computer.overflow);
+    }
+
+    #[test]
+    fn should_handle_positive_overflow() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::MAX;
+        let instruction = Word::from_instruction_parts(Sign::MINUS, 10, 0, FIELD, CODE).unwrap();
+        computer.handle_instruction(instruction);
+        assert_eq!(computer.r_a.to_i32(), 9);
+        assert!(computer.overflow);
+    }
+
+    #[test]
+    fn should_handle_negative_overflow() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::MIN;
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, FIELD, CODE).unwrap();
+        computer.handle_instruction(instruction);
+        assert_eq!(computer.r_a.to_i32(), -9);
+        assert!(computer.overflow);
+    }
+
+    #[test]
+    fn should_not_change_sign_if_result_is_zero() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::from_i32(-1).unwrap();
+        let instruction = Word::from_instruction_parts(Sign::MINUS, 1, 0, FIELD, CODE).unwrap();
+        computer.handle_instruction(instruction);
+        assert_eq!(computer.r_a.to_i32(), 0);
+        assert_eq!(computer.r_a.sign, Sign::MINUS);
+        assert!(!computer.overflow);
+    }
+
+    #[test]
+    fn should_subtract_index_modified_value() {
+        let mut computer = Computer::new();
+        computer.r_a = Word::from_i32(1).unwrap();
+        computer.r_i1 = Index::from_i32(8).unwrap();
+        let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
+        computer.handle_instruction(instruction);
+        assert_eq!(computer.r_a.to_i32(), 6);
+        assert!(!computer.overflow);
+    }
+}

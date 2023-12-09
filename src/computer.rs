@@ -767,6 +767,7 @@ impl Computer {
     fn handle_48(&mut self, instruction: Word) {
         match instruction.field().value() {
             0 => self.inca(instruction),
+            1 => self.deca(instruction),
             2 => self.enta(instruction),
             3 => self.enna(instruction),
             _ => panic!("Illegal field in code 48 instruction"),
@@ -783,6 +784,10 @@ impl Computer {
             self.overflow = true;
         }
         self.r_a = Word::from_i32(result % 64_i32.pow(5)).unwrap();
+    }
+
+    fn deca(&mut self, instruction: Word) {
+        self.inca(instruction.with_opposite_sign());
     }
 
     fn enta(&mut self, instruction: Word) {
