@@ -1048,5 +1048,20 @@ impl Computer {
 
     fn cmp6(&mut self, instruction: Word) {}
 
-    fn cmpx(&mut self, instruction: Word) {}
+    fn cmpx(&mut self, instruction: Word) {
+        let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
+        let register_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, self.r_x, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, self.r_x),
+        };
+        let memory_word = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
+        };
+        self.comparison_indicator = Some(match register_word.to_i32() - memory_word.to_i32() {
+            ..=-1 => ComparisonIndicatorState::LESS,
+            0 => ComparisonIndicatorState::EQUAL,
+            1.. => ComparisonIndicatorState::GREATER,
+        });
+    }
 }
