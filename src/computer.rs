@@ -748,7 +748,20 @@ impl Computer {
 
     fn handle_47(&mut self, instruction: Word) {}
 
-    fn handle_48(&mut self, instruction: Word) {}
+    fn handle_48(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.enta(instruction),
+            _ => panic!("Illegal field in code 48 instruction"),
+        };
+    }
+
+    fn enta(&mut self, instruction: Word) {
+        let mut m = Word::from_i32(self.modified_address(instruction)).unwrap();
+        if m.to_i32() == 0 {
+            m = m.with_sign(instruction.sign);
+        }
+        self.r_a = m;
+    }
 
     fn handle_49(&mut self, instruction: Word) {}
 

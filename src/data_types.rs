@@ -197,6 +197,10 @@ impl FieldSpecification {
     pub fn inclusive_range(&self) -> RangeInclusive<i32> {
         self.left..=self.right
     }
+
+    pub fn value(&self) -> i32 {
+        self.left*8 + self.right
+    }
 }
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy)]
