@@ -766,10 +766,23 @@ impl Computer {
 
     fn handle_48(&mut self, instruction: Word) {
         match instruction.field().value() {
+            0 => self.inca(instruction),
             2 => self.enta(instruction),
             3 => self.enna(instruction),
             _ => panic!("Illegal field in code 48 instruction"),
         };
+    }
+
+    fn inca(&mut self, instruction: Word) {
+        let result = self.r_a.to_i32() + self.modified_address(instruction);
+        if result == 0 {
+            self.r_a.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
+            return;
+        }
+        if result / 64_i32.pow(5) != 0 {
+            self.overflow = true;
+        }
+        self.r_a = Word::from_i32(result % 64_i32.pow(5)).unwrap();
     }
 
     fn enta(&mut self, instruction: Word) {
