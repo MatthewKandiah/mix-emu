@@ -731,7 +731,41 @@ impl Computer {
 
     fn jred(&mut self, instruction: Word) {}
 
-    fn handle_39(&mut self, instruction: Word) {}
+    fn handle_39(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.jmp(instruction),
+            1 => self.jsj(instruction),
+            2 => self.jov(instruction),
+            3 => self.jnov(instruction),
+            4 => self.jl(instruction),
+            5 => self.je(instruction),
+            6 => self.jg(instruction),
+            7 => self.jge(instruction),
+            8 => self.jne(instruction),
+            9 => self.jle(instruction),
+            _ => panic!("Illegal field in code 39 instruction"),
+        };
+    }
+
+    fn jmp(&mut self, instruction: Word) {}
+
+    fn jsj(&mut self, instruction: Word) {}
+
+    fn jov(&mut self, instruction: Word) {}
+
+    fn jnov(&mut self, instruction: Word) {}
+
+    fn jl(&mut self, instruction: Word) {}
+
+    fn je(&mut self, instruction: Word) {}
+
+    fn jg(&mut self, instruction: Word) {}
+
+    fn jge(&mut self, instruction: Word) {}
+
+    fn jne(&mut self, instruction: Word) {}
+
+    fn jle(&mut self, instruction: Word) {}
 
     fn handle_40(&mut self, instruction: Word) {}
 
