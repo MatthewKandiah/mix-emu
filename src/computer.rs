@@ -957,6 +957,7 @@ impl Computer {
     fn handle_55(&mut self, instruction: Word) {
         match instruction.field().value() {
             0 => self.incx(instruction),
+            1 => self.decx(instruction),
             2 => self.entx(instruction),
             3 => self.ennx(instruction),
             _ => panic!("Illegal field in code 55 instruction"),
@@ -973,6 +974,10 @@ impl Computer {
             self.overflow = true;
         }
         self.r_x = Word::from_i32(result % 64_i32.pow(5)).unwrap();
+    }
+
+    fn decx(&mut self, instruction: Word) {
+        self.incx(instruction.with_opposite_sign());
     }
 
     fn entx(&mut self, instruction: Word) {
