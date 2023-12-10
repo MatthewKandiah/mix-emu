@@ -401,9 +401,53 @@ impl Computer {
         self.r_x.bytes = x_bytes;
     }
 
-    fn slc(&mut self, instruction: Word) {}
+    fn slc(&mut self, instruction: Word) {
+        let shift_count = i32::min(self.modified_address(instruction), 10);
+        if shift_count < 0 {
+            panic!("illegal - negative shift count");
+        }
+        let mut a_bytes = self.r_a.bytes;
+        let mut x_bytes = self.r_x.bytes;
+        for _ in 0..shift_count {
+            let temp = a_bytes.0;
+            a_bytes.0 = a_bytes.1;
+            a_bytes.1 = a_bytes.2;
+            a_bytes.2 = a_bytes.3;
+            a_bytes.3 = a_bytes.4;
+            a_bytes.4 = x_bytes.0;
+            x_bytes.0 = x_bytes.1;
+            x_bytes.1 = x_bytes.2;
+            x_bytes.2 = x_bytes.3;
+            x_bytes.3 = x_bytes.4;
+            x_bytes.4 = temp;
+        }
+        self.r_a.bytes = a_bytes;
+        self.r_x.bytes = x_bytes;
+    }
 
-    fn src(&mut self, instruction: Word) {}
+    fn src(&mut self, instruction: Word) {
+        let shift_count = i32::min(self.modified_address(instruction), 10);
+        if shift_count < 0 {
+            panic!("illegal - negative shift count");
+        }
+        let mut a_bytes = self.r_a.bytes;
+        let mut x_bytes = self.r_x.bytes;
+        for _ in 0..shift_count {
+            let temp = x_bytes.4;
+            x_bytes.4 = x_bytes.3;
+            x_bytes.3 = x_bytes.2;
+            x_bytes.2 = x_bytes.1;
+            x_bytes.1 = x_bytes.0;
+            x_bytes.0 = a_bytes.4;
+            a_bytes.4 = a_bytes.3;
+            a_bytes.3 = a_bytes.2;
+            a_bytes.2 = a_bytes.1;
+            a_bytes.1 = a_bytes.0;
+            a_bytes.0 = temp;
+        }
+        self.r_a.bytes = a_bytes;
+        self.r_x.bytes = x_bytes;
+    }
 
     fn mov(&mut self, instruction: Word) {}
 
