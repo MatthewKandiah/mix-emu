@@ -1,16 +1,49 @@
+use crate::computer::*;
+use crate::data_types::*;
+
+fn setup_computer() -> Computer {
+    let mut computer = Computer::new();
+    computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 2, 3, 4, 5).unwrap();
+    computer.r_x = Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap();
+    computer
+}
+
+#[test]
+fn book_example() {
+    let mut computer = setup_computer();
+    let srax1 = Word::from_instruction_parts(Sign::PLUS, 1, 0, 3, 6).unwrap();
+    let sla2 = Word::from_instruction_parts(Sign::PLUS, 2, 0, 0, 6).unwrap();
+    let src4 = Word::from_instruction_parts(Sign::PLUS, 4, 0, 5, 6).unwrap();
+    let sra2 = Word::from_instruction_parts(Sign::PLUS, 2, 0, 1, 6).unwrap();
+    let slc501 = Word::from_instruction_parts(Sign::PLUS, 501, 0, 4, 6).unwrap();
+
+    computer.handle_instruction(srax1);
+    assert_eq!(computer.r_a, Word::from_byte_values(Sign::PLUS, 0, 1, 2, 3, 4).unwrap());
+    assert_eq!(computer.r_x, Word::from_byte_values(Sign::MINUS, 5, 6, 7, 8, 9).unwrap());
+
+    computer.handle_instruction(sla2);
+    assert_eq!(computer.r_a, Word::from_byte_values(Sign::PLUS, 2, 3, 4, 0, 0).unwrap());
+    assert_eq!(computer.r_x, Word::from_byte_values(Sign::MINUS, 5, 6, 7, 8, 9).unwrap());
+
+    computer.handle_instruction(src4);
+    assert_eq!(computer.r_a, Word::from_byte_values(Sign::PLUS, 6, 7, 8, 9, 2).unwrap());
+    assert_eq!(computer.r_x, Word::from_byte_values(Sign::MINUS, 3, 4, 0, 0, 5).unwrap());
+
+    computer.handle_instruction(sra2);
+    assert_eq!(computer.r_a, Word::from_byte_values(Sign::PLUS, 0, 0, 6, 7, 8).unwrap());
+    assert_eq!(computer.r_x, Word::from_byte_values(Sign::MINUS, 3, 4, 0, 0, 5).unwrap());
+
+    computer.handle_instruction(slc501);
+    assert_eq!(computer.r_a, Word::from_byte_values(Sign::PLUS, 0, 6, 7, 8, 3).unwrap());
+    assert_eq!(computer.r_x, Word::from_byte_values(Sign::MINUS, 4, 0, 0, 5, 0).unwrap());
+}
+
 mod sla {
-    use crate::computer::*;
     use crate::data_types::*;
+    use crate::tests::shifting::setup_computer;
 
     const CODE: i32 = 6;
     const FIELD: i32 = 0;
-
-    fn setup_computer() -> Computer {
-        let mut computer = Computer::new();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 2, 3, 4, 5).unwrap();
-        computer.r_x = Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap();
-        computer
-    }
 
     #[test]
     fn should_shift_one_position() {
@@ -65,18 +98,10 @@ mod sla {
 }
 
 mod sra {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use crate::{data_types::*, tests::shifting::setup_computer};
 
     const CODE: i32 = 6;
     const FIELD: i32 = 1;
-
-    fn setup_computer() -> Computer {
-        let mut computer = Computer::new();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 2, 3, 4, 5).unwrap();
-        computer.r_x = Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap();
-        computer
-    }
 
     #[test]
     fn should_shift_one_position() {
@@ -131,18 +156,10 @@ mod sra {
 }
 
 mod slax {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use crate::{data_types::*, tests::shifting::setup_computer};
 
     const CODE: i32 = 6;
     const FIELD: i32 = 2;
-
-    fn setup_computer() -> Computer {
-        let mut computer = Computer::new();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 2, 3, 4, 5).unwrap();
-        computer.r_x = Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap();
-        computer
-    }
 
     #[test]
     fn should_shift_one_position() {
@@ -197,18 +214,10 @@ mod slax {
 }
 
 mod srax {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use crate::{data_types::*, tests::shifting::setup_computer};
 
     const CODE: i32 = 6;
     const FIELD: i32 = 3;
-
-    fn setup_computer() -> Computer {
-        let mut computer = Computer::new();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 2, 3, 4, 5).unwrap();
-        computer.r_x = Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap();
-        computer
-    }
 
     #[test]
     fn should_shift_one_position() {
@@ -263,18 +272,10 @@ mod srax {
 }
 
 mod slc {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use crate::{data_types::*, tests::shifting::setup_computer};
 
     const CODE: i32 = 6;
     const FIELD: i32 = 4;
-
-    fn setup_computer() -> Computer {
-        let mut computer = Computer::new();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 2, 3, 4, 5).unwrap();
-        computer.r_x = Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap();
-        computer
-    }
 
     #[test]
     fn should_shift_one_position() {
@@ -329,18 +330,10 @@ mod slc {
 }
 
 mod src {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use crate::{data_types::*, tests::shifting::setup_computer};
 
     const CODE: i32 = 6;
     const FIELD: i32 = 5;
-
-    fn setup_computer() -> Computer {
-        let mut computer = Computer::new();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 2, 3, 4, 5).unwrap();
-        computer.r_x = Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap();
-        computer
-    }
 
     #[test]
     fn should_shift_one_position() {

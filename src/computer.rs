@@ -402,7 +402,7 @@ impl Computer {
     }
 
     fn slc(&mut self, instruction: Word) {
-        let shift_count = i32::min(self.modified_address(instruction), 10);
+        let shift_count = self.modified_address(instruction) % 10;
         if shift_count < 0 {
             panic!("illegal - negative shift count");
         }
@@ -426,7 +426,7 @@ impl Computer {
     }
 
     fn src(&mut self, instruction: Word) {
-        let shift_count = i32::min(self.modified_address(instruction), 10);
+        let shift_count = self.modified_address(instruction) % 10;
         if shift_count < 0 {
             panic!("illegal - negative shift count");
         }
