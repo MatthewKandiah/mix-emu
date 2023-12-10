@@ -806,26 +806,396 @@ impl Computer {
     }
 
     fn jle(&mut self, instruction: Word) {
-        if self.comparison_indicator == Some(ComparisonIndicatorState::LESS) || self.comparison_indicator == Some(ComparisonIndicatorState::EQUAL) {
+        if self.comparison_indicator == Some(ComparisonIndicatorState::LESS)
+            || self.comparison_indicator == Some(ComparisonIndicatorState::EQUAL)
+        {
             self.jmp(instruction);
         }
     }
 
-    fn handle_40(&mut self, instruction: Word) {}
+    fn handle_40(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.jan(instruction),
+            1 => self.jaz(instruction),
+            2 => self.jap(instruction),
+            3 => self.jann(instruction),
+            4 => self.janz(instruction),
+            5 => self.janp(instruction),
+            _ => panic!("Illegal field for code 40 instruction)"),
+        };
+    }
 
-    fn handle_41(&mut self, instruction: Word) {}
+    fn jan(&mut self, instruction: Word) {
+        if self.r_a.to_i32() < 0 {
+            self.jmp(instruction);
+        }
+    }
 
-    fn handle_42(&mut self, instruction: Word) {}
+    fn jaz(&mut self, instruction: Word) {
+        if self.r_a.to_i32() == 0 {
+            self.jmp(instruction);
+        }
+    }
 
-    fn handle_43(&mut self, instruction: Word) {}
+    fn jap(&mut self, instruction: Word) {
+        if self.r_a.to_i32() > 0 {
+            self.jmp(instruction);
+        }
+    }
 
-    fn handle_44(&mut self, instruction: Word) {}
+    fn jann(&mut self, instruction: Word) {
+        if self.r_a.to_i32() >= 0 {
+            self.jmp(instruction);
+        }
+    }
 
-    fn handle_45(&mut self, instruction: Word) {}
+    fn janz(&mut self, instruction: Word) {
+        if self.r_a.to_i32() != 0 {
+            self.jmp(instruction);
+        }
+    }
 
-    fn handle_46(&mut self, instruction: Word) {}
+    fn janp(&mut self, instruction: Word) {
+        if self.r_a.to_i32() <= 0 {
+            self.jmp(instruction);
+        }
+    }
 
-    fn handle_47(&mut self, instruction: Word) {}
+    fn handle_41(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.j1n(instruction),
+            1 => self.j1z(instruction),
+            2 => self.j1p(instruction),
+            3 => self.j1nn(instruction),
+            4 => self.j1nz(instruction),
+            5 => self.j1np(instruction),
+            _ => panic!("illegal field in code 41 instruction"),
+        }
+    }
+
+    fn j1n(&mut self, instruction: Word) {
+        if self.r_i1.to_i32() < 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j1z(&mut self, instruction: Word) {
+        if self.r_i1.to_i32() == 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j1p(&mut self, instruction: Word) {
+        if self.r_i1.to_i32() > 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j1nn(&mut self, instruction: Word) {
+        if self.r_i1.to_i32() >= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j1nz(&mut self, instruction: Word) {
+        if self.r_i1.to_i32() != 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j1np(&mut self, instruction: Word) {
+        if self.r_i1.to_i32() <= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn handle_42(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.j2n(instruction),
+            1 => self.j2z(instruction),
+            2 => self.j2p(instruction),
+            3 => self.j2nn(instruction),
+            4 => self.j2nz(instruction),
+            5 => self.j2np(instruction),
+            _ => panic!("illegal field in code 42 instruction"),
+        }
+    }
+
+    fn j2n(&mut self, instruction: Word) {
+        if self.r_i2.to_i32() < 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j2z(&mut self, instruction: Word) {
+        if self.r_i2.to_i32() == 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j2p(&mut self, instruction: Word) {
+        if self.r_i2.to_i32() > 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j2nn(&mut self, instruction: Word) {
+        if self.r_i2.to_i32() >= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j2nz(&mut self, instruction: Word) {
+        if self.r_i2.to_i32() != 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j2np(&mut self, instruction: Word) {
+        if self.r_i2.to_i32() <= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn handle_43(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.j3n(instruction),
+            1 => self.j3z(instruction),
+            2 => self.j3p(instruction),
+            3 => self.j3nn(instruction),
+            4 => self.j3nz(instruction),
+            5 => self.j3np(instruction),
+            _ => panic!("illegal field in code 43 instruction"),
+        }
+    }
+
+    fn j3n(&mut self, instruction: Word) {
+        if self.r_i3.to_i32() < 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j3z(&mut self, instruction: Word) {
+        if self.r_i3.to_i32() == 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j3p(&mut self, instruction: Word) {
+        if self.r_i3.to_i32() > 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j3nn(&mut self, instruction: Word) {
+        if self.r_i3.to_i32() >= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j3nz(&mut self, instruction: Word) {
+        if self.r_i3.to_i32() != 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j3np(&mut self, instruction: Word) {
+        if self.r_i3.to_i32() <= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn handle_44(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.j4n(instruction),
+            1 => self.j4z(instruction),
+            2 => self.j4p(instruction),
+            3 => self.j4nn(instruction),
+            4 => self.j4nz(instruction),
+            5 => self.j4np(instruction),
+            _ => panic!("illegal field in code 44 instruction"),
+        }
+    }
+
+    fn j4n(&mut self, instruction: Word) {
+        if self.r_i4.to_i32() < 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j4z(&mut self, instruction: Word) {
+        if self.r_i4.to_i32() == 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j4p(&mut self, instruction: Word) {
+        if self.r_i4.to_i32() > 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j4nn(&mut self, instruction: Word) {
+        if self.r_i4.to_i32() >= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j4nz(&mut self, instruction: Word) {
+        if self.r_i4.to_i32() != 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j4np(&mut self, instruction: Word) {
+        if self.r_i4.to_i32() <= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn handle_45(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.j5n(instruction),
+            1 => self.j5z(instruction),
+            2 => self.j5p(instruction),
+            3 => self.j5nn(instruction),
+            4 => self.j5nz(instruction),
+            5 => self.j5np(instruction),
+            _ => panic!("illegal field in code 45 instruction"),
+        }
+    }
+
+    fn j5n(&mut self, instruction: Word) {
+        if self.r_i5.to_i32() < 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j5z(&mut self, instruction: Word) {
+        if self.r_i5.to_i32() == 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j5p(&mut self, instruction: Word) {
+        if self.r_i5.to_i32() > 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j5nn(&mut self, instruction: Word) {
+        if self.r_i5.to_i32() >= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j5nz(&mut self, instruction: Word) {
+        if self.r_i5.to_i32() != 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j5np(&mut self, instruction: Word) {
+        if self.r_i5.to_i32() <= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn handle_46(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.j6n(instruction),
+            1 => self.j6z(instruction),
+            2 => self.j6p(instruction),
+            3 => self.j6nn(instruction),
+            4 => self.j6nz(instruction),
+            5 => self.j6np(instruction),
+            _ => panic!("illegal field in code 46 instruction"),
+        }
+    }
+
+    fn j6n(&mut self, instruction: Word) {
+        if self.r_i6.to_i32() < 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j6z(&mut self, instruction: Word) {
+        if self.r_i6.to_i32() == 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j6p(&mut self, instruction: Word) {
+        if self.r_i6.to_i32() > 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j6nn(&mut self, instruction: Word) {
+        if self.r_i6.to_i32() >= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j6nz(&mut self, instruction: Word) {
+        if self.r_i6.to_i32() != 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn j6np(&mut self, instruction: Word) {
+        if self.r_i6.to_i32() <= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn handle_47(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.jxn(instruction),
+            1 => self.jxz(instruction),
+            2 => self.jxp(instruction),
+            3 => self.jxnn(instruction),
+            4 => self.jxnz(instruction),
+            5 => self.jxnp(instruction),
+            _ => panic!("illegal field in code 47 instruction"),
+        }
+    }
+
+    fn jxn(&mut self, instruction: Word) {
+        if self.r_x.to_i32() < 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn jxz(&mut self, instruction: Word) {
+        if self.r_x.to_i32() == 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn jxp(&mut self, instruction: Word) {
+        if self.r_x.to_i32() > 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn jxnn(&mut self, instruction: Word) {
+        if self.r_x.to_i32() >= 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn jxnz(&mut self, instruction: Word) {
+        if self.r_x.to_i32() != 0 {
+            self.jmp(instruction);
+        }
+    }
+
+    fn jxnp(&mut self, instruction: Word) {
+        if self.r_x.to_i32() <= 0 {
+            self.jmp(instruction);
+        }
+    }
 
     fn word_to_enter(&self, instruction: Word) -> Word {
         let mut m = Word::from_i32(self.modified_address(instruction)).unwrap();
