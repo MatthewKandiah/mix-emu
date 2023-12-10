@@ -336,7 +336,7 @@ impl Computer {
             register_bytes.3 = register_bytes.4;
             register_bytes.4 = Byte::ZERO;
         }
-        self.r_a = Word {sign: self.r_a.sign, bytes: register_bytes};
+        self.r_a.bytes = register_bytes;
     }
 
     fn sra(&mut self, instruction: Word) {
@@ -352,12 +352,54 @@ impl Computer {
             register_bytes.1 = register_bytes.0;
             register_bytes.0 = Byte::ZERO;
         }
-        self.r_a = Word {sign: self.r_a.sign, bytes: register_bytes};
+        self.r_a.bytes = register_bytes;
     }
 
-    fn slax(&mut self, instruction: Word) {}
+    fn slax(&mut self, instruction: Word) {
+        let shift_count = i32::min(self.modified_address(instruction), 10);
+        if shift_count < 0 {
+            panic!("illegal - negative shift count");
+        }
+        let mut a_bytes = self.r_a.bytes;
+        let mut x_bytes = self.r_x.bytes;
+        for _ in 0..shift_count {
+            a_bytes.0 = a_bytes.1;
+            a_bytes.1 = a_bytes.2;
+            a_bytes.2 = a_bytes.3;
+            a_bytes.3 = a_bytes.4;
+            a_bytes.4 = x_bytes.0;
+            x_bytes.0 = x_bytes.1;
+            x_bytes.1 = x_bytes.2;
+            x_bytes.2 = x_bytes.3;
+            x_bytes.3 = x_bytes.4;
+            x_bytes.4 = Byte::ZERO;
+        }
+        self.r_a.bytes = a_bytes;
+        self.r_x.bytes = x_bytes;
+    }
 
-    fn srax(&mut self, instruction: Word) {}
+    fn srax(&mut self, instruction: Word) {
+        let shift_count = i32::min(self.modified_address(instruction), 10);
+        if shift_count < 0 {
+            panic!("illegal - negative shift count");
+        }
+        let mut a_bytes = self.r_a.bytes;
+        let mut x_bytes = self.r_x.bytes;
+        for _ in 0..shift_count {
+            x_bytes.4 = x_bytes.3;
+            x_bytes.3 = x_bytes.2;
+            x_bytes.2 = x_bytes.1;
+            x_bytes.1 = x_bytes.0;
+            x_bytes.0 = a_bytes.4;
+            a_bytes.4 = a_bytes.3;
+            a_bytes.3 = a_bytes.2;
+            a_bytes.2 = a_bytes.1;
+            a_bytes.1 = a_bytes.0;
+            a_bytes.0 = Byte::ZERO;
+        }
+        self.r_a.bytes = a_bytes;
+        self.r_x.bytes = x_bytes;
+    }
 
     fn slc(&mut self, instruction: Word) {}
 
