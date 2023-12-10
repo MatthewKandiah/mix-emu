@@ -747,7 +747,10 @@ impl Computer {
         };
     }
 
-    fn jmp(&mut self, instruction: Word) {}
+    fn jmp(&mut self, instruction: Word) {
+        self.r_j = JumpAddress::from_i32(self.current_instruction_address).unwrap();
+        self.current_instruction_address = self.modified_address(instruction);
+    }
 
     fn jsj(&mut self, instruction: Word) {}
 
