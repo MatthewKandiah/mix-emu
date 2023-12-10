@@ -449,7 +449,19 @@ impl Computer {
         self.r_x.bytes = x_bytes;
     }
 
-    fn mov(&mut self, instruction: Word) {}
+    fn mov(&mut self, instruction: Word) {
+        let copy_number = instruction.field().value();
+        if copy_number == 0 {
+            return;
+        };
+        let from_address = self.modified_address(instruction);
+        let to_address = self.r_i1.to_i32();
+        for idx in 0..copy_number {
+            let value = self.memory.get(from_address + idx).unwrap();
+            self.memory.set(to_address + idx, value).unwrap();
+        }
+        self.r_i1 = Index::from_i32(to_address + copy_number).unwrap();
+    }
 
     fn lda(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
