@@ -752,23 +752,64 @@ impl Computer {
         self.current_instruction_address = self.modified_address(instruction);
     }
 
-    fn jsj(&mut self, instruction: Word) {}
+    fn jsj(&mut self, instruction: Word) {
+        self.current_instruction_address = self.modified_address(instruction);
+    }
 
-    fn jov(&mut self, instruction: Word) {}
+    fn jov(&mut self, instruction: Word) {
+        if self.overflow {
+            self.overflow = false;
+            self.jmp(instruction);
+        }
+    }
 
-    fn jnov(&mut self, instruction: Word) {}
+    fn jnov(&mut self, instruction: Word) {
+        if !self.overflow {
+            self.jmp(instruction);
+        } else {
+            self.overflow = false;
+        }
+    }
 
-    fn jl(&mut self, instruction: Word) {}
+    fn jl(&mut self, instruction: Word) {
+        if self.comparison_indicator == Some(ComparisonIndicatorState::LESS) {
+            self.jmp(instruction);
+        }
+    }
 
-    fn je(&mut self, instruction: Word) {}
+    fn je(&mut self, instruction: Word) {
+        if self.comparison_indicator == Some(ComparisonIndicatorState::EQUAL) {
+            self.jmp(instruction);
+        }
+    }
 
-    fn jg(&mut self, instruction: Word) {}
+    fn jg(&mut self, instruction: Word) {
+        if self.comparison_indicator == Some(ComparisonIndicatorState::GREATER) {
+            self.jmp(instruction);
+        }
+    }
 
-    fn jge(&mut self, instruction: Word) {}
+    fn jge(&mut self, instruction: Word) {
+        if self.comparison_indicator == Some(ComparisonIndicatorState::GREATER)
+            || self.comparison_indicator == Some(ComparisonIndicatorState::EQUAL)
+        {
+            self.jmp(instruction);
+        }
+    }
 
-    fn jne(&mut self, instruction: Word) {}
+    fn jne(&mut self, instruction: Word) {
+        if self.comparison_indicator == Some(ComparisonIndicatorState::GREATER)
+            || self.comparison_indicator == Some(ComparisonIndicatorState::LESS)
+        {
+            self.jmp(instruction);
+        }
+    }
 
-    fn jle(&mut self, instruction: Word) {}
+    fn jle(&mut self, instruction: Word) {
+        if self.comparison_indicator == Some(ComparisonIndicatorState::LESS) || self.comparison_indicator == Some(ComparisonIndicatorState::EQUAL) {
+            self.jmp(instruction);
+        }
+    }
 
     fn handle_40(&mut self, instruction: Word) {}
 
