@@ -339,7 +339,21 @@ impl Computer {
         self.r_a = Word {sign: self.r_a.sign, bytes: register_bytes};
     }
 
-    fn sra(&mut self, instruction: Word) {}
+    fn sra(&mut self, instruction: Word) {
+        let shift_count = i32::min(self.modified_address(instruction), 5);
+        if shift_count < 0 {
+            panic!("illegal - negative shift count");
+        }
+        let mut register_bytes = self.r_a.bytes;
+        for _ in 0..shift_count {
+            register_bytes.4 = register_bytes.3;
+            register_bytes.3 = register_bytes.2;
+            register_bytes.2 = register_bytes.1;
+            register_bytes.1 = register_bytes.0;
+            register_bytes.0 = Byte::ZERO;
+        }
+        self.r_a = Word {sign: self.r_a.sign, bytes: register_bytes};
+    }
 
     fn slax(&mut self, instruction: Word) {}
 
