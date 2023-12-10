@@ -22,6 +22,7 @@ pub struct Computer {
     pub overflow: bool,
     pub comparison_indicator: Option<ComparisonIndicatorState>,
     pub memory: Memory,
+    pub running: bool,
 }
 
 impl Computer {
@@ -40,10 +41,22 @@ impl Computer {
             overflow: false,
             comparison_indicator: None,
             memory: Memory::ZERO,
+            running: false,
         }
     }
 
+    pub fn start(&mut self) {
+        if self.running {
+            panic!("cannot start when already running, consider using restart");
+        }
+        self.running = true;
+        self.handle_next_instruction();
+    }
+
     pub fn handle_next_instruction(&mut self) {
+        if !self.running {
+            return
+        }
         let current_instruction = self.memory.get(self.current_instruction_address).unwrap();
         self.current_instruction_address += 1;
         self.handle_instruction(current_instruction);
@@ -309,7 +322,16 @@ impl Computer {
         self.r_a = a_result_word;
     }
 
-    fn handle_5(&mut self, instruction: Word) {}
+    fn handle_5(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            2 => self.hlt(),
+            _ => panic!("illegal field in code 5 instruction"),
+        }
+    }
+
+    fn hlt(&mut self) {
+        self.running = false;
+    }
 
     fn handle_6(&mut self, instruction: Word) {
         match instruction.field().value() {

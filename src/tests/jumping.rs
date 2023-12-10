@@ -21,6 +21,7 @@ mod jmp {
     #[test]
     fn should_work_when_called_from_memory() {
         let mut computer = Computer::new();
+        computer.running = true;
         computer.current_instruction_address = 10;
         computer
             .memory
@@ -61,6 +62,7 @@ mod jsj {
     #[test]
     fn should_work_when_called_from_memory() {
         let mut computer = Computer::new();
+        computer.running = true;
         computer.current_instruction_address = 10;
         computer
             .memory
