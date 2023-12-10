@@ -43,7 +43,6 @@ impl Computer {
         }
     }
 
-    // TODO - add tests for this!
     pub fn handle_next_instruction(&mut self) {
         let current_instruction = self.memory.get(self.current_instruction_address).unwrap();
         self.current_instruction_address += 1;
@@ -312,7 +311,43 @@ impl Computer {
 
     fn handle_5(&mut self, instruction: Word) {}
 
-    fn handle_6(&mut self, instruction: Word) {}
+    fn handle_6(&mut self, instruction: Word) {
+        match instruction.field().value() {
+            0 => self.sla(instruction),
+            1 => self.sra(instruction),
+            2 => self.slax(instruction),
+            3 => self.srax(instruction),
+            4 => self.slc(instruction),
+            5 => self.src(instruction),
+            _ => panic!("illegal field in code 6 instruction"),
+        }
+    }
+
+    fn sla(&mut self, instruction: Word) {
+        let shift_count = i32::min(self.modified_address(instruction), 5);
+        if shift_count < 0 {
+            panic!("illegal - negative shift count");
+        }
+        let mut register_bytes = self.r_a.bytes;
+        for _ in 0..shift_count {
+            register_bytes.0 = register_bytes.1;
+            register_bytes.1 = register_bytes.2;
+            register_bytes.2 = register_bytes.3;
+            register_bytes.3 = register_bytes.4;
+            register_bytes.4 = Byte::ZERO;
+        }
+        self.r_a = Word {sign: self.r_a.sign, bytes: register_bytes};
+    }
+
+    fn sra(&mut self, instruction: Word) {}
+
+    fn slax(&mut self, instruction: Word) {}
+
+    fn srax(&mut self, instruction: Word) {}
+
+    fn slc(&mut self, instruction: Word) {}
+
+    fn src(&mut self, instruction: Word) {}
 
     fn mov(&mut self, instruction: Word) {}
 
