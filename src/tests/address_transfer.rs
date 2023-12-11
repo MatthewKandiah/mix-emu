@@ -429,7 +429,7 @@ mod ent5 {
     use crate::data_types::*;
 
     const CODE: i32 = 53;
-    const FIELD:i32 = 2;
+    const FIELD: i32 = 2;
 
     #[test]
     fn should_store_value() {
@@ -473,16 +473,24 @@ mod ent5 {
         computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
     }
 }
@@ -492,7 +500,7 @@ mod ent6 {
     use crate::data_types::*;
 
     const CODE: i32 = 54;
-    const FIELD:i32 = 2;
+    const FIELD: i32 = 2;
 
     #[test]
     fn should_store_value() {
@@ -536,16 +544,24 @@ mod ent6 {
         computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
     }
 }
@@ -599,16 +615,24 @@ mod enna {
         computer.r_i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 1, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 1, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 1, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 1, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 2, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 2, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 2, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 2, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
     }
 }
@@ -662,16 +686,24 @@ mod ennx {
         computer.r_i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 1, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 1, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 1, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 1, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 2, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 2, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 2, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 2, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
     }
 }
@@ -725,16 +757,24 @@ mod enn1 {
         computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
@@ -788,16 +828,24 @@ mod enn2 {
         computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
@@ -851,16 +899,24 @@ mod enn3 {
         computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
@@ -914,16 +970,24 @@ mod enn4 {
         computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
@@ -977,16 +1041,24 @@ mod enn5 {
         computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
@@ -1040,16 +1112,24 @@ mod enn6 {
         computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
         computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
 
-        computer.handle_instruction(Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap());
+        computer.handle_instruction(
+            Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
+        );
         assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
@@ -1220,7 +1300,7 @@ mod inc1 {
         assert_eq!(computer.r_i1.to_i32(), -788);
         assert!(!computer.overflow);
     }
-    
+
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
@@ -1660,7 +1740,7 @@ mod dec1 {
         assert_eq!(computer.r_i1.to_i32(), 790);
         assert!(!computer.overflow);
     }
-    
+
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
@@ -1710,7 +1790,7 @@ mod dec2 {
         assert_eq!(computer.r_i2.to_i32(), 790);
         assert!(!computer.overflow);
     }
-    
+
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
@@ -1760,7 +1840,7 @@ mod dec3 {
         assert_eq!(computer.r_i3.to_i32(), 790);
         assert!(!computer.overflow);
     }
-    
+
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
@@ -1810,7 +1890,7 @@ mod dec4 {
         assert_eq!(computer.r_i4.to_i32(), 790);
         assert!(!computer.overflow);
     }
-    
+
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
@@ -1860,7 +1940,7 @@ mod dec5 {
         assert_eq!(computer.r_i5.to_i32(), 790);
         assert!(!computer.overflow);
     }
-    
+
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
@@ -1910,7 +1990,7 @@ mod dec6 {
         assert_eq!(computer.r_i6.to_i32(), 790);
         assert!(!computer.overflow);
     }
-    
+
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();

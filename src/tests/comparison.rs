@@ -136,7 +136,7 @@ mod cmpa {
     }
 }
 
-mod cmpx{
+mod cmpx {
     use crate::computer::*;
     use crate::data_types::*;
 
@@ -274,7 +274,7 @@ mod cmpx{
     }
 }
 
-mod cmp1{
+mod cmp1 {
     use crate::computer::*;
     use crate::data_types::*;
 
@@ -412,7 +412,7 @@ mod cmp1{
     }
 }
 
-mod cmp2{
+mod cmp2 {
     use crate::computer::*;
     use crate::data_types::*;
 
@@ -550,7 +550,7 @@ mod cmp2{
     }
 }
 
-mod cmp3{
+mod cmp3 {
     use crate::computer::*;
     use crate::data_types::*;
 
@@ -688,7 +688,7 @@ mod cmp3{
     }
 }
 
-mod cmp4{
+mod cmp4 {
     use crate::computer::*;
     use crate::data_types::*;
 
@@ -826,7 +826,7 @@ mod cmp4{
     }
 }
 
-mod cmp5{
+mod cmp5 {
     use crate::computer::*;
     use crate::data_types::*;
 
@@ -964,7 +964,7 @@ mod cmp5{
     }
 }
 
-mod cmp6{
+mod cmp6 {
     use crate::computer::*;
     use crate::data_types::*;
 

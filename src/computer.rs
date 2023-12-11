@@ -55,7 +55,7 @@ impl Computer {
 
     pub fn handle_next_instruction(&mut self) {
         if !self.running {
-            return
+            return;
         }
         let current_instruction = self.memory.get(self.current_instruction_address).unwrap();
         self.current_instruction_address += 1;

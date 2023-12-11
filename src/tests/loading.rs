@@ -605,7 +605,10 @@ mod ldan_tests {
         let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, 20, 16).unwrap();
         computer.handle_instruction(instruction);
 
-        assert_eq!(computer.r_a.to_i32(), (-1) * (2 * 64_i32.pow(2) + 3 * 64 + 4));
+        assert_eq!(
+            computer.r_a.to_i32(),
+            (-1) * (2 * 64_i32.pow(2) + 3 * 64 + 4)
+        );
     }
 }
 
