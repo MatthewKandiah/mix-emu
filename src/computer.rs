@@ -21,7 +21,7 @@ pub struct Computer {
     pub r_j: JumpAddress,
     pub overflow: bool,
     pub comparison_indicator: Option<ComparisonIndicatorState>,
-      pub memory: Memory,
+    pub memory: Memory,
     pub running: bool,
 }
 
