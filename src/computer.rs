@@ -46,7 +46,7 @@ impl Computer {
     }
 
     pub fn start(&mut self) {
-        if self.running {
+        if !self.running {
             panic!("cannot start when already running, consider using restart");
         }
         self.running = true;
