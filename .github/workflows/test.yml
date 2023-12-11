@@ -25,4 +25,5 @@ jobs:
       - name: Check formatting
         uses: actions-rs/cargo@v1
         with:
-          command: fmt --check
+          command: fmt
+          args: --check
