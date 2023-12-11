@@ -9,7 +9,7 @@ pub enum ComparisonIndicatorState {
 }
 
 pub struct Computer {
-    pub   current_instruction_address: i32,
+    pub current_instruction_address: i32,
     pub r_a: Word,
     pub r_x: Word,
     pub r_i1: Index,
