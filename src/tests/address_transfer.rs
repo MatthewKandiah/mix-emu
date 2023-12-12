@@ -11,11 +11,11 @@ mod enta {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 123);
+        assert_eq!(computer.registers.a.to_i32(), 123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_a.to_i32(), -234);
+        assert_eq!(computer.registers.a.to_i32(), -234);
     }
 
     #[test]
@@ -24,48 +24,48 @@ mod enta {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::PLUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(-10).unwrap();
+        computer.registers.i1 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 20);
+        assert_eq!(computer.registers.a.to_i32(), 20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 1, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 1, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, FIELD, 2, CODE).unwrap(),
         );
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, FIELD, 2, CODE).unwrap(),
         );
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::MINUS));
     }
 }
 
@@ -82,11 +82,11 @@ mod entx {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 123);
+        assert_eq!(computer.registers.x.to_i32(), 123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_x.to_i32(), -234);
+        assert_eq!(computer.registers.x.to_i32(), -234);
     }
 
     #[test]
@@ -95,48 +95,48 @@ mod entx {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::PLUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(-10).unwrap();
+        computer.registers.i1 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 20);
+        assert_eq!(computer.registers.x.to_i32(), 20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 1, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 1, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, FIELD, 2, CODE).unwrap(),
         );
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, FIELD, 2, CODE).unwrap(),
         );
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::MINUS));
     }
 }
 
@@ -153,11 +153,11 @@ mod ent1 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), 123);
+        assert_eq!(computer.registers.i1.to_i32(), 123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i1.to_i32(), -234);
+        assert_eq!(computer.registers.i1.to_i32(), -234);
     }
 
     #[test]
@@ -166,48 +166,48 @@ mod ent1 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::PLUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), 20);
+        assert_eq!(computer.registers.i1.to_i32(), 20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::MINUS));
     }
 }
 
@@ -224,11 +224,11 @@ mod ent2 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), 123);
+        assert_eq!(computer.registers.i2.to_i32(), 123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i2.to_i32(), -234);
+        assert_eq!(computer.registers.i2.to_i32(), -234);
     }
 
     #[test]
@@ -237,48 +237,48 @@ mod ent2 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::PLUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), 20);
+        assert_eq!(computer.registers.i2.to_i32(), 20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::MINUS));
     }
 }
 
@@ -295,11 +295,11 @@ mod ent3 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), 123);
+        assert_eq!(computer.registers.i3.to_i32(), 123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i3.to_i32(), -234);
+        assert_eq!(computer.registers.i3.to_i32(), -234);
     }
 
     #[test]
@@ -308,48 +308,48 @@ mod ent3 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::PLUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), 20);
+        assert_eq!(computer.registers.i3.to_i32(), 20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::MINUS));
     }
 }
 
@@ -366,11 +366,11 @@ mod ent4 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), 123);
+        assert_eq!(computer.registers.i4.to_i32(), 123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i4.to_i32(), -234);
+        assert_eq!(computer.registers.i4.to_i32(), -234);
     }
 
     #[test]
@@ -379,48 +379,48 @@ mod ent4 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::PLUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), 20);
+        assert_eq!(computer.registers.i4.to_i32(), 20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::MINUS));
     }
 }
 
@@ -437,11 +437,11 @@ mod ent5 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), 123);
+        assert_eq!(computer.registers.i5.to_i32(), 123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i5.to_i32(), -234);
+        assert_eq!(computer.registers.i5.to_i32(), -234);
     }
 
     #[test]
@@ -450,48 +450,48 @@ mod ent5 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::PLUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), 20);
+        assert_eq!(computer.registers.i5.to_i32(), 20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::MINUS));
     }
 }
 
@@ -508,11 +508,11 @@ mod ent6 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), 123);
+        assert_eq!(computer.registers.i6.to_i32(), 123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i6.to_i32(), -234);
+        assert_eq!(computer.registers.i6.to_i32(), -234);
     }
 
     #[test]
@@ -521,48 +521,48 @@ mod ent6 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::PLUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::MINUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), 20);
+        assert_eq!(computer.registers.i6.to_i32(), 20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::MINUS));
     }
 }
 
@@ -579,11 +579,11 @@ mod enna {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), -123);
+        assert_eq!(computer.registers.a.to_i32(), -123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_a.to_i32(), 234);
+        assert_eq!(computer.registers.a.to_i32(), 234);
     }
 
     #[test]
@@ -592,48 +592,48 @@ mod enna {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::MINUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::PLUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(-10).unwrap();
+        computer.registers.i1 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), -20);
+        assert_eq!(computer.registers.a.to_i32(), -20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 1, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 1, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 2, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 2, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_a, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.a, Word::ZERO.with_sign(Sign::PLUS));
     }
 }
 
@@ -650,11 +650,11 @@ mod ennx {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), -123);
+        assert_eq!(computer.registers.x.to_i32(), -123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_x.to_i32(), 234);
+        assert_eq!(computer.registers.x.to_i32(), 234);
     }
 
     #[test]
@@ -663,48 +663,48 @@ mod ennx {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::MINUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::PLUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(-10).unwrap();
+        computer.registers.i1 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), -20);
+        assert_eq!(computer.registers.x.to_i32(), -20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i1 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i2 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 1, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 1, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 2, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 2, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_x, Word::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.x, Word::ZERO.with_sign(Sign::PLUS));
     }
 }
 
@@ -721,11 +721,11 @@ mod enn1 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), -123);
+        assert_eq!(computer.registers.i1.to_i32(), -123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i1.to_i32(), 234);
+        assert_eq!(computer.registers.i1.to_i32(), 234);
     }
 
     #[test]
@@ -734,48 +734,48 @@ mod enn1 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::MINUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::PLUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), -20);
+        assert_eq!(computer.registers.i1.to_i32(), -20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i1, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i1, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
 
@@ -792,11 +792,11 @@ mod enn2 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), -123);
+        assert_eq!(computer.registers.i2.to_i32(), -123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i2.to_i32(), 234);
+        assert_eq!(computer.registers.i2.to_i32(), 234);
     }
 
     #[test]
@@ -805,48 +805,48 @@ mod enn2 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::MINUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::PLUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), -20);
+        assert_eq!(computer.registers.i2.to_i32(), -20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i2, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i2, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
 
@@ -863,11 +863,11 @@ mod enn3 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), -123);
+        assert_eq!(computer.registers.i3.to_i32(), -123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i3.to_i32(), 234);
+        assert_eq!(computer.registers.i3.to_i32(), 234);
     }
 
     #[test]
@@ -876,48 +876,48 @@ mod enn3 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::MINUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::PLUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), -20);
+        assert_eq!(computer.registers.i3.to_i32(), -20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i3, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i3, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
 
@@ -934,11 +934,11 @@ mod enn4 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), -123);
+        assert_eq!(computer.registers.i4.to_i32(), -123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i4.to_i32(), 234);
+        assert_eq!(computer.registers.i4.to_i32(), 234);
     }
 
     #[test]
@@ -947,48 +947,48 @@ mod enn4 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::MINUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::PLUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), -20);
+        assert_eq!(computer.registers.i4.to_i32(), -20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i4, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i4, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
 
@@ -1005,11 +1005,11 @@ mod enn5 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), -123);
+        assert_eq!(computer.registers.i5.to_i32(), -123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i5.to_i32(), 234);
+        assert_eq!(computer.registers.i5.to_i32(), 234);
     }
 
     #[test]
@@ -1018,48 +1018,48 @@ mod enn5 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::MINUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::PLUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), -20);
+        assert_eq!(computer.registers.i5.to_i32(), -20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i5, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i5, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
 
@@ -1076,11 +1076,11 @@ mod enn6 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 123, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), -123);
+        assert_eq!(computer.registers.i6.to_i32(), -123);
 
         let instruction2 = Word::from_instruction_parts(Sign::MINUS, 234, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction2);
-        assert_eq!(computer.r_i6.to_i32(), 234);
+        assert_eq!(computer.registers.i6.to_i32(), 234);
     }
 
     #[test]
@@ -1089,48 +1089,48 @@ mod enn6 {
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::MINUS));
 
         let instruction = Word::from_instruction_parts(Sign::MINUS, 0, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::PLUS));
     }
 
     #[test]
     fn should_store_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-10).unwrap();
+        computer.registers.i6 = Index::from_i32(-10).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 30, 6, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), -20);
+        assert_eq!(computer.registers.i6.to_i32(), -20);
     }
 
     #[test]
     fn should_handle_storing_index_zero_edge_cases() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::MINUS, 0, 0).unwrap();
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 6, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::PLUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::PLUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::MINUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::MINUS));
 
         computer.handle_instruction(
             Word::from_instruction_parts(Sign::MINUS, 0, 5, FIELD, CODE).unwrap(),
         );
-        assert_eq!(computer.r_i6, Index::ZERO.with_sign(Sign::PLUS));
+        assert_eq!(computer.registers.i6, Index::ZERO.with_sign(Sign::PLUS));
     }
 }
 
@@ -1144,62 +1144,62 @@ mod inca {
     #[test]
     fn should_add_positive_number() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_i32(1).unwrap();
+        computer.registers.a = Word::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 790);
+        assert_eq!(computer.registers.a.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_negative_number() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_i32(1).unwrap();
+        computer.registers.a = Word::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), -788);
+        assert_eq!(computer.registers.a.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_handle_positive_overflow() {
         let mut computer = Computer::new();
-        computer.r_a = Word::MAX;
+        computer.registers.a = Word::MAX;
         let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 9);
+        assert_eq!(computer.registers.a.to_i32(), 9);
         assert!(computer.overflow);
     }
 
     #[test]
     fn should_handle_negative_overflow() {
         let mut computer = Computer::new();
-        computer.r_a = Word::MIN;
+        computer.registers.a = Word::MIN;
         let instruction = Word::from_instruction_parts(Sign::MINUS, 10, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), -9);
+        assert_eq!(computer.registers.a.to_i32(), -9);
         assert!(computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_i32(-1).unwrap();
+        computer.registers.a = Word::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 0);
-        assert_eq!(computer.r_a.sign, Sign::MINUS);
+        assert_eq!(computer.registers.a.to_i32(), 0);
+        assert_eq!(computer.registers.a.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_i32(1).unwrap();
-        computer.r_i1 = Index::from_i32(2).unwrap();
+        computer.registers.a = Word::from_i32(1).unwrap();
+        computer.registers.i1 = Index::from_i32(2).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 6);
+        assert_eq!(computer.registers.a.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1214,62 +1214,62 @@ mod incx {
     #[test]
     fn should_add_positive_number() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_i32(1).unwrap();
+        computer.registers.x = Word::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 790);
+        assert_eq!(computer.registers.x.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_negative_number() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_i32(1).unwrap();
+        computer.registers.x = Word::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), -788);
+        assert_eq!(computer.registers.x.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_handle_positive_overflow() {
         let mut computer = Computer::new();
-        computer.r_x = Word::MAX;
+        computer.registers.x = Word::MAX;
         let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 9);
+        assert_eq!(computer.registers.x.to_i32(), 9);
         assert!(computer.overflow);
     }
 
     #[test]
     fn should_handle_negative_overflow() {
         let mut computer = Computer::new();
-        computer.r_x = Word::MIN;
+        computer.registers.x = Word::MIN;
         let instruction = Word::from_instruction_parts(Sign::MINUS, 10, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), -9);
+        assert_eq!(computer.registers.x.to_i32(), -9);
         assert!(computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_i32(-1).unwrap();
+        computer.registers.x = Word::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 0);
-        assert_eq!(computer.r_x.sign, Sign::MINUS);
+        assert_eq!(computer.registers.x.to_i32(), 0);
+        assert_eq!(computer.registers.x.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_i32(1).unwrap();
-        computer.r_i1 = Index::from_i32(2).unwrap();
+        computer.registers.x = Word::from_i32(1).unwrap();
+        computer.registers.i1 = Index::from_i32(2).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 6);
+        assert_eq!(computer.registers.x.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1284,42 +1284,42 @@ mod inc1 {
     #[test]
     fn should_add_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), 790);
+        assert_eq!(computer.registers.i1.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), -788);
+        assert_eq!(computer.registers.i1.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(-1).unwrap();
+        computer.registers.i1 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), 0);
-        assert_eq!(computer.r_i1.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i1.to_i32(), 0);
+        assert_eq!(computer.registers.i1.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
-        computer.r_i2 = Index::from_i32(2).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(2).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 2, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), 6);
+        assert_eq!(computer.registers.i1.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1334,42 +1334,42 @@ mod inc2 {
     #[test]
     fn should_add_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), 790);
+        assert_eq!(computer.registers.i2.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), -788);
+        assert_eq!(computer.registers.i2.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_i32(-1).unwrap();
+        computer.registers.i2 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), 0);
-        assert_eq!(computer.r_i2.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i2.to_i32(), 0);
+        assert_eq!(computer.registers.i2.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
-        computer.r_i2 = Index::from_i32(2).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(2).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), 6);
+        assert_eq!(computer.registers.i2.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1384,42 +1384,42 @@ mod inc3 {
     #[test]
     fn should_add_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_i32(1).unwrap();
+        computer.registers.i3 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), 790);
+        assert_eq!(computer.registers.i3.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_i32(1).unwrap();
+        computer.registers.i3 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), -788);
+        assert_eq!(computer.registers.i3.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_i32(-1).unwrap();
+        computer.registers.i3 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), 0);
-        assert_eq!(computer.r_i3.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i3.to_i32(), 0);
+        assert_eq!(computer.registers.i3.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
-        computer.r_i3 = Index::from_i32(2).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
+        computer.registers.i3 = Index::from_i32(2).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), 6);
+        assert_eq!(computer.registers.i3.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1434,42 +1434,42 @@ mod inc4 {
     #[test]
     fn should_add_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_i32(1).unwrap();
+        computer.registers.i4 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), 790);
+        assert_eq!(computer.registers.i4.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_i32(1).unwrap();
+        computer.registers.i4 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), -788);
+        assert_eq!(computer.registers.i4.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_i32(-1).unwrap();
+        computer.registers.i4 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), 0);
-        assert_eq!(computer.r_i4.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i4.to_i32(), 0);
+        assert_eq!(computer.registers.i4.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
-        computer.r_i4 = Index::from_i32(2).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
+        computer.registers.i4 = Index::from_i32(2).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), 6);
+        assert_eq!(computer.registers.i4.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1484,42 +1484,42 @@ mod inc5 {
     #[test]
     fn should_add_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_i32(1).unwrap();
+        computer.registers.i5 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), 790);
+        assert_eq!(computer.registers.i5.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_i32(1).unwrap();
+        computer.registers.i5 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), -788);
+        assert_eq!(computer.registers.i5.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_i32(-1).unwrap();
+        computer.registers.i5 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), 0);
-        assert_eq!(computer.r_i5.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i5.to_i32(), 0);
+        assert_eq!(computer.registers.i5.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
-        computer.r_i5 = Index::from_i32(2).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
+        computer.registers.i5 = Index::from_i32(2).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), 6);
+        assert_eq!(computer.registers.i5.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1534,42 +1534,42 @@ mod inc6 {
     #[test]
     fn should_add_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(1).unwrap();
+        computer.registers.i6 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), 790);
+        assert_eq!(computer.registers.i6.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(1).unwrap();
+        computer.registers.i6 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), -788);
+        assert_eq!(computer.registers.i6.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-1).unwrap();
+        computer.registers.i6 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), 0);
-        assert_eq!(computer.r_i6.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i6.to_i32(), 0);
+        assert_eq!(computer.registers.i6.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_add_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
-        computer.r_i6 = Index::from_i32(2).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
+        computer.registers.i6 = Index::from_i32(2).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), 6);
+        assert_eq!(computer.registers.i6.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1584,62 +1584,62 @@ mod deca {
     #[test]
     fn should_subtract_positive_number() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_i32(1).unwrap();
+        computer.registers.a = Word::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), -788);
+        assert_eq!(computer.registers.a.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_negative_number() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_i32(1).unwrap();
+        computer.registers.a = Word::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 790);
+        assert_eq!(computer.registers.a.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_handle_positive_overflow() {
         let mut computer = Computer::new();
-        computer.r_a = Word::MAX;
+        computer.registers.a = Word::MAX;
         let instruction = Word::from_instruction_parts(Sign::MINUS, 10, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 9);
+        assert_eq!(computer.registers.a.to_i32(), 9);
         assert!(computer.overflow);
     }
 
     #[test]
     fn should_handle_negative_overflow() {
         let mut computer = Computer::new();
-        computer.r_a = Word::MIN;
+        computer.registers.a = Word::MIN;
         let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), -9);
+        assert_eq!(computer.registers.a.to_i32(), -9);
         assert!(computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_i32(-1).unwrap();
+        computer.registers.a = Word::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 0);
-        assert_eq!(computer.r_a.sign, Sign::MINUS);
+        assert_eq!(computer.registers.a.to_i32(), 0);
+        assert_eq!(computer.registers.a.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_i32(1).unwrap();
-        computer.r_i1 = Index::from_i32(8).unwrap();
+        computer.registers.a = Word::from_i32(1).unwrap();
+        computer.registers.i1 = Index::from_i32(8).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_a.to_i32(), 6);
+        assert_eq!(computer.registers.a.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1654,62 +1654,62 @@ mod decx {
     #[test]
     fn should_subtract_positive_number() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_i32(1).unwrap();
+        computer.registers.x = Word::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), -788);
+        assert_eq!(computer.registers.x.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_negative_number() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_i32(1).unwrap();
+        computer.registers.x = Word::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 790);
+        assert_eq!(computer.registers.x.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_handle_positive_overflow() {
         let mut computer = Computer::new();
-        computer.r_x = Word::MAX;
+        computer.registers.x = Word::MAX;
         let instruction = Word::from_instruction_parts(Sign::MINUS, 10, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 9);
+        assert_eq!(computer.registers.x.to_i32(), 9);
         assert!(computer.overflow);
     }
 
     #[test]
     fn should_handle_negative_overflow() {
         let mut computer = Computer::new();
-        computer.r_x = Word::MIN;
+        computer.registers.x = Word::MIN;
         let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), -9);
+        assert_eq!(computer.registers.x.to_i32(), -9);
         assert!(computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_i32(-1).unwrap();
+        computer.registers.x = Word::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 0);
-        assert_eq!(computer.r_x.sign, Sign::MINUS);
+        assert_eq!(computer.registers.x.to_i32(), 0);
+        assert_eq!(computer.registers.x.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_i32(1).unwrap();
-        computer.r_i1 = Index::from_i32(8).unwrap();
+        computer.registers.x = Word::from_i32(1).unwrap();
+        computer.registers.i1 = Index::from_i32(8).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_x.to_i32(), 6);
+        assert_eq!(computer.registers.x.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1724,42 +1724,42 @@ mod dec1 {
     #[test]
     fn should_subtract_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), -788);
+        assert_eq!(computer.registers.i1.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), 790);
+        assert_eq!(computer.registers.i1.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(-1).unwrap();
+        computer.registers.i1 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), 0);
-        assert_eq!(computer.r_i1.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i1.to_i32(), 0);
+        assert_eq!(computer.registers.i1.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
-        computer.r_i2 = Index::from_i32(8).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(8).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 2, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i1.to_i32(), 6);
+        assert_eq!(computer.registers.i1.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1774,42 +1774,42 @@ mod dec2 {
     #[test]
     fn should_subtract_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), -788);
+        assert_eq!(computer.registers.i2.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), 790);
+        assert_eq!(computer.registers.i2.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_i32(-1).unwrap();
+        computer.registers.i2 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), 0);
-        assert_eq!(computer.r_i2.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i2.to_i32(), 0);
+        assert_eq!(computer.registers.i2.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(1).unwrap();
-        computer.r_i2 = Index::from_i32(8).unwrap();
+        computer.registers.i1 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(8).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 1, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i2.to_i32(), 6);
+        assert_eq!(computer.registers.i2.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1824,42 +1824,42 @@ mod dec3 {
     #[test]
     fn should_subtract_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_i32(1).unwrap();
+        computer.registers.i3 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), -788);
+        assert_eq!(computer.registers.i3.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_i32(1).unwrap();
+        computer.registers.i3 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), 790);
+        assert_eq!(computer.registers.i3.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_i32(-1).unwrap();
+        computer.registers.i3 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), 0);
-        assert_eq!(computer.r_i3.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i3.to_i32(), 0);
+        assert_eq!(computer.registers.i3.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_i32(1).unwrap();
-        computer.r_i2 = Index::from_i32(8).unwrap();
+        computer.registers.i3 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(8).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 2, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i3.to_i32(), 6);
+        assert_eq!(computer.registers.i3.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1874,42 +1874,42 @@ mod dec4 {
     #[test]
     fn should_subtract_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_i32(1).unwrap();
+        computer.registers.i4 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), -788);
+        assert_eq!(computer.registers.i4.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_i32(1).unwrap();
+        computer.registers.i4 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), 790);
+        assert_eq!(computer.registers.i4.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_i32(-1).unwrap();
+        computer.registers.i4 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), 0);
-        assert_eq!(computer.r_i4.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i4.to_i32(), 0);
+        assert_eq!(computer.registers.i4.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_i32(1).unwrap();
-        computer.r_i2 = Index::from_i32(8).unwrap();
+        computer.registers.i4 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(8).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 2, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i4.to_i32(), 6);
+        assert_eq!(computer.registers.i4.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1924,42 +1924,42 @@ mod dec5 {
     #[test]
     fn should_subtract_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_i32(1).unwrap();
+        computer.registers.i5 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), -788);
+        assert_eq!(computer.registers.i5.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_i32(1).unwrap();
+        computer.registers.i5 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), 790);
+        assert_eq!(computer.registers.i5.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_i32(-1).unwrap();
+        computer.registers.i5 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), 0);
-        assert_eq!(computer.r_i5.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i5.to_i32(), 0);
+        assert_eq!(computer.registers.i5.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_i32(1).unwrap();
-        computer.r_i2 = Index::from_i32(8).unwrap();
+        computer.registers.i5 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(8).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 2, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i5.to_i32(), 6);
+        assert_eq!(computer.registers.i5.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }
@@ -1974,42 +1974,42 @@ mod dec6 {
     #[test]
     fn should_subtract_positive_number() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(1).unwrap();
+        computer.registers.i6 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), -788);
+        assert_eq!(computer.registers.i6.to_i32(), -788);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_negative_number() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(1).unwrap();
+        computer.registers.i6 = Index::from_i32(1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 789, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), 790);
+        assert_eq!(computer.registers.i6.to_i32(), 790);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_not_change_sign_if_result_is_zero() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(-1).unwrap();
+        computer.registers.i6 = Index::from_i32(-1).unwrap();
         let instruction = Word::from_instruction_parts(Sign::MINUS, 1, 0, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), 0);
-        assert_eq!(computer.r_i6.sign, Sign::MINUS);
+        assert_eq!(computer.registers.i6.to_i32(), 0);
+        assert_eq!(computer.registers.i6.sign, Sign::MINUS);
         assert!(!computer.overflow);
     }
 
     #[test]
     fn should_subtract_index_modified_value() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(1).unwrap();
-        computer.r_i2 = Index::from_i32(8).unwrap();
+        computer.registers.i6 = Index::from_i32(1).unwrap();
+        computer.registers.i2 = Index::from_i32(8).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 3, 2, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
-        assert_eq!(computer.r_i6.to_i32(), 6);
+        assert_eq!(computer.registers.i6.to_i32(), 6);
         assert!(!computer.overflow);
     }
 }

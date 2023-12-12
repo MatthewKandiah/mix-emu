@@ -7,7 +7,7 @@ mod cmpa {
 
     fn setup_computer(register_value: i32, memory_value: i32) -> Computer {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_i32(register_value).unwrap();
+        computer.registers.a = Word::from_i32(register_value).unwrap();
         computer
             .memory
             .set(ADDRESS, Word::from_i32(memory_value).unwrap())
@@ -57,7 +57,7 @@ mod cmpa {
     #[test]
     fn should_be_greater_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 63, 63, 0, 0, 0).unwrap();
+        computer.registers.a = Word::from_byte_values(Sign::PLUS, 63, 63, 0, 0, 0).unwrap();
         computer
             .memory
             .set(
@@ -78,7 +78,7 @@ mod cmpa {
     #[test]
     fn should_be_less_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 0, 0, 63, 63, 63).unwrap();
+        computer.registers.a = Word::from_byte_values(Sign::PLUS, 0, 0, 63, 63, 63).unwrap();
         computer
             .memory
             .set(
@@ -99,7 +99,7 @@ mod cmpa {
     #[test]
     fn should_be_equal_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 10, 10, 63, 63, 63).unwrap();
+        computer.registers.a = Word::from_byte_values(Sign::PLUS, 10, 10, 63, 63, 63).unwrap();
         computer
             .memory
             .set(
@@ -120,7 +120,7 @@ mod cmpa {
     #[test]
     fn minus_zero_should_equal_zero() {
         let mut computer = Computer::new();
-        computer.r_a = Word::ZERO.with_sign(Sign::PLUS);
+        computer.registers.a = Word::ZERO.with_sign(Sign::PLUS);
         computer
             .memory
             .set(ADDRESS, Word::ZERO.with_sign(Sign::MINUS))
@@ -145,7 +145,7 @@ mod cmpx {
 
     fn setup_computer(register_value: i32, memory_value: i32) -> Computer {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_i32(register_value).unwrap();
+        computer.registers.x = Word::from_i32(register_value).unwrap();
         computer
             .memory
             .set(ADDRESS, Word::from_i32(memory_value).unwrap())
@@ -195,7 +195,7 @@ mod cmpx {
     #[test]
     fn should_be_greater_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_byte_values(Sign::PLUS, 63, 63, 0, 0, 0).unwrap();
+        computer.registers.x = Word::from_byte_values(Sign::PLUS, 63, 63, 0, 0, 0).unwrap();
         computer
             .memory
             .set(
@@ -216,7 +216,7 @@ mod cmpx {
     #[test]
     fn should_be_less_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_byte_values(Sign::PLUS, 0, 0, 63, 63, 63).unwrap();
+        computer.registers.x = Word::from_byte_values(Sign::PLUS, 0, 0, 63, 63, 63).unwrap();
         computer
             .memory
             .set(
@@ -237,7 +237,7 @@ mod cmpx {
     #[test]
     fn should_be_equal_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_x = Word::from_byte_values(Sign::PLUS, 10, 10, 63, 63, 63).unwrap();
+        computer.registers.x = Word::from_byte_values(Sign::PLUS, 10, 10, 63, 63, 63).unwrap();
         computer
             .memory
             .set(
@@ -258,7 +258,7 @@ mod cmpx {
     #[test]
     fn minus_zero_should_equal_zero() {
         let mut computer = Computer::new();
-        computer.r_x = Word::ZERO.with_sign(Sign::PLUS);
+        computer.registers.x = Word::ZERO.with_sign(Sign::PLUS);
         computer
             .memory
             .set(ADDRESS, Word::ZERO.with_sign(Sign::MINUS))
@@ -283,7 +283,7 @@ mod cmp1 {
 
     fn setup_computer(register_value: i32, memory_value: i32) -> Computer {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_i32(register_value).unwrap();
+        computer.registers.i1 = Index::from_i32(register_value).unwrap();
         computer
             .memory
             .set(ADDRESS, Word::from_i32(memory_value).unwrap())
@@ -333,7 +333,7 @@ mod cmp1 {
     #[test]
     fn should_be_greater_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
+        computer.registers.i1 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
         computer
             .memory
             .set(
@@ -354,7 +354,7 @@ mod cmp1 {
     #[test]
     fn should_be_less_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
+        computer.registers.i1 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
         computer
             .memory
             .set(
@@ -375,7 +375,7 @@ mod cmp1 {
     #[test]
     fn should_be_equal_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
+        computer.registers.i1 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
         computer
             .memory
             .set(
@@ -396,7 +396,7 @@ mod cmp1 {
     #[test]
     fn minus_zero_should_equal_zero() {
         let mut computer = Computer::new();
-        computer.r_i1 = Index::ZERO.with_sign(Sign::PLUS);
+        computer.registers.i1 = Index::ZERO.with_sign(Sign::PLUS);
         computer
             .memory
             .set(ADDRESS, Word::ZERO.with_sign(Sign::MINUS))
@@ -421,7 +421,7 @@ mod cmp2 {
 
     fn setup_computer(register_value: i32, memory_value: i32) -> Computer {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_i32(register_value).unwrap();
+        computer.registers.i2 = Index::from_i32(register_value).unwrap();
         computer
             .memory
             .set(ADDRESS, Word::from_i32(memory_value).unwrap())
@@ -471,7 +471,7 @@ mod cmp2 {
     #[test]
     fn should_be_greater_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
+        computer.registers.i2 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
         computer
             .memory
             .set(
@@ -492,7 +492,7 @@ mod cmp2 {
     #[test]
     fn should_be_less_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
+        computer.registers.i2 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
         computer
             .memory
             .set(
@@ -513,7 +513,7 @@ mod cmp2 {
     #[test]
     fn should_be_equal_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
+        computer.registers.i2 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
         computer
             .memory
             .set(
@@ -534,7 +534,7 @@ mod cmp2 {
     #[test]
     fn minus_zero_should_equal_zero() {
         let mut computer = Computer::new();
-        computer.r_i2 = Index::ZERO.with_sign(Sign::PLUS);
+        computer.registers.i2 = Index::ZERO.with_sign(Sign::PLUS);
         computer
             .memory
             .set(ADDRESS, Word::ZERO.with_sign(Sign::MINUS))
@@ -559,7 +559,7 @@ mod cmp3 {
 
     fn setup_computer(register_value: i32, memory_value: i32) -> Computer {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_i32(register_value).unwrap();
+        computer.registers.i3 = Index::from_i32(register_value).unwrap();
         computer
             .memory
             .set(ADDRESS, Word::from_i32(memory_value).unwrap())
@@ -609,7 +609,7 @@ mod cmp3 {
     #[test]
     fn should_be_greater_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
+        computer.registers.i3 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
         computer
             .memory
             .set(
@@ -630,7 +630,7 @@ mod cmp3 {
     #[test]
     fn should_be_less_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
+        computer.registers.i3 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
         computer
             .memory
             .set(
@@ -651,7 +651,7 @@ mod cmp3 {
     #[test]
     fn should_be_equal_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
+        computer.registers.i3 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
         computer
             .memory
             .set(
@@ -672,7 +672,7 @@ mod cmp3 {
     #[test]
     fn minus_zero_should_equal_zero() {
         let mut computer = Computer::new();
-        computer.r_i3 = Index::ZERO.with_sign(Sign::PLUS);
+        computer.registers.i3 = Index::ZERO.with_sign(Sign::PLUS);
         computer
             .memory
             .set(ADDRESS, Word::ZERO.with_sign(Sign::MINUS))
@@ -697,7 +697,7 @@ mod cmp4 {
 
     fn setup_computer(register_value: i32, memory_value: i32) -> Computer {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_i32(register_value).unwrap();
+        computer.registers.i4 = Index::from_i32(register_value).unwrap();
         computer
             .memory
             .set(ADDRESS, Word::from_i32(memory_value).unwrap())
@@ -747,7 +747,7 @@ mod cmp4 {
     #[test]
     fn should_be_greater_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
+        computer.registers.i4 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
         computer
             .memory
             .set(
@@ -768,7 +768,7 @@ mod cmp4 {
     #[test]
     fn should_be_less_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
+        computer.registers.i4 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
         computer
             .memory
             .set(
@@ -789,7 +789,7 @@ mod cmp4 {
     #[test]
     fn should_be_equal_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
+        computer.registers.i4 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
         computer
             .memory
             .set(
@@ -810,7 +810,7 @@ mod cmp4 {
     #[test]
     fn minus_zero_should_equal_zero() {
         let mut computer = Computer::new();
-        computer.r_i4 = Index::ZERO.with_sign(Sign::PLUS);
+        computer.registers.i4 = Index::ZERO.with_sign(Sign::PLUS);
         computer
             .memory
             .set(ADDRESS, Word::ZERO.with_sign(Sign::MINUS))
@@ -835,7 +835,7 @@ mod cmp5 {
 
     fn setup_computer(register_value: i32, memory_value: i32) -> Computer {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_i32(register_value).unwrap();
+        computer.registers.i5 = Index::from_i32(register_value).unwrap();
         computer
             .memory
             .set(ADDRESS, Word::from_i32(memory_value).unwrap())
@@ -885,7 +885,7 @@ mod cmp5 {
     #[test]
     fn should_be_greater_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
         computer
             .memory
             .set(
@@ -906,7 +906,7 @@ mod cmp5 {
     #[test]
     fn should_be_less_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
         computer
             .memory
             .set(
@@ -927,7 +927,7 @@ mod cmp5 {
     #[test]
     fn should_be_equal_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
         computer
             .memory
             .set(
@@ -948,7 +948,7 @@ mod cmp5 {
     #[test]
     fn minus_zero_should_equal_zero() {
         let mut computer = Computer::new();
-        computer.r_i5 = Index::ZERO.with_sign(Sign::PLUS);
+        computer.registers.i5 = Index::ZERO.with_sign(Sign::PLUS);
         computer
             .memory
             .set(ADDRESS, Word::ZERO.with_sign(Sign::MINUS))
@@ -973,7 +973,7 @@ mod cmp6 {
 
     fn setup_computer(register_value: i32, memory_value: i32) -> Computer {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_i32(register_value).unwrap();
+        computer.registers.i6 = Index::from_i32(register_value).unwrap();
         computer
             .memory
             .set(ADDRESS, Word::from_i32(memory_value).unwrap())
@@ -1023,7 +1023,7 @@ mod cmp6 {
     #[test]
     fn should_be_greater_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 63, 0).unwrap();
         computer
             .memory
             .set(
@@ -1044,7 +1044,7 @@ mod cmp6 {
     #[test]
     fn should_be_less_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 0, 63).unwrap();
         computer
             .memory
             .set(
@@ -1065,7 +1065,7 @@ mod cmp6 {
     #[test]
     fn should_be_equal_partial_comparison() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 10, 63).unwrap();
         computer
             .memory
             .set(
@@ -1086,7 +1086,7 @@ mod cmp6 {
     #[test]
     fn minus_zero_should_equal_zero() {
         let mut computer = Computer::new();
-        computer.r_i6 = Index::ZERO.with_sign(Sign::PLUS);
+        computer.registers.i6 = Index::ZERO.with_sign(Sign::PLUS);
         computer
             .memory
             .set(ADDRESS, Word::ZERO.with_sign(Sign::MINUS))

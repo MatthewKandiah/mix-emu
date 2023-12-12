@@ -3,8 +3,8 @@ use crate::data_types::*;
 
 fn setup_computer() -> Computer {
     let mut computer = Computer::new();
-    computer.r_a = Word::from_byte_values(Sign::PLUS, 1, 2, 3, 4, 5).unwrap();
-    computer.r_x = Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap();
+    computer.registers.a = Word::from_byte_values(Sign::PLUS, 1, 2, 3, 4, 5).unwrap();
+    computer.registers.x = Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap();
     computer
 }
 
@@ -19,51 +19,51 @@ fn book_example() {
 
     computer.handle_instruction(srax1);
     assert_eq!(
-        computer.r_a,
+        computer.registers.a,
         Word::from_byte_values(Sign::PLUS, 0, 1, 2, 3, 4).unwrap()
     );
     assert_eq!(
-        computer.r_x,
+        computer.registers.x,
         Word::from_byte_values(Sign::MINUS, 5, 6, 7, 8, 9).unwrap()
     );
 
     computer.handle_instruction(sla2);
     assert_eq!(
-        computer.r_a,
+        computer.registers.a,
         Word::from_byte_values(Sign::PLUS, 2, 3, 4, 0, 0).unwrap()
     );
     assert_eq!(
-        computer.r_x,
+        computer.registers.x,
         Word::from_byte_values(Sign::MINUS, 5, 6, 7, 8, 9).unwrap()
     );
 
     computer.handle_instruction(src4);
     assert_eq!(
-        computer.r_a,
+        computer.registers.a,
         Word::from_byte_values(Sign::PLUS, 6, 7, 8, 9, 2).unwrap()
     );
     assert_eq!(
-        computer.r_x,
+        computer.registers.x,
         Word::from_byte_values(Sign::MINUS, 3, 4, 0, 0, 5).unwrap()
     );
 
     computer.handle_instruction(sra2);
     assert_eq!(
-        computer.r_a,
+        computer.registers.a,
         Word::from_byte_values(Sign::PLUS, 0, 0, 6, 7, 8).unwrap()
     );
     assert_eq!(
-        computer.r_x,
+        computer.registers.x,
         Word::from_byte_values(Sign::MINUS, 3, 4, 0, 0, 5).unwrap()
     );
 
     computer.handle_instruction(slc501);
     assert_eq!(
-        computer.r_a,
+        computer.registers.a,
         Word::from_byte_values(Sign::PLUS, 0, 6, 7, 8, 3).unwrap()
     );
     assert_eq!(
-        computer.r_x,
+        computer.registers.x,
         Word::from_byte_values(Sign::MINUS, 4, 0, 0, 5, 0).unwrap()
     );
 }
@@ -83,11 +83,11 @@ mod sla {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 2, 3, 4, 5, 0).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap()
         );
     }
@@ -100,11 +100,11 @@ mod sla {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 5, 0, 0, 0, 0).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap()
         );
     }
@@ -117,11 +117,11 @@ mod sla {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 0, 0, 0, 0, 0).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap()
         );
     }
@@ -141,11 +141,11 @@ mod sra {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 0, 1, 2, 3, 4).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap()
         );
     }
@@ -158,11 +158,11 @@ mod sra {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 0, 0, 0, 0, 1).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap()
         );
     }
@@ -175,11 +175,11 @@ mod sra {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 0, 0, 0, 0, 0).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 6, 7, 8, 9, 10).unwrap()
         );
     }
@@ -199,11 +199,11 @@ mod slax {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 2, 3, 4, 5, 6).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 7, 8, 9, 10, 0).unwrap()
         );
     }
@@ -216,11 +216,11 @@ mod slax {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 5, 6, 7, 8, 9).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 10, 0, 0, 0, 0).unwrap()
         );
     }
@@ -233,11 +233,11 @@ mod slax {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 9, 10, 0, 0, 0).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 0, 0, 0, 0, 0).unwrap()
         );
     }
@@ -257,11 +257,11 @@ mod srax {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 0, 1, 2, 3, 4).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 5, 6, 7, 8, 9).unwrap()
         );
     }
@@ -274,11 +274,11 @@ mod srax {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 0, 0, 0, 0, 1).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 2, 3, 4, 5, 6).unwrap()
         );
     }
@@ -291,11 +291,11 @@ mod srax {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 0, 0, 0, 0, 0).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 0, 0, 0, 1, 2).unwrap()
         );
     }
@@ -315,11 +315,11 @@ mod slc {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 2, 3, 4, 5, 6).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 7, 8, 9, 10, 1).unwrap()
         );
     }
@@ -332,11 +332,11 @@ mod slc {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 5, 6, 7, 8, 9).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 10, 1, 2, 3, 4).unwrap()
         );
     }
@@ -349,11 +349,11 @@ mod slc {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 9, 10, 1, 2, 3).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 4, 5, 6, 7, 8).unwrap()
         );
     }
@@ -373,11 +373,11 @@ mod src {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 10, 1, 2, 3, 4).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 5, 6, 7, 8, 9).unwrap()
         );
     }
@@ -390,11 +390,11 @@ mod src {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 7, 8, 9, 10, 1).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 2, 3, 4, 5, 6).unwrap()
         );
     }
@@ -407,11 +407,11 @@ mod src {
         computer.handle_instruction(instruction);
 
         assert_eq!(
-            computer.r_a,
+            computer.registers.a,
             Word::from_byte_values(Sign::PLUS, 3, 4, 5, 6, 7).unwrap()
         );
         assert_eq!(
-            computer.r_x,
+            computer.registers.x,
             Word::from_byte_values(Sign::MINUS, 8, 9, 10, 1, 2).unwrap()
         );
     }

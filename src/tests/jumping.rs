@@ -9,13 +9,13 @@ mod jmp {
     fn should_set_current_instruction_address_and_j_register() {
         let mut computer = Computer::new();
         computer.current_instruction_address = 10;
-        computer.r_i2 = Index::from_i32(30).unwrap();
+        computer.registers.i2 = Index::from_i32(30).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 2, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
 
         assert_eq!(computer.current_instruction_address, 40);
-        assert_eq!(computer.r_j.to_i32(), 10);
+        assert_eq!(computer.registers.j.to_i32(), 10);
     }
 
     #[test]
@@ -34,7 +34,7 @@ mod jmp {
         computer.handle_next_instruction();
 
         assert_eq!(computer.current_instruction_address, 1000);
-        assert_eq!(computer.r_j.to_i32(), 11);
+        assert_eq!(computer.registers.j.to_i32(), 11);
     }
 }
 
@@ -49,14 +49,14 @@ mod jsj {
     fn should_set_current_instruction_address_but_not_j_register() {
         let mut computer = Computer::new();
         computer.current_instruction_address = 10;
-        computer.r_i2 = Index::from_i32(30).unwrap();
-        computer.r_j = JumpAddress::from_i32(4).unwrap();
+        computer.registers.i2 = Index::from_i32(30).unwrap();
+        computer.registers.j = JumpAddress::from_i32(4).unwrap();
 
         let instruction = Word::from_instruction_parts(Sign::PLUS, 10, 2, FIELD, CODE).unwrap();
         computer.handle_instruction(instruction);
 
         assert_eq!(computer.current_instruction_address, 40);
-        assert_eq!(computer.r_j.to_i32(), 4);
+        assert_eq!(computer.registers.j.to_i32(), 4);
     }
 
     #[test]
@@ -75,7 +75,7 @@ mod jsj {
         computer.handle_next_instruction();
 
         assert_eq!(computer.current_instruction_address, 1000);
-        assert_eq!(computer.r_j.to_i32(), 0);
+        assert_eq!(computer.registers.j.to_i32(), 0);
     }
 }
 

@@ -10,7 +10,7 @@ mod sta_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 6, 7, 8, 9, 0).unwrap();
+        computer.registers.a = Word::from_byte_values(Sign::PLUS, 6, 7, 8, 9, 0).unwrap();
         computer
     }
 
@@ -53,7 +53,7 @@ mod sta_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i4 = Index::from_i32(1999).unwrap();
+        computer.registers.i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 24).unwrap();
         computer.handle_instruction(instruction);
 
@@ -76,7 +76,7 @@ mod stx_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_x = Word::from_byte_values(Sign::PLUS, 6, 7, 8, 9, 0).unwrap();
+        computer.registers.x = Word::from_byte_values(Sign::PLUS, 6, 7, 8, 9, 0).unwrap();
         computer
     }
 
@@ -119,7 +119,7 @@ mod stx_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i4 = Index::from_i32(1999).unwrap();
+        computer.registers.i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 31).unwrap();
         computer.handle_instruction(instruction);
 
@@ -142,7 +142,7 @@ mod st1_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_i1 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
+        computer.registers.i1 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
         computer
     }
 
@@ -185,7 +185,7 @@ mod st1_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i4 = Index::from_i32(1999).unwrap();
+        computer.registers.i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 25).unwrap();
         computer.handle_instruction(instruction);
 
@@ -208,7 +208,7 @@ mod st2_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_i2 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
+        computer.registers.i2 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
         computer
     }
 
@@ -251,7 +251,7 @@ mod st2_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i4 = Index::from_i32(1999).unwrap();
+        computer.registers.i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 26).unwrap();
         computer.handle_instruction(instruction);
 
@@ -274,7 +274,7 @@ mod st3_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_i3 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
+        computer.registers.i3 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
         computer
     }
 
@@ -317,7 +317,7 @@ mod st3_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i4 = Index::from_i32(1999).unwrap();
+        computer.registers.i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 27).unwrap();
         computer.handle_instruction(instruction);
 
@@ -340,7 +340,7 @@ mod st4_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_i4 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
+        computer.registers.i4 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
         computer
     }
 
@@ -383,7 +383,7 @@ mod st4_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i2 = Index::from_i32(1999).unwrap();
+        computer.registers.i2 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 2, 45, 28).unwrap();
         computer.handle_instruction(instruction);
 
@@ -406,7 +406,7 @@ mod st5_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_i5 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
+        computer.registers.i5 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
         computer
     }
 
@@ -449,7 +449,7 @@ mod st5_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i4 = Index::from_i32(1999).unwrap();
+        computer.registers.i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 29).unwrap();
         computer.handle_instruction(instruction);
 
@@ -472,7 +472,7 @@ mod st6_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_i6 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
+        computer.registers.i6 = Index::from_byte_values(Sign::PLUS, 6, 7).unwrap();
         computer
     }
 
@@ -515,7 +515,7 @@ mod st6_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i4 = Index::from_i32(1999).unwrap();
+        computer.registers.i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 30).unwrap();
         computer.handle_instruction(instruction);
 
@@ -538,7 +538,7 @@ mod stj_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_j = JumpAddress::from_byte_values(6, 7).unwrap();
+        computer.registers.j = JumpAddress::from_byte_values(6, 7).unwrap();
         computer
     }
 
@@ -581,7 +581,7 @@ mod stj_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i4 = Index::from_i32(1999).unwrap();
+        computer.registers.i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 32).unwrap();
         computer.handle_instruction(instruction);
 
@@ -604,7 +604,7 @@ mod stz_tests {
                 Word::from_byte_values(Sign::MINUS, 1, 2, 3, 4, 5).unwrap(),
             )
             .unwrap();
-        computer.r_a = Word::from_byte_values(Sign::PLUS, 6, 7, 8, 9, 0).unwrap();
+        computer.registers.a = Word::from_byte_values(Sign::PLUS, 6, 7, 8, 9, 0).unwrap();
         computer
     }
 
@@ -647,7 +647,7 @@ mod stz_tests {
     #[test]
     fn should_store_contents_in_index_adjusted_address() {
         let mut computer = setup_computer();
-        computer.r_i4 = Index::from_i32(1999).unwrap();
+        computer.registers.i4 = Index::from_i32(1999).unwrap();
         let instruction = Word::from_instruction_parts(Sign::PLUS, 1, 4, 45, 33).unwrap();
         computer.handle_instruction(instruction);
 

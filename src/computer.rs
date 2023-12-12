@@ -8,20 +8,40 @@ pub enum ComparisonIndicatorState {
     LESS,
 }
 
+pub struct Registers {
+    pub a: Word,
+    pub x: Word,
+    pub i1: Index,
+    pub i2: Index,
+    pub i3: Index,
+    pub i4: Index,
+    pub i5: Index,
+    pub i6: Index,
+    pub j: JumpAddress,
+}
+
+impl Registers {
+    fn new() -> Self {
+        Self {
+            a: Word::ZERO,
+            x: Word::ZERO,
+            i1: Index::ZERO,
+            i2: Index::ZERO,
+            i3: Index::ZERO,
+            i4: Index::ZERO,
+            i5: Index::ZERO,
+            i6: Index::ZERO,
+            j: JumpAddress::ZERO,
+        }
+    }
+}
+
 pub struct Computer {
     pub current_instruction_address: i32,
-    pub r_a: Word,
-    pub r_x: Word,
-    pub r_i1: Index,
-    pub r_i2: Index,
-    pub r_i3: Index,
-    pub r_i4: Index,
-    pub r_i5: Index,
-    pub r_i6: Index,
-    pub r_j: JumpAddress,
+    pub registers: Registers,
+    pub memory: Memory,
     pub overflow: bool,
     pub comparison_indicator: Option<ComparisonIndicatorState>,
-    pub memory: Memory,
     pub running: bool,
 }
 
@@ -29,15 +49,7 @@ impl Computer {
     pub fn new() -> Self {
         Self {
             current_instruction_address: 0,
-            r_a: Word::ZERO,
-            r_x: Word::ZERO,
-            r_i1: Index::ZERO,
-            r_i2: Index::ZERO,
-            r_i3: Index::ZERO,
-            r_i4: Index::ZERO,
-            r_i5: Index::ZERO,
-            r_i6: Index::ZERO,
-            r_j: JumpAddress::ZERO,
+            registers: Registers::new(),
             overflow: false,
             comparison_indicator: None,
             memory: Memory::ZERO,
@@ -135,12 +147,12 @@ impl Computer {
     fn modified_address(&self, instruction: Word) -> i32 {
         let index_modifier = match instruction.index() {
             0 => 0,
-            1 => self.r_i1.to_i32(),
-            2 => self.r_i2.to_i32(),
-            3 => self.r_i3.to_i32(),
-            4 => self.r_i4.to_i32(),
-            5 => self.r_i5.to_i32(),
-            6 => self.r_i6.to_i32(),
+            1 => self.registers.i1.to_i32(),
+            2 => self.registers.i2.to_i32(),
+            3 => self.registers.i3.to_i32(),
+            4 => self.registers.i4.to_i32(),
+            5 => self.registers.i5.to_i32(),
+            6 => self.registers.i6.to_i32(),
             _ => panic!("Invalid index"),
         };
         instruction.address() + index_modifier
@@ -224,35 +236,35 @@ impl Computer {
     }
 
     fn add(&mut self, instruction: Word) {
-        let result = self.r_a.to_i32() + self.get_v(instruction);
+        let result = self.registers.a.to_i32() + self.get_v(instruction);
         if result == 0 {
-            self.r_a.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
+            self.registers.a.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
             return;
         }
         if result / 64_i32.pow(5) != 0 {
             self.overflow = true;
         }
-        self.r_a = Word::from_i32(result % 64_i32.pow(5)).unwrap();
+        self.registers.a = Word::from_i32(result % 64_i32.pow(5)).unwrap();
     }
 
     fn sub(&mut self, instruction: Word) {
-        let result = self.r_a.to_i32() - self.get_v(instruction);
+        let result = self.registers.a.to_i32() - self.get_v(instruction);
         if result == 0 {
-            self.r_a.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
+            self.registers.a.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
             return;
         }
         if result / 64_i32.pow(5) != 0 {
             self.overflow = true;
         }
-        self.r_a = Word::from_i32(result % 64_i32.pow(5)).unwrap();
+        self.registers.a = Word::from_i32(result % 64_i32.pow(5)).unwrap();
     }
 
     fn mul(&mut self, instruction: Word) {
         // Word::MAX * Word::MAX too large to store in i32
-        let result: i64 = <i32 as Into<i64>>::into(self.r_a.to_i32())
+        let result: i64 = <i32 as Into<i64>>::into(self.registers.a.to_i32())
             * <i32 as Into<i64>>::into(self.get_v(instruction));
         let (_, contents) = self.field_specifier_and_contents(instruction);
-        let result_sign = match self.r_a.sign == contents.sign {
+        let result_sign = match self.registers.a.sign == contents.sign {
             true => Sign::PLUS,
             false => Sign::MINUS,
         };
@@ -262,26 +274,26 @@ impl Computer {
         // multiplication cannot overflow, consider the largest possible absolute value
         // (64^5-1)*(64^5-1) < 64^10-1
         // so result can always fit in 10 bytes!
-        self.r_a = Word::from_i32(a_value.try_into().unwrap())
+        self.registers.a = Word::from_i32(a_value.try_into().unwrap())
             .unwrap()
             .with_sign(result_sign);
-        self.r_x = Word::from_i32(x_value.try_into().unwrap())
+        self.registers.x = Word::from_i32(x_value.try_into().unwrap())
             .unwrap()
             .with_sign(result_sign);
     }
 
     fn div(&mut self, instruction: Word) {
-        let numerator: i64 = <i32 as Into<i64>>::into(self.r_a.to_i32()) * 64_i64.pow(5)
-            + <i32 as Into<i64>>::into(self.r_x.to_i32());
+        let numerator: i64 = <i32 as Into<i64>>::into(self.registers.a.to_i32()) * 64_i64.pow(5)
+            + <i32 as Into<i64>>::into(self.registers.x.to_i32());
         let v = self.get_v(instruction);
         if v == 0 {
             self.overflow = true;
             return;
         }
 
-        let x_sign = self.r_a.sign;
+        let x_sign = self.registers.a.sign;
         let (_, contents) = self.field_specifier_and_contents(instruction);
-        let a_sign = match self.r_a.sign == contents.sign {
+        let a_sign = match self.registers.a.sign == contents.sign {
             true => Sign::PLUS,
             false => Sign::MINUS,
         };
@@ -318,8 +330,8 @@ impl Computer {
         }
         .with_sign(x_sign);
 
-        self.r_x = x_result_word;
-        self.r_a = a_result_word;
+        self.registers.x = x_result_word;
+        self.registers.a = a_result_word;
     }
 
     fn handle_5(&mut self, instruction: Word) {
@@ -350,7 +362,7 @@ impl Computer {
         if shift_count < 0 {
             panic!("illegal - negative shift count");
         }
-        let mut register_bytes = self.r_a.bytes;
+        let mut register_bytes = self.registers.a.bytes;
         for _ in 0..shift_count {
             register_bytes.0 = register_bytes.1;
             register_bytes.1 = register_bytes.2;
@@ -358,7 +370,7 @@ impl Computer {
             register_bytes.3 = register_bytes.4;
             register_bytes.4 = Byte::ZERO;
         }
-        self.r_a.bytes = register_bytes;
+        self.registers.a.bytes = register_bytes;
     }
 
     fn sra(&mut self, instruction: Word) {
@@ -366,7 +378,7 @@ impl Computer {
         if shift_count < 0 {
             panic!("illegal - negative shift count");
         }
-        let mut register_bytes = self.r_a.bytes;
+        let mut register_bytes = self.registers.a.bytes;
         for _ in 0..shift_count {
             register_bytes.4 = register_bytes.3;
             register_bytes.3 = register_bytes.2;
@@ -374,7 +386,7 @@ impl Computer {
             register_bytes.1 = register_bytes.0;
             register_bytes.0 = Byte::ZERO;
         }
-        self.r_a.bytes = register_bytes;
+        self.registers.a.bytes = register_bytes;
     }
 
     fn slax(&mut self, instruction: Word) {
@@ -382,8 +394,8 @@ impl Computer {
         if shift_count < 0 {
             panic!("illegal - negative shift count");
         }
-        let mut a_bytes = self.r_a.bytes;
-        let mut x_bytes = self.r_x.bytes;
+        let mut a_bytes = self.registers.a.bytes;
+        let mut x_bytes = self.registers.x.bytes;
         for _ in 0..shift_count {
             a_bytes.0 = a_bytes.1;
             a_bytes.1 = a_bytes.2;
@@ -396,8 +408,8 @@ impl Computer {
             x_bytes.3 = x_bytes.4;
             x_bytes.4 = Byte::ZERO;
         }
-        self.r_a.bytes = a_bytes;
-        self.r_x.bytes = x_bytes;
+        self.registers.a.bytes = a_bytes;
+        self.registers.x.bytes = x_bytes;
     }
 
     fn srax(&mut self, instruction: Word) {
@@ -405,8 +417,8 @@ impl Computer {
         if shift_count < 0 {
             panic!("illegal - negative shift count");
         }
-        let mut a_bytes = self.r_a.bytes;
-        let mut x_bytes = self.r_x.bytes;
+        let mut a_bytes = self.registers.a.bytes;
+        let mut x_bytes = self.registers.x.bytes;
         for _ in 0..shift_count {
             x_bytes.4 = x_bytes.3;
             x_bytes.3 = x_bytes.2;
@@ -419,8 +431,8 @@ impl Computer {
             a_bytes.1 = a_bytes.0;
             a_bytes.0 = Byte::ZERO;
         }
-        self.r_a.bytes = a_bytes;
-        self.r_x.bytes = x_bytes;
+        self.registers.a.bytes = a_bytes;
+        self.registers.x.bytes = x_bytes;
     }
 
     fn slc(&mut self, instruction: Word) {
@@ -428,8 +440,8 @@ impl Computer {
         if shift_count < 0 {
             panic!("illegal - negative shift count");
         }
-        let mut a_bytes = self.r_a.bytes;
-        let mut x_bytes = self.r_x.bytes;
+        let mut a_bytes = self.registers.a.bytes;
+        let mut x_bytes = self.registers.x.bytes;
         for _ in 0..shift_count {
             let temp = a_bytes.0;
             a_bytes.0 = a_bytes.1;
@@ -443,8 +455,8 @@ impl Computer {
             x_bytes.3 = x_bytes.4;
             x_bytes.4 = temp;
         }
-        self.r_a.bytes = a_bytes;
-        self.r_x.bytes = x_bytes;
+        self.registers.a.bytes = a_bytes;
+        self.registers.x.bytes = x_bytes;
     }
 
     fn src(&mut self, instruction: Word) {
@@ -452,8 +464,8 @@ impl Computer {
         if shift_count < 0 {
             panic!("illegal - negative shift count");
         }
-        let mut a_bytes = self.r_a.bytes;
-        let mut x_bytes = self.r_x.bytes;
+        let mut a_bytes = self.registers.a.bytes;
+        let mut x_bytes = self.registers.x.bytes;
         for _ in 0..shift_count {
             let temp = x_bytes.4;
             x_bytes.4 = x_bytes.3;
@@ -467,8 +479,8 @@ impl Computer {
             a_bytes.1 = a_bytes.0;
             a_bytes.0 = temp;
         }
-        self.r_a.bytes = a_bytes;
-        self.r_x.bytes = x_bytes;
+        self.registers.a.bytes = a_bytes;
+        self.registers.x.bytes = x_bytes;
     }
 
     fn mov(&mut self, instruction: Word) {
@@ -477,90 +489,91 @@ impl Computer {
             return;
         };
         let from_address = self.modified_address(instruction);
-        let to_address = self.r_i1.to_i32();
+        let to_address = self.registers.i1.to_i32();
         for idx in 0..copy_number {
             let value = self.memory.get(from_address + idx).unwrap();
             self.memory.set(to_address + idx, value).unwrap();
         }
-        self.r_i1 = Index::from_i32(to_address + copy_number).unwrap();
+        self.registers.i1 = Index::from_i32(to_address + copy_number).unwrap();
     }
 
     fn lda(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_a = Word {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_a.sign),
+        self.registers.a = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.a.sign),
             bytes: Self::bytes_to_load_word(&field_specifier, contents),
         };
     }
 
     fn ld1(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i1 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i1.sign),
+        self.registers.i1 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i1.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
 
     fn ld2(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i2 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i2.sign),
+        self.registers.i2 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i2.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
 
     fn ld3(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i3 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i3.sign),
+        self.registers.i3 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i3.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
 
     fn ld4(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i4 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i4.sign),
+        self.registers.i4 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i4.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
 
     fn ld5(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i5 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i5.sign),
+        self.registers.i5 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i5.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
 
     fn ld6(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i6 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i6.sign),
+        self.registers.i6 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i6.sign),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
     }
 
     fn ldx(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_x = Word {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_x.sign),
+        self.registers.x = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.x.sign),
             bytes: Self::bytes_to_load_word(&field_specifier, contents),
         };
     }
 
     fn ldan(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_a = Word {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_a.sign).opposite(),
+        self.registers.a = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.a.sign)
+                .opposite(),
             bytes: Self::bytes_to_load_word(&field_specifier, contents),
         };
     }
 
     fn ld1n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i1 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i1.sign)
+        self.registers.i1 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i1.sign)
                 .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
@@ -568,8 +581,8 @@ impl Computer {
 
     fn ld2n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i2 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i2.sign)
+        self.registers.i2 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i2.sign)
                 .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
@@ -577,8 +590,8 @@ impl Computer {
 
     fn ld3n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i3 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i3.sign)
+        self.registers.i3 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i3.sign)
                 .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
@@ -586,8 +599,8 @@ impl Computer {
 
     fn ld4n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i4 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i4.sign)
+        self.registers.i4 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i4.sign)
                 .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
@@ -595,8 +608,8 @@ impl Computer {
 
     fn ld5n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i5 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i5.sign)
+        self.registers.i5 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i5.sign)
                 .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
@@ -604,8 +617,8 @@ impl Computer {
 
     fn ld6n(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_i6 = Index {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_i6.sign)
+        self.registers.i6 = Index {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.i6.sign)
                 .opposite(),
             bytes: Self::bytes_to_load_index(&field_specifier, contents),
         };
@@ -613,8 +626,9 @@ impl Computer {
 
     fn ldxn(&mut self, instruction: Word) {
         let (field_specifier, contents) = self.field_specifier_and_contents(instruction);
-        self.r_x = Word {
-            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.r_x.sign).opposite(),
+        self.registers.x = Word {
+            sign: Self::sign_to_load_or_store(&field_specifier, contents, self.registers.x.sign)
+                .opposite(),
             bytes: Self::bytes_to_load_word(&field_specifier, contents),
         };
     }
@@ -677,8 +691,12 @@ impl Computer {
             .set(
                 self.modified_address(instruction),
                 Word {
-                    sign: Self::sign_to_load_or_store(&field_specifier, self.r_a, original_sign),
-                    bytes: Self::bytes_to_store(contents, self.r_a, &field_specifier),
+                    sign: Self::sign_to_load_or_store(
+                        &field_specifier,
+                        self.registers.a,
+                        original_sign,
+                    ),
+                    bytes: Self::bytes_to_store(contents, self.registers.a, &field_specifier),
                 },
             )
             .unwrap();
@@ -691,7 +709,7 @@ impl Computer {
             .get(self.modified_address(instruction))
             .unwrap()
             .sign;
-        let word_from_index = Word::from_i32(self.r_i1.to_i32()).unwrap();
+        let word_from_index = Word::from_i32(self.registers.i1.to_i32()).unwrap();
 
         self.memory
             .set(
@@ -715,7 +733,7 @@ impl Computer {
             .get(self.modified_address(instruction))
             .unwrap()
             .sign;
-        let word_from_index = Word::from_i32(self.r_i2.to_i32()).unwrap();
+        let word_from_index = Word::from_i32(self.registers.i2.to_i32()).unwrap();
 
         self.memory
             .set(
@@ -739,7 +757,7 @@ impl Computer {
             .get(self.modified_address(instruction))
             .unwrap()
             .sign;
-        let word_from_index = Word::from_i32(self.r_i3.to_i32()).unwrap();
+        let word_from_index = Word::from_i32(self.registers.i3.to_i32()).unwrap();
 
         self.memory
             .set(
@@ -763,7 +781,7 @@ impl Computer {
             .get(self.modified_address(instruction))
             .unwrap()
             .sign;
-        let word_from_index = Word::from_i32(self.r_i4.to_i32()).unwrap();
+        let word_from_index = Word::from_i32(self.registers.i4.to_i32()).unwrap();
 
         self.memory
             .set(
@@ -787,7 +805,7 @@ impl Computer {
             .get(self.modified_address(instruction))
             .unwrap()
             .sign;
-        let word_from_index = Word::from_i32(self.r_i5.to_i32()).unwrap();
+        let word_from_index = Word::from_i32(self.registers.i5.to_i32()).unwrap();
 
         self.memory
             .set(
@@ -811,7 +829,7 @@ impl Computer {
             .get(self.modified_address(instruction))
             .unwrap()
             .sign;
-        let word_from_index = Word::from_i32(self.r_i6.to_i32()).unwrap();
+        let word_from_index = Word::from_i32(self.registers.i6.to_i32()).unwrap();
 
         self.memory
             .set(
@@ -840,8 +858,12 @@ impl Computer {
             .set(
                 self.modified_address(instruction),
                 Word {
-                    sign: Self::sign_to_load_or_store(&field_specifier, self.r_x, original_sign),
-                    bytes: Self::bytes_to_store(contents, self.r_x, &field_specifier),
+                    sign: Self::sign_to_load_or_store(
+                        &field_specifier,
+                        self.registers.x,
+                        original_sign,
+                    ),
+                    bytes: Self::bytes_to_store(contents, self.registers.x, &field_specifier),
                 },
             )
             .unwrap();
@@ -854,7 +876,7 @@ impl Computer {
             .get(self.modified_address(instruction))
             .unwrap()
             .sign;
-        let word_from_jump_address = Word::from_i32(self.r_j.to_i32()).unwrap();
+        let word_from_jump_address = Word::from_i32(self.registers.j.to_i32()).unwrap();
 
         self.memory
             .set(
@@ -917,7 +939,7 @@ impl Computer {
     }
 
     fn jmp(&mut self, instruction: Word) {
-        self.r_j = JumpAddress::from_i32(self.current_instruction_address).unwrap();
+        self.registers.j = JumpAddress::from_i32(self.current_instruction_address).unwrap();
         self.current_instruction_address = self.modified_address(instruction);
     }
 
@@ -995,37 +1017,37 @@ impl Computer {
     }
 
     fn jan(&mut self, instruction: Word) {
-        if self.r_a.to_i32() < 0 {
+        if self.registers.a.to_i32() < 0 {
             self.jmp(instruction);
         }
     }
 
     fn jaz(&mut self, instruction: Word) {
-        if self.r_a.to_i32() == 0 {
+        if self.registers.a.to_i32() == 0 {
             self.jmp(instruction);
         }
     }
 
     fn jap(&mut self, instruction: Word) {
-        if self.r_a.to_i32() > 0 {
+        if self.registers.a.to_i32() > 0 {
             self.jmp(instruction);
         }
     }
 
     fn jann(&mut self, instruction: Word) {
-        if self.r_a.to_i32() >= 0 {
+        if self.registers.a.to_i32() >= 0 {
             self.jmp(instruction);
         }
     }
 
     fn janz(&mut self, instruction: Word) {
-        if self.r_a.to_i32() != 0 {
+        if self.registers.a.to_i32() != 0 {
             self.jmp(instruction);
         }
     }
 
     fn janp(&mut self, instruction: Word) {
-        if self.r_a.to_i32() <= 0 {
+        if self.registers.a.to_i32() <= 0 {
             self.jmp(instruction);
         }
     }
@@ -1043,37 +1065,37 @@ impl Computer {
     }
 
     fn j1n(&mut self, instruction: Word) {
-        if self.r_i1.to_i32() < 0 {
+        if self.registers.i1.to_i32() < 0 {
             self.jmp(instruction);
         }
     }
 
     fn j1z(&mut self, instruction: Word) {
-        if self.r_i1.to_i32() == 0 {
+        if self.registers.i1.to_i32() == 0 {
             self.jmp(instruction);
         }
     }
 
     fn j1p(&mut self, instruction: Word) {
-        if self.r_i1.to_i32() > 0 {
+        if self.registers.i1.to_i32() > 0 {
             self.jmp(instruction);
         }
     }
 
     fn j1nn(&mut self, instruction: Word) {
-        if self.r_i1.to_i32() >= 0 {
+        if self.registers.i1.to_i32() >= 0 {
             self.jmp(instruction);
         }
     }
 
     fn j1nz(&mut self, instruction: Word) {
-        if self.r_i1.to_i32() != 0 {
+        if self.registers.i1.to_i32() != 0 {
             self.jmp(instruction);
         }
     }
 
     fn j1np(&mut self, instruction: Word) {
-        if self.r_i1.to_i32() <= 0 {
+        if self.registers.i1.to_i32() <= 0 {
             self.jmp(instruction);
         }
     }
@@ -1091,37 +1113,37 @@ impl Computer {
     }
 
     fn j2n(&mut self, instruction: Word) {
-        if self.r_i2.to_i32() < 0 {
+        if self.registers.i2.to_i32() < 0 {
             self.jmp(instruction);
         }
     }
 
     fn j2z(&mut self, instruction: Word) {
-        if self.r_i2.to_i32() == 0 {
+        if self.registers.i2.to_i32() == 0 {
             self.jmp(instruction);
         }
     }
 
     fn j2p(&mut self, instruction: Word) {
-        if self.r_i2.to_i32() > 0 {
+        if self.registers.i2.to_i32() > 0 {
             self.jmp(instruction);
         }
     }
 
     fn j2nn(&mut self, instruction: Word) {
-        if self.r_i2.to_i32() >= 0 {
+        if self.registers.i2.to_i32() >= 0 {
             self.jmp(instruction);
         }
     }
 
     fn j2nz(&mut self, instruction: Word) {
-        if self.r_i2.to_i32() != 0 {
+        if self.registers.i2.to_i32() != 0 {
             self.jmp(instruction);
         }
     }
 
     fn j2np(&mut self, instruction: Word) {
-        if self.r_i2.to_i32() <= 0 {
+        if self.registers.i2.to_i32() <= 0 {
             self.jmp(instruction);
         }
     }
@@ -1139,37 +1161,37 @@ impl Computer {
     }
 
     fn j3n(&mut self, instruction: Word) {
-        if self.r_i3.to_i32() < 0 {
+        if self.registers.i3.to_i32() < 0 {
             self.jmp(instruction);
         }
     }
 
     fn j3z(&mut self, instruction: Word) {
-        if self.r_i3.to_i32() == 0 {
+        if self.registers.i3.to_i32() == 0 {
             self.jmp(instruction);
         }
     }
 
     fn j3p(&mut self, instruction: Word) {
-        if self.r_i3.to_i32() > 0 {
+        if self.registers.i3.to_i32() > 0 {
             self.jmp(instruction);
         }
     }
 
     fn j3nn(&mut self, instruction: Word) {
-        if self.r_i3.to_i32() >= 0 {
+        if self.registers.i3.to_i32() >= 0 {
             self.jmp(instruction);
         }
     }
 
     fn j3nz(&mut self, instruction: Word) {
-        if self.r_i3.to_i32() != 0 {
+        if self.registers.i3.to_i32() != 0 {
             self.jmp(instruction);
         }
     }
 
     fn j3np(&mut self, instruction: Word) {
-        if self.r_i3.to_i32() <= 0 {
+        if self.registers.i3.to_i32() <= 0 {
             self.jmp(instruction);
         }
     }
@@ -1187,37 +1209,37 @@ impl Computer {
     }
 
     fn j4n(&mut self, instruction: Word) {
-        if self.r_i4.to_i32() < 0 {
+        if self.registers.i4.to_i32() < 0 {
             self.jmp(instruction);
         }
     }
 
     fn j4z(&mut self, instruction: Word) {
-        if self.r_i4.to_i32() == 0 {
+        if self.registers.i4.to_i32() == 0 {
             self.jmp(instruction);
         }
     }
 
     fn j4p(&mut self, instruction: Word) {
-        if self.r_i4.to_i32() > 0 {
+        if self.registers.i4.to_i32() > 0 {
             self.jmp(instruction);
         }
     }
 
     fn j4nn(&mut self, instruction: Word) {
-        if self.r_i4.to_i32() >= 0 {
+        if self.registers.i4.to_i32() >= 0 {
             self.jmp(instruction);
         }
     }
 
     fn j4nz(&mut self, instruction: Word) {
-        if self.r_i4.to_i32() != 0 {
+        if self.registers.i4.to_i32() != 0 {
             self.jmp(instruction);
         }
     }
 
     fn j4np(&mut self, instruction: Word) {
-        if self.r_i4.to_i32() <= 0 {
+        if self.registers.i4.to_i32() <= 0 {
             self.jmp(instruction);
         }
     }
@@ -1235,37 +1257,37 @@ impl Computer {
     }
 
     fn j5n(&mut self, instruction: Word) {
-        if self.r_i5.to_i32() < 0 {
+        if self.registers.i5.to_i32() < 0 {
             self.jmp(instruction);
         }
     }
 
     fn j5z(&mut self, instruction: Word) {
-        if self.r_i5.to_i32() == 0 {
+        if self.registers.i5.to_i32() == 0 {
             self.jmp(instruction);
         }
     }
 
     fn j5p(&mut self, instruction: Word) {
-        if self.r_i5.to_i32() > 0 {
+        if self.registers.i5.to_i32() > 0 {
             self.jmp(instruction);
         }
     }
 
     fn j5nn(&mut self, instruction: Word) {
-        if self.r_i5.to_i32() >= 0 {
+        if self.registers.i5.to_i32() >= 0 {
             self.jmp(instruction);
         }
     }
 
     fn j5nz(&mut self, instruction: Word) {
-        if self.r_i5.to_i32() != 0 {
+        if self.registers.i5.to_i32() != 0 {
             self.jmp(instruction);
         }
     }
 
     fn j5np(&mut self, instruction: Word) {
-        if self.r_i5.to_i32() <= 0 {
+        if self.registers.i5.to_i32() <= 0 {
             self.jmp(instruction);
         }
     }
@@ -1283,37 +1305,37 @@ impl Computer {
     }
 
     fn j6n(&mut self, instruction: Word) {
-        if self.r_i6.to_i32() < 0 {
+        if self.registers.i6.to_i32() < 0 {
             self.jmp(instruction);
         }
     }
 
     fn j6z(&mut self, instruction: Word) {
-        if self.r_i6.to_i32() == 0 {
+        if self.registers.i6.to_i32() == 0 {
             self.jmp(instruction);
         }
     }
 
     fn j6p(&mut self, instruction: Word) {
-        if self.r_i6.to_i32() > 0 {
+        if self.registers.i6.to_i32() > 0 {
             self.jmp(instruction);
         }
     }
 
     fn j6nn(&mut self, instruction: Word) {
-        if self.r_i6.to_i32() >= 0 {
+        if self.registers.i6.to_i32() >= 0 {
             self.jmp(instruction);
         }
     }
 
     fn j6nz(&mut self, instruction: Word) {
-        if self.r_i6.to_i32() != 0 {
+        if self.registers.i6.to_i32() != 0 {
             self.jmp(instruction);
         }
     }
 
     fn j6np(&mut self, instruction: Word) {
-        if self.r_i6.to_i32() <= 0 {
+        if self.registers.i6.to_i32() <= 0 {
             self.jmp(instruction);
         }
     }
@@ -1331,37 +1353,37 @@ impl Computer {
     }
 
     fn jxn(&mut self, instruction: Word) {
-        if self.r_x.to_i32() < 0 {
+        if self.registers.x.to_i32() < 0 {
             self.jmp(instruction);
         }
     }
 
     fn jxz(&mut self, instruction: Word) {
-        if self.r_x.to_i32() == 0 {
+        if self.registers.x.to_i32() == 0 {
             self.jmp(instruction);
         }
     }
 
     fn jxp(&mut self, instruction: Word) {
-        if self.r_x.to_i32() > 0 {
+        if self.registers.x.to_i32() > 0 {
             self.jmp(instruction);
         }
     }
 
     fn jxnn(&mut self, instruction: Word) {
-        if self.r_x.to_i32() >= 0 {
+        if self.registers.x.to_i32() >= 0 {
             self.jmp(instruction);
         }
     }
 
     fn jxnz(&mut self, instruction: Word) {
-        if self.r_x.to_i32() != 0 {
+        if self.registers.x.to_i32() != 0 {
             self.jmp(instruction);
         }
     }
 
     fn jxnp(&mut self, instruction: Word) {
-        if self.r_x.to_i32() <= 0 {
+        if self.registers.x.to_i32() <= 0 {
             self.jmp(instruction);
         }
     }
@@ -1393,15 +1415,15 @@ impl Computer {
     }
 
     fn inca(&mut self, instruction: Word) {
-        let result = self.r_a.to_i32() + self.modified_address(instruction);
+        let result = self.registers.a.to_i32() + self.modified_address(instruction);
         if result == 0 {
-            self.r_a.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
+            self.registers.a.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
             return;
         }
         if result / 64_i32.pow(5) != 0 {
             self.overflow = true;
         }
-        self.r_a = Word::from_i32(result % 64_i32.pow(5)).unwrap();
+        self.registers.a = Word::from_i32(result % 64_i32.pow(5)).unwrap();
     }
 
     fn deca(&mut self, instruction: Word) {
@@ -1409,11 +1431,11 @@ impl Computer {
     }
 
     fn enta(&mut self, instruction: Word) {
-        self.r_a = self.word_to_enter(instruction);
+        self.registers.a = self.word_to_enter(instruction);
     }
 
     fn enna(&mut self, instruction: Word) {
-        self.r_a = self.word_to_enter(instruction).with_opposite_sign();
+        self.registers.a = self.word_to_enter(instruction).with_opposite_sign();
     }
 
     fn handle_49(&mut self, instruction: Word) {
@@ -1427,12 +1449,12 @@ impl Computer {
     }
 
     fn inc1(&mut self, instruction: Word) {
-        let result = self.r_i1.to_i32() + self.modified_address(instruction);
+        let result = self.registers.i1.to_i32() + self.modified_address(instruction);
         if result == 0 {
-            self.r_i1.bytes = (Byte::ZERO, Byte::ZERO);
+            self.registers.i1.bytes = (Byte::ZERO, Byte::ZERO);
             return;
         }
-        self.r_i1 = Index::from_i32(result).unwrap();
+        self.registers.i1 = Index::from_i32(result).unwrap();
     }
 
     fn dec1(&mut self, instruction: Word) {
@@ -1440,11 +1462,11 @@ impl Computer {
     }
 
     fn ent1(&mut self, instruction: Word) {
-        self.r_i1 = self.index_to_enter(instruction);
+        self.registers.i1 = self.index_to_enter(instruction);
     }
 
     fn enn1(&mut self, instruction: Word) {
-        self.r_i1 = self.index_to_enter(instruction).with_opposite_sign();
+        self.registers.i1 = self.index_to_enter(instruction).with_opposite_sign();
     }
 
     fn handle_50(&mut self, instruction: Word) {
@@ -1458,12 +1480,12 @@ impl Computer {
     }
 
     fn inc2(&mut self, instruction: Word) {
-        let result = self.r_i2.to_i32() + self.modified_address(instruction);
+        let result = self.registers.i2.to_i32() + self.modified_address(instruction);
         if result == 0 {
-            self.r_i2.bytes = (Byte::ZERO, Byte::ZERO);
+            self.registers.i2.bytes = (Byte::ZERO, Byte::ZERO);
             return;
         }
-        self.r_i2 = Index::from_i32(result).unwrap();
+        self.registers.i2 = Index::from_i32(result).unwrap();
     }
 
     fn dec2(&mut self, instruction: Word) {
@@ -1471,11 +1493,11 @@ impl Computer {
     }
 
     fn ent2(&mut self, instruction: Word) {
-        self.r_i2 = self.index_to_enter(instruction);
+        self.registers.i2 = self.index_to_enter(instruction);
     }
 
     fn enn2(&mut self, instruction: Word) {
-        self.r_i2 = self.index_to_enter(instruction).with_opposite_sign();
+        self.registers.i2 = self.index_to_enter(instruction).with_opposite_sign();
     }
 
     fn handle_51(&mut self, instruction: Word) {
@@ -1489,12 +1511,12 @@ impl Computer {
     }
 
     fn inc3(&mut self, instruction: Word) {
-        let result = self.r_i3.to_i32() + self.modified_address(instruction);
+        let result = self.registers.i3.to_i32() + self.modified_address(instruction);
         if result == 0 {
-            self.r_i3.bytes = (Byte::ZERO, Byte::ZERO);
+            self.registers.i3.bytes = (Byte::ZERO, Byte::ZERO);
             return;
         }
-        self.r_i3 = Index::from_i32(result).unwrap();
+        self.registers.i3 = Index::from_i32(result).unwrap();
     }
 
     fn dec3(&mut self, instruction: Word) {
@@ -1502,11 +1524,11 @@ impl Computer {
     }
 
     fn ent3(&mut self, instruction: Word) {
-        self.r_i3 = self.index_to_enter(instruction);
+        self.registers.i3 = self.index_to_enter(instruction);
     }
 
     fn enn3(&mut self, instruction: Word) {
-        self.r_i3 = self.index_to_enter(instruction).with_opposite_sign();
+        self.registers.i3 = self.index_to_enter(instruction).with_opposite_sign();
     }
 
     fn handle_52(&mut self, instruction: Word) {
@@ -1520,12 +1542,12 @@ impl Computer {
     }
 
     fn inc4(&mut self, instruction: Word) {
-        let result = self.r_i4.to_i32() + self.modified_address(instruction);
+        let result = self.registers.i4.to_i32() + self.modified_address(instruction);
         if result == 0 {
-            self.r_i4.bytes = (Byte::ZERO, Byte::ZERO);
+            self.registers.i4.bytes = (Byte::ZERO, Byte::ZERO);
             return;
         }
-        self.r_i4 = Index::from_i32(result).unwrap();
+        self.registers.i4 = Index::from_i32(result).unwrap();
     }
 
     fn dec4(&mut self, instruction: Word) {
@@ -1533,11 +1555,11 @@ impl Computer {
     }
 
     fn ent4(&mut self, instruction: Word) {
-        self.r_i4 = self.index_to_enter(instruction);
+        self.registers.i4 = self.index_to_enter(instruction);
     }
 
     fn enn4(&mut self, instruction: Word) {
-        self.r_i4 = self.index_to_enter(instruction).with_opposite_sign();
+        self.registers.i4 = self.index_to_enter(instruction).with_opposite_sign();
     }
 
     fn handle_53(&mut self, instruction: Word) {
@@ -1551,12 +1573,12 @@ impl Computer {
     }
 
     fn inc5(&mut self, instruction: Word) {
-        let result = self.r_i5.to_i32() + self.modified_address(instruction);
+        let result = self.registers.i5.to_i32() + self.modified_address(instruction);
         if result == 0 {
-            self.r_i5.bytes = (Byte::ZERO, Byte::ZERO);
+            self.registers.i5.bytes = (Byte::ZERO, Byte::ZERO);
             return;
         }
-        self.r_i5 = Index::from_i32(result).unwrap();
+        self.registers.i5 = Index::from_i32(result).unwrap();
     }
 
     fn dec5(&mut self, instruction: Word) {
@@ -1564,11 +1586,11 @@ impl Computer {
     }
 
     fn ent5(&mut self, instruction: Word) {
-        self.r_i5 = self.index_to_enter(instruction);
+        self.registers.i5 = self.index_to_enter(instruction);
     }
 
     fn enn5(&mut self, instruction: Word) {
-        self.r_i5 = self.index_to_enter(instruction).with_opposite_sign();
+        self.registers.i5 = self.index_to_enter(instruction).with_opposite_sign();
     }
 
     fn handle_54(&mut self, instruction: Word) {
@@ -1582,12 +1604,12 @@ impl Computer {
     }
 
     fn inc6(&mut self, instruction: Word) {
-        let result = self.r_i6.to_i32() + self.modified_address(instruction);
+        let result = self.registers.i6.to_i32() + self.modified_address(instruction);
         if result == 0 {
-            self.r_i6.bytes = (Byte::ZERO, Byte::ZERO);
+            self.registers.i6.bytes = (Byte::ZERO, Byte::ZERO);
             return;
         }
-        self.r_i6 = Index::from_i32(result).unwrap();
+        self.registers.i6 = Index::from_i32(result).unwrap();
     }
 
     fn dec6(&mut self, instruction: Word) {
@@ -1595,11 +1617,11 @@ impl Computer {
     }
 
     fn ent6(&mut self, instruction: Word) {
-        self.r_i6 = self.index_to_enter(instruction);
+        self.registers.i6 = self.index_to_enter(instruction);
     }
 
     fn enn6(&mut self, instruction: Word) {
-        self.r_i6 = self.index_to_enter(instruction).with_opposite_sign();
+        self.registers.i6 = self.index_to_enter(instruction).with_opposite_sign();
     }
 
     fn handle_55(&mut self, instruction: Word) {
@@ -1613,15 +1635,15 @@ impl Computer {
     }
 
     fn incx(&mut self, instruction: Word) {
-        let result = self.r_x.to_i32() + self.modified_address(instruction);
+        let result = self.registers.x.to_i32() + self.modified_address(instruction);
         if result == 0 {
-            self.r_x.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
+            self.registers.x.bytes = (Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO, Byte::ZERO);
             return;
         }
         if result / 64_i32.pow(5) != 0 {
             self.overflow = true;
         }
-        self.r_x = Word::from_i32(result % 64_i32.pow(5)).unwrap();
+        self.registers.x = Word::from_i32(result % 64_i32.pow(5)).unwrap();
     }
 
     fn decx(&mut self, instruction: Word) {
@@ -1629,11 +1651,11 @@ impl Computer {
     }
 
     fn entx(&mut self, instruction: Word) {
-        self.r_x = self.word_to_enter(instruction);
+        self.registers.x = self.word_to_enter(instruction);
     }
 
     fn ennx(&mut self, instruction: Word) {
-        self.r_x = self.word_to_enter(instruction).with_opposite_sign();
+        self.registers.x = self.word_to_enter(instruction).with_opposite_sign();
     }
 
     fn do_comparison(&mut self, register_word: Word, memory_word: Word) {
@@ -1647,8 +1669,8 @@ impl Computer {
     fn cmpa(&mut self, instruction: Word) {
         let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
         let register_word = Word {
-            sign: Self::sign_to_load_or_store(&field_specifier, self.r_a, Sign::PLUS),
-            bytes: Self::bytes_to_load_word(&field_specifier, self.r_a),
+            sign: Self::sign_to_load_or_store(&field_specifier, self.registers.a, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, self.registers.a),
         };
         let memory_word = Word {
             sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
@@ -1663,7 +1685,7 @@ impl Computer {
             sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
         };
-        let index_value_as_word = Word::from_i32(self.r_i1.to_i32()).unwrap();
+        let index_value_as_word = Word::from_i32(self.registers.i1.to_i32()).unwrap();
         let register_word = Word {
             sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
@@ -1677,7 +1699,7 @@ impl Computer {
             sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
         };
-        let index_value_as_word = Word::from_i32(self.r_i2.to_i32()).unwrap();
+        let index_value_as_word = Word::from_i32(self.registers.i2.to_i32()).unwrap();
         let register_word = Word {
             sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
@@ -1691,7 +1713,7 @@ impl Computer {
             sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
         };
-        let index_value_as_word = Word::from_i32(self.r_i3.to_i32()).unwrap();
+        let index_value_as_word = Word::from_i32(self.registers.i3.to_i32()).unwrap();
         let register_word = Word {
             sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
@@ -1705,7 +1727,7 @@ impl Computer {
             sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
         };
-        let index_value_as_word = Word::from_i32(self.r_i4.to_i32()).unwrap();
+        let index_value_as_word = Word::from_i32(self.registers.i4.to_i32()).unwrap();
         let register_word = Word {
             sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
@@ -1719,7 +1741,7 @@ impl Computer {
             sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
         };
-        let index_value_as_word = Word::from_i32(self.r_i5.to_i32()).unwrap();
+        let index_value_as_word = Word::from_i32(self.registers.i5.to_i32()).unwrap();
         let register_word = Word {
             sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
@@ -1733,7 +1755,7 @@ impl Computer {
             sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, memory_contents),
         };
-        let index_value_as_word = Word::from_i32(self.r_i6.to_i32()).unwrap();
+        let index_value_as_word = Word::from_i32(self.registers.i6.to_i32()).unwrap();
         let register_word = Word {
             sign: Self::sign_to_load_or_store(&field_specifier, index_value_as_word, Sign::PLUS),
             bytes: Self::bytes_to_load_word(&field_specifier, index_value_as_word),
@@ -1744,8 +1766,8 @@ impl Computer {
     fn cmpx(&mut self, instruction: Word) {
         let (field_specifier, memory_contents) = self.field_specifier_and_contents(instruction);
         let register_word = Word {
-            sign: Self::sign_to_load_or_store(&field_specifier, self.r_x, Sign::PLUS),
-            bytes: Self::bytes_to_load_word(&field_specifier, self.r_x),
+            sign: Self::sign_to_load_or_store(&field_specifier, self.registers.x, Sign::PLUS),
+            bytes: Self::bytes_to_load_word(&field_specifier, self.registers.x),
         };
         let memory_word = Word {
             sign: Self::sign_to_load_or_store(&field_specifier, memory_contents, Sign::PLUS),

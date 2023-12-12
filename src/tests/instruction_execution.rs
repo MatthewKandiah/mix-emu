@@ -14,7 +14,7 @@ fn should_start_running_from_current_address() {
 
     assert_eq!(computer.running, true);
     assert_eq!(computer.current_instruction_address, 8);
-    assert_eq!(computer.r_a.to_i32(), 1234);
+    assert_eq!(computer.registers.a.to_i32(), 1234);
 }
 
 #[test]
@@ -29,7 +29,7 @@ fn should_do_nothing_if_not_running() {
     computer.handle_next_instruction();
 
     assert_eq!(computer.current_instruction_address, 1);
-    assert_eq!(computer.r_a.to_i32(), 0);
+    assert_eq!(computer.registers.a.to_i32(), 0);
 }
 
 #[test]
@@ -74,11 +74,11 @@ fn should_execute_instructions_from_memory() {
         .unwrap();
 
     computer.handle_next_instruction();
-    assert_eq!(computer.r_a.to_i32(), 100);
+    assert_eq!(computer.registers.a.to_i32(), 100);
     computer.handle_next_instruction();
-    assert_eq!(computer.r_a.to_i32(), 300);
+    assert_eq!(computer.registers.a.to_i32(), 300);
     computer.handle_next_instruction();
-    assert_eq!(computer.r_a.to_i32(), 600);
+    assert_eq!(computer.registers.a.to_i32(), 600);
 }
 
 mod hlt {
@@ -106,11 +106,11 @@ mod hlt {
         assert!(!computer.running);
 
         computer.start();
-        assert_eq!(computer.r_a.to_i32(), 1);
+        assert_eq!(computer.registers.a.to_i32(), 1);
         assert_eq!(computer.current_instruction_address, 12);
 
         computer.handle_next_instruction();
-        assert_eq!(computer.r_a.to_i32(), 2);
+        assert_eq!(computer.registers.a.to_i32(), 2);
         assert_eq!(computer.current_instruction_address, 13);
     }
 }
