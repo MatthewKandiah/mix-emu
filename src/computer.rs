@@ -1,9 +1,9 @@
+pub mod memory;
 pub mod registers;
 
 use crate::data_types::{Byte, FieldSpecification, Index, JumpAddress, Sign, Word};
-use crate::memory::Memory;
 
-use self::registers::Registers;
+use self::{memory::Memory, registers::Registers};
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum ComparisonIndicatorState {
