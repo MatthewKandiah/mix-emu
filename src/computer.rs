@@ -1,6 +1,8 @@
 pub mod memory;
 pub mod registers;
 
+use core::panic;
+
 use crate::data_types::{Byte, FieldSpecification, Index, JumpAddress, Sign, Word};
 
 use self::{memory::Memory, registers::Registers};
@@ -12,6 +14,44 @@ pub enum ComparisonIndicatorState {
     LESS,
 }
 
+pub struct TapeUnit {
+    capacity: usize,
+    data: Vec<[Word; 100]>,
+}
+
+impl TapeUnit {
+    pub fn capacity(&self) -> usize {
+        self.capacity
+    }
+
+    fn is_position_valid(&self, pos: usize) -> bool {
+        pos < self.capacity()
+    }
+
+    pub fn new(capacity: usize) -> Self {
+        Self {
+            capacity,
+            data: vec![[Word::ZERO; 100]; capacity],
+        }
+    }
+
+    pub fn read(&self, position: i32) -> [Word; 100] {
+        let position: usize = position.try_into().unwrap();
+        if !self.is_position_valid(position) {
+            panic!("invalid read position");
+        }
+        self.data[position]
+    }
+
+    pub fn write(&mut self, position: i32, words: [Word; 100]) {
+        let position: usize = position.try_into().unwrap();
+        if !self.is_position_valid(position) {
+            panic!("invalid write position");
+        }
+        self.data[position] = words;
+    }
+}
+
 pub struct Computer {
     pub current_instruction_address: i32,
     pub registers: Registers,
@@ -19,6 +59,7 @@ pub struct Computer {
     pub overflow: bool,
     pub comparison_indicator: Option<ComparisonIndicatorState>,
     pub running: bool,
+    pub tape_unit: TapeUnit,
 }
 
 impl Computer {
@@ -30,6 +71,7 @@ impl Computer {
             comparison_indicator: None,
             memory: Memory::ZERO,
             running: false,
+            tape_unit: TapeUnit::new(1000),
         }
     }
 
