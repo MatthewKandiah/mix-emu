@@ -15,11 +15,16 @@ pub enum ComparisonIndicatorState {
 }
 
 pub struct TapeUnit {
+    ready: bool,
     capacity: usize,
     data: Vec<[Word; 100]>,
 }
 
 impl TapeUnit {
+    pub fn block_size(&self) -> usize {
+        100
+    }
+
     pub fn capacity(&self) -> usize {
         self.capacity
     }
@@ -30,6 +35,7 @@ impl TapeUnit {
 
     pub fn new(capacity: usize) -> Self {
         Self {
+            ready: true,
             capacity,
             data: vec![[Word::ZERO; 100]; capacity],
         }
@@ -930,15 +936,57 @@ impl Computer {
             .unwrap();
     }
 
-    fn jbus(&mut self, instruction: Word) {}
+    fn jbus(&mut self, instruction: Word) {
+        if !instruction.field().value() != 0 {
+            panic!("illegal field in jbus instruction");
+        }
+        if self.tape_unit.ready {
+            self.jmp(instruction);
+        }
+    }
 
-    fn ioc(&mut self, instruction: Word) {}
+    fn ioc(&mut self, _instruction: Word) {
+        // do nothing - let's worry about these device specifics later
+    }
 
-    fn input(&mut self, instruction: Word) {}
+    fn input(&mut self, instruction: Word) {
+        let unit = instruction.field().value();
+        if unit != 0 {
+            panic!("illegal field value in IN instruction - I haven't implemented all the input devices yet!");
+        }
+        let target_device = &self.tape_unit;
+        let read_words = target_device.read(self.registers.x.to_i32());
+        for (idx, word) in read_words.iter().enumerate() {
+            let idx: i32 = idx.try_into().unwrap();
+            self.memory
+                .set(self.modified_address(instruction) + idx, *word)
+                .unwrap();
+        }
+    }
 
-    fn output(&mut self, instruction: Word) {}
+    fn output(&mut self, instruction: Word) {
+        let unit = instruction.field().value();
+        if unit != 0 {
+            panic!("illegal field value in IN instruction - I haven't implemented all the input devices yet!");
+        }
+        let modified_address = self.modified_address(instruction);
+        let target_device = &mut self.tape_unit;
+        let mut write_words: [Word; 100] = [Word::ZERO; 100];
+        for i in 0..100 {
+            let idx: i32 = i.try_into().unwrap();
+            write_words[i] = self.memory.get(modified_address + idx).unwrap();
+        }
+        target_device.write(self.registers.x.to_i32(), write_words);
+    }
 
-    fn jred(&mut self, instruction: Word) {}
+    fn jred(&mut self, instruction: Word) {
+        if instruction.field().value() != 0 {
+            panic!("illegal field value in jred");
+        }
+        if self.tape_unit.ready {
+            self.jmp(instruction);
+        }
+    }
 
     fn handle_39(&mut self, instruction: Word) {
         match instruction.field().value() {
