@@ -58,6 +58,28 @@ impl TapeUnit {
     }
 }
 
+pub struct LinePrinter {
+    ready: bool,
+}
+
+impl LinePrinter {
+    pub fn new() -> Self {
+        Self { ready: true }
+    }
+
+    pub fn write(&self, words: [Word; 24]) {
+        let mut line = String::new();
+        for word in words {
+            line.push(word.bytes.0.to_char().unwrap());
+            line.push(word.bytes.1.to_char().unwrap());
+            line.push(word.bytes.2.to_char().unwrap());
+            line.push(word.bytes.3.to_char().unwrap());
+            line.push(word.bytes.4.to_char().unwrap());
+        }
+        println!("{}", line);
+    }
+}
+
 pub struct Computer {
     pub current_instruction_address: i32,
     pub registers: Registers,
@@ -66,6 +88,7 @@ pub struct Computer {
     pub comparison_indicator: Option<ComparisonIndicatorState>,
     pub running: bool,
     pub tape_unit: TapeUnit,
+    pub line_printer: LinePrinter,
 }
 
 impl Computer {
@@ -78,6 +101,7 @@ impl Computer {
             memory: Memory::ZERO,
             running: false,
             tape_unit: TapeUnit::new(1000),
+            line_printer: LinePrinter::new(),
         }
     }
 
