@@ -1039,17 +1039,27 @@ impl Computer {
 
     fn output(&mut self, instruction: Word) {
         let unit = instruction.field().value();
-        if unit != 0 {
+        if unit != 0 && unit != 18 {
             panic!("illegal field value in IN instruction - I haven't implemented all the input devices yet!");
         }
         let modified_address = self.modified_address(instruction);
-        let target_device = &mut self.tape_unit;
-        let mut write_words: [Word; 100] = [Word::ZERO; 100];
-        for i in 0..100 {
-            let idx: i32 = i.try_into().unwrap();
-            write_words[i] = self.memory.get(modified_address + idx).unwrap();
+        if unit == 0 {
+            let target_device = &mut self.tape_unit;
+            let mut write_words: [Word; 100] = [Word::ZERO; 100];
+            for i in 0..100 {
+                let idx: i32 = i.try_into().unwrap();
+                write_words[i] = self.memory.get(modified_address + idx).unwrap();
+            }
+            target_device.write(self.registers.x.to_i32(), write_words);
+        } else if unit == 18 {
+            let target_device = &self.line_printer;
+            let mut write_words: [Word; 24] = [Word::ZERO; 24];
+            for i in 0..24 {
+                let idx: i32 = i.try_into().unwrap();
+                write_words[i] = self.memory.get(modified_address + idx).unwrap()
+            }
+            target_device.write(write_words);
         }
-        target_device.write(self.registers.x.to_i32(), write_words);
     }
 
     fn jred(&mut self, instruction: Word) {
