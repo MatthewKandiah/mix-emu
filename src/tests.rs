@@ -1,5 +1,6 @@
 mod address_transfer;
 mod arithmetic;
+mod char_conversion;
 mod comparison;
 mod instruction_execution;
 mod jumping;

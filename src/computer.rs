@@ -384,9 +384,58 @@ impl Computer {
 
     fn handle_5(&mut self, instruction: Word) {
         match instruction.field().value() {
+            0 => self.num(),
+            1 => self.char(),
             2 => self.hlt(),
             _ => panic!("illegal field in code 5 instruction"),
         }
+    }
+
+    fn num(&mut self) {
+        let sign = self.registers.a.sign;
+        let bytes: [Byte; 10] = [
+            self.registers.a.bytes.0,
+            self.registers.a.bytes.1,
+            self.registers.a.bytes.2,
+            self.registers.a.bytes.3,
+            self.registers.a.bytes.4,
+            self.registers.x.bytes.0,
+            self.registers.x.bytes.1,
+            self.registers.x.bytes.2,
+            self.registers.x.bytes.3,
+            self.registers.x.bytes.4,
+        ];
+        let mut value = 0;
+        for byte in bytes {
+            value = value * 10 + byte.to_i32() % 10;
+        }
+        self.registers.a = Word::from_i32(value % 64_i32.pow(5))
+            .unwrap()
+            .with_sign(sign);
+    }
+
+    fn char(&mut self) {
+        let mut value: i64 = self.registers.a.to_i32().abs().into();
+        println!("{}", value);
+        self.registers.x.bytes.4 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
+        value = value / 10;
+        self.registers.x.bytes.3 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
+        value = value / 10;
+        self.registers.x.bytes.2 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
+        value = value / 10;
+        self.registers.x.bytes.1 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
+        value = value / 10;
+        self.registers.x.bytes.0 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
+        value = value / 10;
+        self.registers.a.bytes.4 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
+        value = value / 10;
+        self.registers.a.bytes.3 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
+        value = value / 10;
+        self.registers.a.bytes.2 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
+        value = value / 10;
+        self.registers.a.bytes.1 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
+        value = value / 10;
+        self.registers.a.bytes.0 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
     }
 
     fn hlt(&mut self) {
