@@ -416,7 +416,6 @@ impl Computer {
 
     fn char(&mut self) {
         let mut value: i64 = self.registers.a.to_i32().abs().into();
-        println!("{}", value);
         self.registers.x.bytes.4 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
         value = value / 10;
         self.registers.x.bytes.3 = Byte::from_i32((value % 10 + 30).try_into().unwrap()).unwrap();
