@@ -15,9 +15,9 @@ pub enum ComparisonIndicatorState {
 }
 
 pub struct TapeUnit {
-    ready: bool,
-    capacity: usize,
-    data: Vec<[Word; 100]>,
+    pub ready: bool,
+    pub capacity: usize,
+    pub data: Vec<[Word; 100]>,
 }
 
 impl TapeUnit {
