@@ -1,5 +1,5 @@
-use crate::computer::*;
-use crate::data_types::*;
+use mix_emu::computer::*;
+use mix_emu::data_types::*;
 
 fn setup_computer() -> Computer {
     let mut computer = Computer::new();

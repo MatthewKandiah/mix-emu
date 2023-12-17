@@ -1,5 +1,5 @@
-use crate::computer::*;
-use crate::data_types::*;
+use mix_emu::computer::*;
+use mix_emu::data_types::*;
 
 #[test]
 fn should_convert_to_numerical_value() {

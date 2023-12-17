@@ -1,5 +1,5 @@
 mod lda_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -70,7 +70,7 @@ mod lda_tests {
 
 #[cfg(test)]
 mod ldx_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -141,7 +141,7 @@ mod ldx_tests {
 
 #[cfg(test)]
 mod ld1_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -209,7 +209,7 @@ mod ld1_tests {
 
 #[cfg(test)]
 mod ld2_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -277,7 +277,7 @@ mod ld2_tests {
 
 #[cfg(test)]
 mod ld3_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -345,7 +345,7 @@ mod ld3_tests {
 
 #[cfg(test)]
 mod ld4_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -413,7 +413,7 @@ mod ld4_tests {
 
 #[cfg(test)]
 mod ld5_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -481,7 +481,7 @@ mod ld5_tests {
 
 #[cfg(test)]
 mod ld6_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -549,7 +549,7 @@ mod ld6_tests {
 
 #[cfg(test)]
 mod ldan_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -620,7 +620,7 @@ mod ldan_tests {
 
 #[cfg(test)]
 mod ldxn_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -637,7 +637,7 @@ mod ldxn_tests {
 
 #[cfg(test)]
 mod ld1n_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -654,7 +654,7 @@ mod ld1n_tests {
 
 #[cfg(test)]
 mod ld2n_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -671,7 +671,7 @@ mod ld2n_tests {
 
 #[cfg(test)]
 mod ld3n_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -688,7 +688,7 @@ mod ld3n_tests {
 
 #[cfg(test)]
 mod ld4n_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -705,7 +705,7 @@ mod ld4n_tests {
 
 #[cfg(test)]
 mod ld5n_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {
@@ -722,7 +722,7 @@ mod ld5n_tests {
 
 #[cfg(test)]
 mod ld6n_tests {
-    use crate::{computer::*, data_types::*};
+    use mix_emu::{computer::*, data_types::*};
 
     #[test]
     fn should_load_value_from_memory() {

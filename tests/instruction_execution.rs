@@ -1,5 +1,5 @@
-use crate::computer::*;
-use crate::data_types::*;
+use mix_emu::computer::*;
+use mix_emu::data_types::*;
 
 #[test]
 fn should_start_running_from_current_address() {
@@ -82,8 +82,8 @@ fn should_execute_instructions_from_memory() {
 }
 
 mod hlt {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();

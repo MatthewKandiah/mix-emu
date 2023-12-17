@@ -1,5 +1,5 @@
-mod sta_tests {
-    use crate::{computer::*, data_types::*};
+mod sta {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -64,8 +64,8 @@ mod sta_tests {
     }
 }
 
-mod stx_tests {
-    use crate::{computer::*, data_types::*};
+mod stx {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -130,8 +130,8 @@ mod stx_tests {
     }
 }
 
-mod st1_tests {
-    use crate::{computer::*, data_types::*};
+mod st1 {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -196,8 +196,8 @@ mod st1_tests {
     }
 }
 
-mod st2_tests {
-    use crate::{computer::*, data_types::*};
+mod st2 {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -262,8 +262,8 @@ mod st2_tests {
     }
 }
 
-mod st3_tests {
-    use crate::{computer::*, data_types::*};
+mod st3 {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -328,8 +328,8 @@ mod st3_tests {
     }
 }
 
-mod st4_tests {
-    use crate::{computer::*, data_types::*};
+mod st4 {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -394,8 +394,8 @@ mod st4_tests {
     }
 }
 
-mod st5_tests {
-    use crate::{computer::*, data_types::*};
+mod st5 {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -460,8 +460,8 @@ mod st5_tests {
     }
 }
 
-mod st6_tests {
-    use crate::{computer::*, data_types::*};
+mod st6 {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -526,8 +526,8 @@ mod st6_tests {
     }
 }
 
-mod stj_tests {
-    use crate::{computer::*, data_types::*};
+mod stj {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -592,8 +592,8 @@ mod stj_tests {
     }
 }
 
-mod stz_tests {
-    use crate::{computer::*, data_types::*};
+mod stz {
+    use mix_emu::{computer::*, data_types::*};
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();

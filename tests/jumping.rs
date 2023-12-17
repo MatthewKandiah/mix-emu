@@ -1,6 +1,6 @@
 mod jmp {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const FIELD: i32 = 0;
     const CODE: i32 = 39;
@@ -39,8 +39,8 @@ mod jmp {
 }
 
 mod jsj {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const FIELD: i32 = 1;
     const CODE: i32 = 39;
@@ -80,8 +80,8 @@ mod jsj {
 }
 
 mod jov {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const FIELD: i32 = 2;
     const CODE: i32 = 39;
@@ -114,8 +114,8 @@ mod jov {
 }
 
 mod jnov {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const FIELD: i32 = 3;
     const CODE: i32 = 39;

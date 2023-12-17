@@ -1,6 +1,6 @@
 mod add {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -129,8 +129,8 @@ mod add {
 }
 
 mod sub {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     fn setup_computer() -> Computer {
         let mut computer = Computer::new();
@@ -259,8 +259,8 @@ mod sub {
 }
 
 mod mul {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const MEM_ADDRESS: i32 = 2345;
     fn set_up_computer(a_value: i32, mem_value: i32) -> Computer {
@@ -388,8 +388,8 @@ mod mul {
 }
 
 mod div {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     #[test]
     fn should_agree_with_first_book_example() {

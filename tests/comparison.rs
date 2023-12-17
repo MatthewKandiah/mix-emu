@@ -1,6 +1,6 @@
 mod cmpa {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 56;
     const ADDRESS: i32 = 1000;
@@ -137,8 +137,8 @@ mod cmpa {
 }
 
 mod cmpx {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 63;
     const ADDRESS: i32 = 1000;
@@ -275,8 +275,8 @@ mod cmpx {
 }
 
 mod cmp1 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 57;
     const ADDRESS: i32 = 1000;
@@ -413,8 +413,8 @@ mod cmp1 {
 }
 
 mod cmp2 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 58;
     const ADDRESS: i32 = 1000;
@@ -551,8 +551,8 @@ mod cmp2 {
 }
 
 mod cmp3 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 59;
     const ADDRESS: i32 = 1000;
@@ -689,8 +689,8 @@ mod cmp3 {
 }
 
 mod cmp4 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 60;
     const ADDRESS: i32 = 1000;
@@ -827,8 +827,8 @@ mod cmp4 {
 }
 
 mod cmp5 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 61;
     const ADDRESS: i32 = 1000;
@@ -965,8 +965,8 @@ mod cmp5 {
 }
 
 mod cmp6 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 62;
     const ADDRESS: i32 = 1000;

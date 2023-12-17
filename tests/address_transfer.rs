@@ -1,6 +1,6 @@
 mod enta {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 48;
     const FIELD: i32 = 2;
@@ -70,8 +70,8 @@ mod enta {
 }
 
 mod entx {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 55;
     const FIELD: i32 = 2;
@@ -141,8 +141,8 @@ mod entx {
 }
 
 mod ent1 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 49;
     const FIELD: i32 = 2;
@@ -212,8 +212,8 @@ mod ent1 {
 }
 
 mod ent2 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 50;
     const FIELD: i32 = 2;
@@ -283,8 +283,8 @@ mod ent2 {
 }
 
 mod ent3 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 51;
     const FIELD: i32 = 2;
@@ -354,8 +354,8 @@ mod ent3 {
 }
 
 mod ent4 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 52;
     const FIELD: i32 = 2;
@@ -425,8 +425,8 @@ mod ent4 {
 }
 
 mod ent5 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 53;
     const FIELD: i32 = 2;
@@ -496,8 +496,8 @@ mod ent5 {
 }
 
 mod ent6 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 54;
     const FIELD: i32 = 2;
@@ -567,8 +567,8 @@ mod ent6 {
 }
 
 mod enna {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 48;
     const FIELD: i32 = 3;
@@ -638,8 +638,8 @@ mod enna {
 }
 
 mod ennx {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 55;
     const FIELD: i32 = 3;
@@ -709,8 +709,8 @@ mod ennx {
 }
 
 mod enn1 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 49;
     const FIELD: i32 = 3;
@@ -780,8 +780,8 @@ mod enn1 {
 }
 
 mod enn2 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 50;
     const FIELD: i32 = 3;
@@ -851,8 +851,8 @@ mod enn2 {
 }
 
 mod enn3 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 51;
     const FIELD: i32 = 3;
@@ -922,8 +922,8 @@ mod enn3 {
 }
 
 mod enn4 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 52;
     const FIELD: i32 = 3;
@@ -993,8 +993,8 @@ mod enn4 {
 }
 
 mod enn5 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 53;
     const FIELD: i32 = 3;
@@ -1064,8 +1064,8 @@ mod enn5 {
 }
 
 mod enn6 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 54;
     const FIELD: i32 = 3;
@@ -1135,8 +1135,8 @@ mod enn6 {
 }
 
 mod inca {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 48;
     const FIELD: i32 = 0;
@@ -1205,8 +1205,8 @@ mod inca {
 }
 
 mod incx {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 55;
     const FIELD: i32 = 0;
@@ -1275,8 +1275,8 @@ mod incx {
 }
 
 mod inc1 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 49;
     const FIELD: i32 = 0;
@@ -1325,8 +1325,8 @@ mod inc1 {
 }
 
 mod inc2 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 50;
     const FIELD: i32 = 0;
@@ -1375,8 +1375,8 @@ mod inc2 {
 }
 
 mod inc3 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 51;
     const FIELD: i32 = 0;
@@ -1425,8 +1425,8 @@ mod inc3 {
 }
 
 mod inc4 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 52;
     const FIELD: i32 = 0;
@@ -1475,8 +1475,8 @@ mod inc4 {
 }
 
 mod inc5 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 53;
     const FIELD: i32 = 0;
@@ -1525,8 +1525,8 @@ mod inc5 {
 }
 
 mod inc6 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 54;
     const FIELD: i32 = 0;
@@ -1575,8 +1575,8 @@ mod inc6 {
 }
 
 mod deca {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 48;
     const FIELD: i32 = 1;
@@ -1645,8 +1645,8 @@ mod deca {
 }
 
 mod decx {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 55;
     const FIELD: i32 = 1;
@@ -1715,8 +1715,8 @@ mod decx {
 }
 
 mod dec1 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 49;
     const FIELD: i32 = 1;
@@ -1765,8 +1765,8 @@ mod dec1 {
 }
 
 mod dec2 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 50;
     const FIELD: i32 = 1;
@@ -1815,8 +1815,8 @@ mod dec2 {
 }
 
 mod dec3 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 51;
     const FIELD: i32 = 1;
@@ -1865,8 +1865,8 @@ mod dec3 {
 }
 
 mod dec4 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 52;
     const FIELD: i32 = 1;
@@ -1915,8 +1915,8 @@ mod dec4 {
 }
 
 mod dec5 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 53;
     const FIELD: i32 = 1;
@@ -1965,8 +1965,8 @@ mod dec5 {
 }
 
 mod dec6 {
-    use crate::computer::*;
-    use crate::data_types::*;
+    use mix_emu::computer::*;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 54;
     const FIELD: i32 = 1;

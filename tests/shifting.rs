@@ -1,5 +1,5 @@
-use crate::computer::*;
-use crate::data_types::*;
+use mix_emu::computer::*;
+use mix_emu::data_types::*;
 
 fn setup_computer() -> Computer {
     let mut computer = Computer::new();
@@ -69,8 +69,9 @@ fn book_example() {
 }
 
 mod sla {
-    use crate::data_types::*;
-    use crate::tests::shifting::setup_computer;
+    use mix_emu::data_types::*;
+
+    use crate::setup_computer;
 
     const CODE: i32 = 6;
     const FIELD: i32 = 0;
@@ -128,7 +129,8 @@ mod sla {
 }
 
 mod sra {
-    use crate::{data_types::*, tests::shifting::setup_computer};
+    use crate::setup_computer;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 6;
     const FIELD: i32 = 1;
@@ -186,7 +188,8 @@ mod sra {
 }
 
 mod slax {
-    use crate::{data_types::*, tests::shifting::setup_computer};
+    use crate::setup_computer;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 6;
     const FIELD: i32 = 2;
@@ -244,7 +247,8 @@ mod slax {
 }
 
 mod srax {
-    use crate::{data_types::*, tests::shifting::setup_computer};
+    use crate::setup_computer;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 6;
     const FIELD: i32 = 3;
@@ -302,7 +306,8 @@ mod srax {
 }
 
 mod slc {
-    use crate::{data_types::*, tests::shifting::setup_computer};
+    use crate::setup_computer;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 6;
     const FIELD: i32 = 4;
@@ -360,7 +365,8 @@ mod slc {
 }
 
 mod src {
-    use crate::{data_types::*, tests::shifting::setup_computer};
+    use crate::setup_computer;
+    use mix_emu::data_types::*;
 
     const CODE: i32 = 6;
     const FIELD: i32 = 5;
