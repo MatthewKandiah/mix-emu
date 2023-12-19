@@ -1,8 +1,6 @@
 pub mod memory;
 pub mod registers;
 
-use core::panic;
-
 use crate::data_types::{Byte, FieldSpecification, Index, JumpAddress, Sign, Word};
 
 use self::{memory::Memory, registers::Registers};
