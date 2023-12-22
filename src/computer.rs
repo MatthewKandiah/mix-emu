@@ -56,13 +56,11 @@ impl TapeUnit {
     }
 }
 
-pub struct LinePrinter {
-    ready: bool,
-}
+pub struct LinePrinter {}
 
 impl LinePrinter {
     pub fn new() -> Self {
-        Self { ready: true }
+        Self {}
     }
 
     pub fn write(&self, words: [Word; 24]) {
