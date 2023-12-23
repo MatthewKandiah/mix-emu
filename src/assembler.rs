@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::data_types::Word;
 
 type LineParts<'a> = (Option<&'a str>, &'a str, &'a str);
@@ -12,19 +14,25 @@ pub fn read_source_string_as_instructions(source: String) -> Vec<Word> {
         .map(parse_line_parts)
         .collect();
 
+    // a symbol can be defined equal to another symbol, which may not have a value yet
+    // handle this by storing their values as strings, attempting to parse value as int, and
+    // if that fails, then in the replacement step we will use the retrieve value as a search key in the hashmap again. If we ever fail to
+    // find the symbol then panic, the program has failed to define all its symbols.
+    let mut symbols = HashMap::<String, String>::new();
     for line in source_lines {
-        println!("{:?}", line);
+        if line.1 == "EQU" {
+            if line.0 == None {
+                panic!("EQU statement requires a LOC field");
+            }
+            let sym = line.0.unwrap();
+            if symbols.contains_key(sym) {
+                panic!("Redefining global symbol not allowed in EQU statement");
+            }
+            symbols.insert(sym.to_string(), line.2.to_string());
+        }
     }
-
-    // first pass - determine value of each symbol
-    // types of symbol - EQU statements, asterisk addresses, local variables dH, dB, dF, ORIG
-    // statements
-    //
-    // UNKNOWN:
-    // - do you require an ORIG statement before the rest of a program?
-    //
-    // second pass - replace all symbols with values and generate instruction Words for output
-    //
+    // now we know what global symbols are defined, we can generate non-clashing names for local
+    // symbols. Iterate through source, and replace dH, dF, dB with non-clashing symbol names
     let mut result: Vec<Word> = vec![];
     result.push(Word::ZERO);
     return result;
