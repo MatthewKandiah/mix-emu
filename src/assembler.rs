@@ -1,20 +1,43 @@
 use crate::data_types::Word;
 
 struct SourceLine {
-    loc: Option<SymbolOrInt>,
+    loc: Option<Loc>,
     op: Op,
     address: Option<Address>,
+}
+
+struct Loc {
+    value: SymbolOrInt,
+}
+
+impl Loc {
+    fn from_str(input: &str) -> Self {
+        if let Result::Err(op) = Op::from_str(input) {
+            panic!(
+                "Illegal loc - op names may not be used as loc names: {:?}",
+                op
+            );
+        }
+        Self {
+            value: SymbolOrInt::from_str(input),
+        }
+    }
 }
 
 enum Op {
     EQU,
 }
 
+#[derive(Debug)]
+enum OpErr {
+    InvalidString(String),
+}
+
 impl Op {
-    fn from_str(input: &str) -> Self {
+    fn from_str(input: &str) -> Result<Self, OpErr> {
         match input {
-            "EQU" => Self::EQU,
-            _ => panic!("Invalid string: {}", input),
+            "EQU" => Ok(Self::EQU),
+            _ => Err(OpErr::InvalidString(input.to_string())),
         }
     }
 }
@@ -52,13 +75,13 @@ impl SymbolOrInt {
 }
 
 pub fn read_source_string_as_instructions(source: String) -> Vec<Word> {
-    let source_lines = source
+    source
         .split('\n')
         .filter(is_not_empty)
         .filter(is_not_comment)
-        .map(parse_line);
-
-    return vec![];
+        .map(parse_line)
+        .map(generate_instruction)
+        .collect()
 }
 
 fn is_not_empty(line: &&str) -> bool {
@@ -75,13 +98,13 @@ fn parse_line(line: &str) -> SourceLine {
     match fixed_split_line.len() {
         1 => SourceLine {
             loc: None,
-            op: Op::from_str(&fixed_split_line[0]),
+            op: Op::from_str(&fixed_split_line[0]).unwrap(),
             address: None,
         },
         2 => parse_2_column_line(&fixed_split_line[0], &fixed_split_line[1]),
         3 => SourceLine {
-            loc: Some(SymbolOrInt::from_str(&fixed_split_line[0])),
-            op: Op::from_str(&fixed_split_line[1]),
+            loc: Some(Loc::from_str(&fixed_split_line[0])),
+            op: Op::from_str(&fixed_split_line[1]).unwrap(),
             address: Some(Address::from_str(&fixed_split_line[2])),
         },
         _ => panic!(
@@ -111,9 +134,20 @@ fn join_splits_within_quotes(split_line: Vec<&str>) -> Vec<String> {
 }
 
 fn parse_2_column_line(first_column: &str, second_column: &str) -> SourceLine {
-    // need to tell whether we have LOC&OP or OP&ADDRESS
-    // since everything is allowed to be a symbol with an arbitrary name, I think this is difficult
-    // to solve perfectly generally
-    // maybe best to say OP strings are invalid symbol names
+    match Op::from_str(first_column) {
+        Ok(op) => SourceLine {
+            loc: None,
+            op,
+            address: Some(Address::from_str(second_column)),
+        },
+        Err(_) => SourceLine {
+            loc: Some(Loc::from_str(first_column)),
+            op: Op::from_str(second_column).unwrap(),
+            address: None,
+        },
+    }
+}
+
+fn generate_instruction(source_line: SourceLine) -> Word {
     unimplemented!();
 }
