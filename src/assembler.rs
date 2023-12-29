@@ -81,6 +81,7 @@ pub fn read_source_string_as_instructions(source: String) -> Vec<Word> {
         .filter(is_not_comment)
         .map(parse_line)
         .map(generate_instruction)
+        .flatten()
         .collect()
 }
 
@@ -148,6 +149,6 @@ fn parse_2_column_line(first_column: &str, second_column: &str) -> SourceLine {
     }
 }
 
-fn generate_instruction(source_line: SourceLine) -> Word {
+fn generate_instruction(source_line: SourceLine) -> Option<Word> {
     unimplemented!();
 }
