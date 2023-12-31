@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::data_types::Word;
 
 struct SourceLine {
@@ -567,26 +569,11 @@ impl Op {
             | Op::CMP4
             | Op::CMP5
             | Op::CMP6
-            | Op::CMPX => Field {
-                left: SymbolOrInt::Int(0),
-                right: SymbolOrInt::Int(5),
-            },
-            Op::JG => Field {
-                left: SymbolOrInt::Int(0),
-                right: SymbolOrInt::Int(6),
-            },
-            Op::JGE => Field {
-                left: SymbolOrInt::Int(0),
-                right: SymbolOrInt::Int(7),
-            },
-            Op::JNE => Field {
-                left: SymbolOrInt::Int(1),
-                right: SymbolOrInt::Int(0),
-            },
-            Op::JLE => Field {
-                left: SymbolOrInt::Int(1),
-                right: SymbolOrInt::Int(1),
-            },
+            | Op::CMPX => Field::from_int(5),
+            Op::JG => Field::from_int(6),
+            Op::JGE => Field::from_int(7),
+            Op::JNE => Field::from_int(8),
+            Op::JLE => Field::from_int(9),
         }
     }
 }
@@ -604,8 +591,21 @@ impl Address {
 }
 
 struct Field {
-    left: SymbolOrInt,
-    right: SymbolOrInt,
+    left: i32,
+    right: i32,
+}
+
+impl Field {
+    fn from_left_right(left: i32, right: i32) -> Self {
+        Self { left, right }
+    }
+
+    fn from_int(value: i32) -> Self {
+        Self {
+            left: value / 8,
+            right: value % 8,
+        }
+    }
 }
 
 enum SymbolOrInt {
@@ -624,14 +624,42 @@ impl SymbolOrInt {
 }
 
 pub fn read_source_string_as_instructions(source: String) -> Vec<Word> {
-    source
+    let source_lines: Vec<SourceLine> = source
         .split('\n')
         .filter(is_not_empty)
         .filter(is_not_comment)
         .map(parse_line)
-        .map(generate_instruction)
-        .flatten()
-        .collect()
+        .collect();
+    let mut line_count = 0;
+    let mut symbol_table: HashMap<String, SymbolOrInt> = HashMap::new();
+    let mut result: Vec<Word> = vec![];
+    for source_line in source_lines {
+        match source_line.op {
+            Op::EQU => todo!("update symbol table"),
+            Op::ORIG => todo!("update line_count"),
+            x => todo!("append instruction word to result"),
+        };
+    }
+    result
+}
+
+fn symbol_lookup(
+    symbol: &str,
+    symbol_table: &HashMap<String, SymbolOrInt>,
+    previous_keys: Vec<&str>,
+) -> i32 {
+    if previous_keys.contains(&symbol) {
+        panic!("Illegal circular symbol definition {:?}", previous_keys);
+    }
+    match symbol_table.get(symbol) {
+        None => panic!("Failed symbol lookup {:?}", symbol),
+        Some(SymbolOrInt::Int(x)) => *x,
+        Some(SymbolOrInt::Symbol(sym)) => {
+            let mut next_previous_keys = previous_keys;
+            next_previous_keys.push(sym);
+            return symbol_lookup(&sym, symbol_table, next_previous_keys);
+        }
+    }
 }
 
 fn is_not_empty(line: &&str) -> bool {
