@@ -586,11 +586,49 @@ struct Address {
 
 impl Address {
     fn from_str(input: &str) -> Self {
-        unimplemented!()
+        enum state {
+            address,
+            index,
+            field,
+            finished,
+        }
+        let mut address_buffer = String::new();
+        let mut index_buffer = String::new();
+        let mut field_buffer = String::new();
+        let mut current_state = state::address;
+        for c in input.chars() {
+            match (c, current_state) {
+                (x, state::address) if x.is_alphanumeric() => address_buffer.push(x),
+                (x, state::index) if x.is_alphanumeric() => index_buffer.push(x),
+                (x, state::field) if x.is_alphanumeric() => field_buffer.push(x),
+                (',', state::address) => current_state = state::index,
+                (',', state::index) => panic!("Illegal comma inside index part of instruction"),
+                (',', state::field) => panic!("Illegal comma inside field part of instruction"),
+                ('(', state::address) => current_state = state::field,
+                ('(', state::index) => current_state = state::field,
+                ('(', state::field) => panic!("Illegal open paren inside field part of instruction"),
+                (')', state::field) => current_state = state::finished,
+                (_, state::finished) => {},
+                _ => panic!("Unexpected character-state combination in address parsing"),
+            };
+        }
+        return Self {
+            value: SymbolOrInt::from_str(&address_buffer),
+            index: match index_buffer.len() {
+                0 => None,
+                x => Some(SymbolOrInt::from_str(x)),
+            },
+            field: match field_buffer.len() {
+                0 => None,
+                x => Some(Field::from_str(x)),
+            }
+        }
     }
 }
 
 struct Field {
+    // not sure this is the neatest way to do this, might be better to make a `value: SymbolOrInt`
+    // and parse left:right into a number
     left: i32,
     right: i32,
 }
@@ -605,6 +643,17 @@ impl Field {
             left: value / 8,
             right: value % 8,
         }
+    }
+
+    fn from_str(value: &str) -> Self {
+        if value.contains(':') {
+            let split = value.split(':');
+            if split.len() != 2 {
+                panic!("Too many colons in field");
+            }
+            return Self::from_left_right(split[0], split[1]);
+        }
+        todo!("Can't do what I had originally planned, we don't know for certain at this point that we have an int, so can't parse the string as i32, it may be an unresolved symbol")
     }
 }
 
@@ -727,5 +776,5 @@ fn parse_2_column_line(first_column: &str, second_column: &str) -> SourceLine {
 }
 
 fn generate_instruction(source_line: SourceLine) -> Option<Word> {
-    unimplemented!()
+    todo!()
 }
