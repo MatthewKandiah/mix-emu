@@ -13,7 +13,7 @@ fn main() {
 
     let path = &args[1];
     let source_content = fs::read_to_string(path).expect("Failed to read source file");
-    let instructions = assembler::read_source_string_as_instructions(source_content);
+    let instructions = assembler::read_source_string_as_instructions(&source_content).unwrap();
     for instruction in instructions.iter() {
         println!("{:?}", instruction);
     }
