@@ -84,13 +84,7 @@ fn get_token(iter: &mut Peekable<Chars>, current_value: char) -> Token {
         ')' => RightBracket,
         '(' => LeftBracket,
         ':' => Colon,
-        '/' => match iter.peek() {
-            Some('/') => {
-                iter.next();
-                return DoubleSlash;
-            }
-            _ => Slash,
-        },
+        '/' => handle_slash_or_double_slash(iter),
         '*' => Asterisk,
         '-' => Minus,
         '+' => Plus,
@@ -98,6 +92,16 @@ fn get_token(iter: &mut Peekable<Chars>, current_value: char) -> Token {
             absorb_consecutive_alphanumerics_into_single_token(iter, x)
         }
         _ => Illegal(current_value.to_string()),
+    }
+}
+
+fn handle_slash_or_double_slash(iter: &mut Peekable<Chars>) -> Token {
+    match iter.peek() {
+        Some('/') => {
+            iter.next();
+            Token::DoubleSlash
+        }
+        _ => Token::Slash,
     }
 }
 
