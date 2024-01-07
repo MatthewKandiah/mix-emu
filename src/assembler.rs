@@ -1,6 +1,6 @@
 use std::{iter::Peekable, str::Chars};
 
-use crate::data_types::Word;
+use crate::data_types::{Sign, Word};
 
 #[derive(Debug)]
 pub enum AssemblerError {
@@ -162,11 +162,16 @@ enum Op {
 }
 
 impl Op {
-    fn from_token(t: Token) -> Result<Self, AssemblerError> {
-        match t {
-            Token::Symbol(x) => Self::from_str(&x),
-            _ => Err(AssemblerError::BadOpCode(t)),
-        }
+    fn to_code_value(&self) -> i32 {
+        todo!("fill all these in...")
+    }
+
+    fn is_pseudo_instruction(&self) -> bool {
+        self == &Self::EQU
+            || self == &Self::ORIG
+            || self == &Self::CON
+            || self == &Self::ALF
+            || self == &Self::END
     }
 
     fn from_str(s: &str) -> Result<Self, AssemblerError> {
@@ -327,9 +332,8 @@ impl Op {
 
 // using the terminal input rules -> empty LOC indicated by leading space
 // changing ALF so characters are enclosed in "s instead of working by character count
-pub fn read_source_string_as_instructions(
-    source_content: &str,
-) -> Vec<Word> {
+// not supporting remarks either, use comments instead
+pub fn read_source_string_as_instructions(source_content: &str) -> Vec<Word> {
     let lines = split_tokens_by_line(tokenise(source_content));
     return parse_lines(lines);
 }
@@ -345,7 +349,75 @@ fn parse_lines(lines: Vec<Vec<Token>>) -> Vec<Word> {
 }
 
 fn parse_line(line: Vec<Token>) -> Option<Word> {
-    unimplemented!("{:?}", line)
+    if line.is_empty() || line.first() == Some(&Token::Asterisk) {
+        return None;
+    }
+    let mut iter = line.iter();
+    let loc = parse_loc(&mut iter);
+    let op = parse_op(&mut iter);
+    let addr = parse_address(&mut iter, &op);
+    if op.is_pseudo_instruction() {
+        handle_pseudo_instruction(loc, op, addr);
+        return None;
+    }
+    return Some(build_word(op, addr));
+}
+
+fn handle_pseudo_instruction(loc: Option<String>, op: Op, addr: Address) {
+    todo!()
+}
+
+fn build_word(op: Op, addr: Address) -> Word {
+    Word::from_instruction_parts(
+        Sign::from_i32(addr.a),
+        addr.a.abs(),
+        addr.i,
+        8 * addr.f_left + addr.f_right,
+        op.to_code_value(),
+    )
+    .unwrap()
+}
+
+fn parse_loc(iter: &mut dyn Iterator<Item = &Token>) -> Option<String> {
+    match iter.next().expect("illegal null loc field") {
+        Token::Space => None,
+        Token::Symbol(s) => Some(s.to_string()),
+        x => panic!("Bad loc {:?}", x),
+    }
+}
+
+fn parse_op(iter: &mut dyn Iterator<Item = &Token>) -> Op {
+    match iter.next().expect("illegal null op field") {
+        Token::Symbol(op) => Op::from_str(&op).expect("illegal op code"),
+        x => panic!("Bad op {:?}", x),
+    }
+}
+
+struct Address {
+    a: i32,
+    i: i32,
+    f_left: i32,
+    f_right: i32,
+}
+
+fn parse_address(iter: &mut dyn Iterator<Item = &Token>, op: &Op) -> Address {
+    match op {
+        Op::EQU | Op::ORIG | Op::CON | Op::END => parse_w_value(iter),
+        Op::ALF => parse_character_codes(iter),
+        _ => parse_a_and_i_and_f_values(iter),
+    }
+}
+
+fn parse_a_and_i_and_f_values(iter: &mut dyn Iterator<Item = &Token>) -> Address {
+    todo!()
+}
+
+fn parse_w_value(iter: &mut dyn Iterator<Item = &Token>) -> Address {
+    todo!()
+}
+
+fn parse_character_codes(iter: &mut dyn Iterator<Item = &Token>) -> Address {
+    todo!()
 }
 
 fn split_tokens_by_line(tokens: Vec<Token>) -> Vec<Vec<Token>> {
